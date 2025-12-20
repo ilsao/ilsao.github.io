@@ -1,0 +1,671 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CSAPP U8 筆記與(部分)練習題解答 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="深入理解計算機系統第八章筆記">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP U8 筆記與(部分)練習題解答">
+<meta property="og:url" content="https://ilsao.github.io/2025/08/01/CSAPP-U8-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="深入理解計算機系統第八章筆記">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/CSAPP_U8.png">
+<meta property="article:published_time" content="2025-08-01T08:15:27.000Z">
+<meta property="article:modified_time" content="2025-08-01T08:28:03.105Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/CSAPP_U8.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CSAPP U8 筆記與(部分)練習題解答",
+  "url": "https://ilsao.github.io/2025/08/01/CSAPP-U8-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/",
+  "image": "https://ilsao.github.io/pictures/CSAPP_U8.png",
+  "datePublished": "2025-08-01T08:15:27.000Z",
+  "dateModified": "2025-08-01T08:28:03.105Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/08/01/CSAPP-U8-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CSAPP U8 筆記與(部分)練習題解答',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/CSAPP_U8.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">CSAPP U8 筆記與(部分)練習題解答</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CSAPP U8 筆記與(部分)練習題解答</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-01T08:15:27.000Z" title="发表于 2025-08-01 16:15:27">2025-08-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-08-01T08:28:03.105Z" title="更新于 2025-08-01 16:28:03">2025-08-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">6.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>23分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="異常"><a href="#異常" class="headerlink" title="異常"></a>異常</h1><p>假設程序計數器每次執行代碼的值會組成一個序列$<a_{n}>$，每次從$a<em>{k}$到$a</em>{k+1}$的過渡稱為<strong>控制轉移(control transfer)</strong>。控制轉移組成的序列即處理器的<strong>控制流(control flow)</strong> 。</p>
+<p><strong>異常(exception)</strong> 就是控制流中的突變，用來響應處理器中的某些變化。</p>
+<p>當處理器檢測到<strong>事件(event)</strong> 發生，它會通過<strong>異常表(exception table)</strong> 間接調用<strong>異常處理程序(exception handler)</strong>。當異常處理程序完成後，會發生以下情況之一：</p>
+<ol>
+<li>返回到事件發生時運行的指令。</li>
+<li>返回到事件發生時運行的下一條指令。</li>
+<li>終止程序。</li>
+</ol>
+<h2 id="異常處理"><a href="#異常處理" class="headerlink" title="異常處理"></a>異常處理</h2><p>異常表的起始地址被存放於<strong>異常表基址寄存器(exception table base register)</strong> 的特殊CPU寄存器中。而系統中每種類型的異常都分配了唯一的<strong>異常號(exception number)</strong>，我們可以通過以下算法由異常號訪問異常表：</p>
+<script type="math/tex; mode=display">
+\text{異常表基址寄存器} \ + \ 4\times 異常號</script><p>異常類似於過程調用，但有不同：</p>
+<ul>
+<li>把額外的處理器狀態壓入棧。</li>
+<li>若控制從用戶程序轉到內核，則把項目壓到內核棧中而非用戶棧。</li>
+<li>異常處理程序運行在內核模式下，對系統資源有完全的訪問權限。</li>
+</ul>
+<h2 id="異常的類別"><a href="#異常的類別" class="headerlink" title="異常的類別"></a>異常的類別</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>類別</th>
+<th>原因</th>
+<th>異步/同步</th>
+<th>返回行為</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中斷 interrupt</td>
+<td>來自I/O設備的信號</td>
+<td>異步</td>
+<td>總是返回到下一條指令</td>
+</tr>
+<tr>
+<td>陷阱 trap</td>
+<td>有意的異常</td>
+<td>同步</td>
+<td>總是返回到下一條指令</td>
+</tr>
+<tr>
+<td>故障 fault</td>
+<td>潛在可恢復的錯誤</td>
+<td>同步</td>
+<td>可能返回到當前指令</td>
+</tr>
+<tr>
+<td>終止 abort</td>
+<td>不可恢復的錯誤</td>
+<td>同步</td>
+<td>不返回</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="中斷"><a href="#中斷" class="headerlink" title="中斷"></a>中斷</h3><p>中斷是異步發生的，來自I/O設備信號。硬件中斷不是由指令造成的，所以稱為異步。硬件中斷的處理程序常稱<strong>中斷處理程序(interrput handler)</strong>。</p>
+<p>IO設備，例如磁盤控制器，通過向CPU芯片的引腳發送信號，並將異常號放到系統總線上來觸發中斷。此異常號標記了引起中斷的設備。</p>
+<p>CPU發現中斷引腳的電壓變高，就會存系統總線讀取異常號，然後調用處理程序。處理程序返回後，將控制傳遞給下一條指令，就像中斷沒有發生過一樣。</p>
+<p>剩下的異常類型為同步發生，是執行當前指令的結果。我們稱這類指令<strong>故障指令(faulting instruction)</strong>。</p>
+<h3 id="陷阱和系統調用"><a href="#陷阱和系統調用" class="headerlink" title="陷阱和系統調用"></a>陷阱和系統調用</h3><p>當用戶程序需要向內核請求<strong>系統調用</strong>時，會故意觸發陷阱。</p>
+<p>CPU提供<code>syscall n</code>指令，當程序請求服務$n$時，<code>syscall</code>會導致陷阱。此時異常處理程序會解析程序參數並調用內核程序。</p>
+<h3 id="故障"><a href="#故障" class="headerlink" title="故障"></a>故障</h3><p>故障由錯誤引起，若故障處理程序可以修正這個錯誤，就會將控制返回到引起故障的指令並重新執行它。否則，返回到內核的<code>abort</code>例程，<code>abort</code>例程會終止引起故障的程序。</p>
+<h3 id="終止"><a href="#終止" class="headerlink" title="終止"></a>終止</h3><p>終止是不可恢復的致命錯誤造成的結果，通常是硬件錯誤。比如RAM損壞。終止處理程序不會將控制返回應用程序，而是返回到<code>abort</code>例程。</p>
+<h2 id="Linux-x86-64-系統中的異常"><a href="#Linux-x86-64-系統中的異常" class="headerlink" title="Linux/x86-64 系統中的異常"></a>Linux/x86-64 系統中的異常</h2><p>Linux有256種異常，其中0~31由Intel定義，對所有x86-64系統皆相同。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>異常號</th>
+<th>描述</th>
+<th>異常類別</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>除法錯誤</td>
+<td>故障</td>
+</tr>
+<tr>
+<td>13</td>
+<td>一般保護故障</td>
+<td>故障</td>
+</tr>
+<tr>
+<td>14</td>
+<td>缺頁</td>
+<td>故障</td>
+</tr>
+<tr>
+<td>18</td>
+<td>機器檢查</td>
+<td>終止</td>
+</tr>
+<tr>
+<td>32~255</td>
+<td>操作系統定義的異常</td>
+<td>中斷或陷阱</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>若代碼嘗試除以零就會觸發除法錯誤。Unix會直接終止程序，而Linux Shell會將錯誤報告為<strong>浮點異常(Floating exception)</strong>。</p>
+<p>若程序引用未定義的虛擬內存區域，或試圖寫只讀的文本段等行為會觸發一般補戶故障。Linux不會嘗試修復這種故障。Linux shell會將這種故障報告為<strong>段故障(Segmentation fault)</strong>。</p>
+<p>缺頁是會重新執行故障指令的一個示例。</p>
+<p>當執行故障指令時發現致命的硬件錯誤會導致機器檢查。處理程序不會返回控制給應用程序。</p>
+<p>在x86-64系統上，系統調用通過<code>syscall</code>陷阱指令實現。所有Linux系統調用的參數都是由寄存器傳遞而非棧。<code>%rax</code>包含系統調用號，<code>%rdi, %rsi, %rdx, %r10, %r8, %r9</code>共包含六個參數。</p>
+<p>當調用返回時，<code>%rcx, %r11</code>會被破壞，而<code>%rax</code>包含返回值。</p>
+<p><img src="/pictures/CSAPP_U8/1.png" alt="1"></p>
+<h1 id="進程"><a href="#進程" class="headerlink" title="進程"></a>進程</h1><p>進程：執行中程序的實例。</p>
+<p>進程提供給程序：</p>
+<ul>
+<li>獨立的邏輯控制流</li>
+<li>私有的地址空間</li>
+</ul>
+<h2 id="邏輯控制流"><a href="#邏輯控制流" class="headerlink" title="邏輯控制流"></a>邏輯控制流</h2><p>進程輪流使用處理器，每個進程執行一部份邏輯流，然後被<strong>搶占(preempted)</strong> 暫時掛起，輪到其他進程運行。</p>
+<h2 id="並發流"><a href="#並發流" class="headerlink" title="並發流"></a>並發流</h2><p><strong>並發流(concurrent flow)</strong>：一個邏輯流的執行時間與另一個流重疊。</p>
+<p><strong>並行流(parallel flow)</strong>：兩個流並發的運行在不同處理器核中。</p>
+<p><img src="/pictures/CSAPP_U8/2.png" alt="2"></p>
+<p>如上圖，A和B並發，也和C並發。但是B和C不並發，因為當C開始執行時，B已經執行結束。</p>
+<p>一個進程執行其部分控制流的時間段稱<strong>時間片(time slice)</strong>，一個進程與其他進程輪流運行的概念稱<strong>多任務(multitasking)</strong>，亦稱為<strong>時間分片(time slicing)</strong>。</p>
+<h3 id="練習題"><a href="#練習題" class="headerlink" title="練習題"></a>練習題</h3><p>8.1</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>進程對</th>
+<th>並發的?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AB</td>
+<td>y</td>
+</tr>
+<tr>
+<td>AC</td>
+<td>n</td>
+</tr>
+<tr>
+<td>BC</td>
+<td>y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="用戶模式與內核模式"><a href="#用戶模式與內核模式" class="headerlink" title="用戶模式與內核模式"></a>用戶模式與內核模式</h2><p>處理器使用某個控制寄存器中的<strong>模式位(mode bit)</strong> 的設置與否來判斷進程是否處於內核模式中。</p>
+<p>進程從用戶模式轉為內核模式的方法只有通過中斷、故障或系統調用這些異常。異常發生時，控制傳遞到EH，此時由用戶模式切換為內核模式。當EH結束後，切換回用戶模式後返回控制給程序。</p>
+<h2 id="上下文切換"><a href="#上下文切換" class="headerlink" title="上下文切換"></a>上下文切換</h2><p><strong>調度器(scheduler)</strong> 可以搶佔當前進程，利用<strong>上下文切換(context switch)</strong> 機制重新開始另一個被搶占的進程。</p>
+<p>上下文切換：</p>
+<ol>
+<li>保存當前進程上下文。</li>
+<li>恢復某個被搶佔進程的上下文。</li>
+<li>將控制傳遞給新恢復的進程。</li>
+</ol>
+<p>內核執行系統調用時，可能發生上下文切換。若系統調用因某事件阻塞，內核便可執行上下文切換。例如，<code>read</code>系統調用訪問磁盤，為了等待數據讀取，內核執行上下文切換運行另一個進程。</p>
+<p>中斷也可能造成上下文切換。比如，系統有一種產生週期性定時器中斷的機制，通常每1或10ms發生一次。此時，內核會判定當前進程執行得夠久了，切換到新進程執行。</p>
+<h1 id="系統調用錯誤處理"><a href="#系統調用錯誤處理" class="headerlink" title="系統調用錯誤處理"></a>系統調用錯誤處理</h1><p>當Unix風格的函數遇到錯誤，通常會返回-1，並設置全局整數變量<code>errno</code>。</p>
+<p>當Posix與GAI風格的函數遇到錯誤，會將錯誤代碼作為返回值。</p>
+<p>我們如下包裝三種不同風格的異常處理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">unix_error</span><span class="params">(<span class="type">char</span> *msg)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;%s: %s\n&quot;</span>, msg, strerror(errno));</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">posix_error</span><span class="params">(<span class="type">int</span> code, <span class="type">char</span> *msg)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;%s: %s\n&quot;</span>, msg, strerror(code));</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">gai_error</span><span class="params">(<span class="type">int</span> code, <span class="type">char</span> *msg)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;%s: %s\n&quot;</span>, msg, gai_strerror(code));</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>錯誤處理包裝函數可以簡化異常處理的代碼，對於一個基本函數<code>foo</code>我們定義一個相同參數與返回的包裝函數<code>Foo</code>，注意，第一個字母轉成大寫。</p>
+<p>當我們想為系統函數定義錯誤處理包裝函數時，可以如下編寫：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pid_t</span> <span class="title function_">Wait</span><span class="params">(<span class="type">int</span> *status)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">pid_t</span> pid;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((pid = wait(status)) &lt; <span class="number">0</span>)</span><br><span class="line">		unix_error(<span class="string">&quot;Wait error&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="進程控制"><a href="#進程控制" class="headerlink" title="進程控制"></a>進程控制</h1><h2 id="獲取PID"><a href="#獲取PID" class="headerlink" title="獲取PID"></a>獲取PID</h2><p>使用函數<code>getpid()</code>或<code>gitppid()</code>。</p>
+<h2 id="進程創建與終止"><a href="#進程創建與終止" class="headerlink" title="進程創建與終止"></a>進程創建與終止</h2><p>當進程<strong>停止</strong> 時，處於被<strong>掛起(suspended)</strong> 的狀態，不會被調度。當收到信號<code>SIGSTOP, SIGTSTP, SIGTTIN, STGTTOU</code>時進程停止，直到收到信號<code>SIGCONT</code>才會繼續運行。</p>
+<p><code>exit(int status)</code>以<code>status</code>退出狀態來終止進程</p>
+<p>父進程調用<code>pid_t fork()</code>函數創建子進程。返回值：子進程返回0，父進程返回子進程PID。</p>
+<p>子進程與父進程幾乎相同，也擁有父進程打開的文件，唯一的區別就是PID不同。且父子進程並發執行。</p>
+<p>二者的地址空間相同，但是獨立。也就是說，子進程修改自己的內存數據不會更改父進程的數據。</p>
+<p>注意，若代碼中調用兩次<code>fork()</code>會創建3個進程，因為被父進程創建的子進程也會調用一次<code>fork()</code>。</p>
+<h3 id="練習題-1"><a href="#練習題-1" class="headerlink" title="練習題"></a>練習題</h3><p>8.2</p>
+<p>A. p1: x=2 \n p2: x=1</p>
+<p>B. p2: x=0</p>
+<h2 id="回收子進程"><a href="#回收子進程" class="headerlink" title="回收子進程"></a>回收子進程</h2><p>當子進程終止時，內核不會馬上把它從系統中清除，而需等待父進程<strong>回收(reaped)</strong>，此時子進程稱<strong>僵死進程(zombie)</strong>。當父進程回收子進程時，內核將子進程的退出狀態傳遞給父進程，然後拋棄已終止的子進程。</p>
+<p>若父進程終止，但還未回收其子進程，系統會安排<code>init</code>進程(PID始終為1)回收。注意，我們總應該回收僵死進程，因為就算沒有在運行，它們也會占用內存資源。</p>
+<p>我們可以調用<code>pid_t waitpid(pid_t pid, int *statusp, int opitons)</code>等待子進程終止或停止。返回：若成功為子進程PID，若設置<code>WNOHANG</code>且任何子進程都未終止則為0，若有其他錯誤則為-1。</p>
+<p>默認情況(<code>option=0</code>)，<code>waitpid</code>掛起調用進程的執行，直到<strong>等待集合(wait set)</strong> 的其中一個子進程終止。</p>
+<ol>
+<li>判定等待集合的成員<br> 當pid &gt; 0，等待集合為PID所指定的單獨子進程。<br> 當pid = -1，等待集合由父進程的所有子進程組成。</li>
+<li>修改默認行為<br> 通過將<code>option</code>修改為以下幾項常數可以修改默認行為：<br> <code>WNOHANG</code>：若等待集合中沒有任何子進程終止，立即返回。若想在等待子進程終止時做其他工作可用。<br> <code>WUNTRACED</code>：返回PID的值比默認多一個，返回已終止或被停止子進程的PID。<br> <code>WCONTINUED</code>：掛起調用進程，直到等待集合有子進程終止或被終止的進程收到<code>SIGCONT</code>。</li>
+<li>檢查已回收子進程的退出狀態<br> 我們可以檢查<code>pstatus</code>指向的<code>status</code>檢查退出狀態。</li>
+<li><code>wait</code>函數<br> <code>pid_t wait(int *statusp)</code>函數是<code>waitpid</code>的簡化版本。<br> 調用<code>wait(&amp;status)</code>等價於<code>waitpid(-1, &amp;status, 0)</code>。</li>
+</ol>
+<h3 id="練習題-2"><a href="#練習題-2" class="headerlink" title="練習題"></a>練習題</h3><p>8.3</p>
+<p>acbc</p>
+<p>abcc</p>
+<p>bacc</p>
+<p>8.4</p>
+<p>A. 6</p>
+<p>B. </p>
+<p>Hello<br>0 // from father<br>1 // from son<br>Bye // from son and exit with status 2<br>2<br>Bye</p>
+<h2 id="讓進程休眠"><a href="#讓進程休眠" class="headerlink" title="讓進程休眠"></a>讓進程休眠</h2><p><code>unsinged int sleep(unsinged int secs)</code>讓進程掛起<code>secs</code>秒。返回：若請求的時間到了則返回0，否則返回還要掛起多久(發生在<code>sleep</code>被信號打斷)。</p>
+<p><code>int pause()</code>讓函數休眠直到收到信號。該函數總是返回-1。</p>
+<h3 id="練習題-3"><a href="#練習題-3" class="headerlink" title="練習題"></a>練習題</h3><p>8.5</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">snooze</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> secs)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> actualSecs = secs - sleep(secs);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Slept for %d of %d secs&quot;</span>, actualSecs, secs);</span><br><span class="line">	<span class="keyword">return</span> (secs - actualSecs);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="加載並運行程序"><a href="#加載並運行程序" class="headerlink" title="加載並運行程序"></a>加載並運行程序</h2><p><code>int execve(const char *filename, const char *argv[], const char *envp[])</code>可以在當前上下文中加載運行一個程序，其中<code>argv</code>是參數列表，<code>envp</code>是環境變量列表。</p>
+<p><code>execve</code>只有出現錯誤才會返回，其餘情況從不返回。</p>
+<p><code>execve</code>加載<code>filename</code>後，調用啟動代碼設置棧，將控制傳遞給新程序的主函數。</p>
+<p><img src="/pictures/CSAPP_U8/3.png" alt="3"></p>
+<p>上圖是<code>main</code>開始執行時棧的結構。</p>
+<p><code>char *getenv(const char *name)</code>在環境數組中搜索字符串”name=value”，若找到則返回<code>value</code>，否則返回<code>NULL</code>。</p>
+<p>若環境數組包含如”name=oldvalue”的字符串，則：</p>
+<ul>
+<li><code>int setenv(const char *name, const char *newvalue, int overwrite)</code>在<code>overwrite</code>非零時使用<code>newvalue</code>替代<code>oldvalue</code>。若<code>name</code>不存在，則把”name=newvalue”添加到數組中。</li>
+<li><code>void unsetenv(const char *name)</code>刪除環境數組中匹配項。</li>
+</ul>
+<h3 id="練習題-4"><a href="#練習題-4" class="headerlink" title="練習題"></a>練習題</h3><p>8.6</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* myecho.c */</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[], <span class="type">char</span> *envp[])</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Command-line arguments:\n&quot;</span>);</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; argc; i++)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;\targv[%2d]: %s\n&quot;</span>, i, argv[i]);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Environment variables:\n&quot;</span>);</span><br><span class="line">	i = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (envp[i] != <span class="literal">NULL</span>)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;\tenvp[%2d]: %s\n&quot;</span>, i, envp[i++]);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，<code>%2d</code>表示輸出兩位整數，不足兩位在左側補空格。</p>
+<p>循環可以使用以下代碼替代。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; envp[i] != <span class="literal">NULL</span>; i++)</span><br></pre></td></tr></table></figure>
+<h1 id="信號"><a href="#信號" class="headerlink" title="信號"></a>信號</h1><p>Linux信號是軟件形式的異常，允許進程和內核中斷其他進程。一個信號就是一條通知進程系統發生某類型事件的消息。</p>
+<p>硬件異常由內核EH處理，通常對用戶進程不可見。信號這種機制則通知用戶進程發生了這些異常。</p>
+<p><img src="/pictures/CSAPP_U8/4.png" alt="4"></p>
+<blockquote id="fn_b">
+<sup>b</sup>. 這個信號不能被捕獲與忽略。<a href="#reffn_b" title="Jump back to footnote [b] in the text."> &#8617;</a>
+</blockquote>
+<h2 id="信號術語"><a href="#信號術語" class="headerlink" title="信號術語"></a>信號術語</h2><p>傳遞信號到進程分為兩個步驟(進程可以發送信號給自身)：</p>
+<ol>
+<li>發送信號<br> 發送信號有以下原因：<ul>
+<li>內核檢測到系統事件，如除零或子進程終止。</li>
+<li>進程調用<code>kill</code>顯式地要求內核發送信號給目的進程。</li>
+</ul>
+</li>
+<li>接受信號<br> 目的進程被內核強迫對信號做出反應，此時目標進程接受信號。<br> 進程可以忽略、終止或運行一個用戶層函數，稱<strong>信號處理程序(signal handler)</strong> 來捕獲信號。</li>
+</ol>
+<p>一個發出而還未被接收的信號稱<strong>待處理信號(pending signal)</strong>。無論何時一種類型只能有一個待處理信號。</p>
+<p>進程可以選擇信阻塞接收某種信號。此時，被阻塞的信號仍可以發送，但是產生的待處理信號不會被接收，直到取消阻塞。</p>
+<p>內核為每個進程維護待處理信號集合，存放於<code>pending</code>位向量中。只要傳送一個類型<code>k</code>的信號，<code>pending</code>的第<code>k</code>位就會被設置。當接受類型為<code>k</code>的信號，就會清除第<code>k</code>位。</p>
+<p>被阻塞的信號集合存放於<code>blocked</code>位向量中。</p>
+<h2 id="發送信號"><a href="#發送信號" class="headerlink" title="發送信號"></a>發送信號</h2><h3 id="進程組"><a href="#進程組" class="headerlink" title="進程組"></a>進程組</h3><p>每個進程都僅屬於一個<strong>進程組(process group)</strong>，進程組由進程組ID標識。</p>
+<p>我們可以使用<code>pid_t getpgrp()</code>取得當前進程所屬的進程組ID。</p>
+<p>默認情況下，子進程會與其父進程屬於同一進程組。</p>
+<p>我們可以使用<code>int setpgid(pid_t pid, pid_t pgid)</code>，若<code>pid</code>為0則使用當前進程PID，若<code>pgid</code>為0則使用<code>pid</code>作為進程組ID。</p>
+<h3 id="使用-bin-kill發送信號"><a href="#使用-bin-kill發送信號" class="headerlink" title="使用/bin/kill發送信號"></a>使用<code>/bin/kill</code>發送信號</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/kill -9 15213</span><br></pre></td></tr></table></figure>
+<p>上指令將信號9(<code>SIGKILL</code>)發送給進程15213。</p>
+<p>若指定的PID為負，則信號會傳送給該進程所屬進程組的每個進程。</p>
+<h3 id="從鍵盤發送信號"><a href="#從鍵盤發送信號" class="headerlink" title="從鍵盤發送信號"></a>從鍵盤發送信號</h3><p>Unix shell 使用<strong>作業(job)</strong> 這種概念表示解析一條命令而創建的進程。無論何時至多只能有一個前台作業。</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> | <span class="built_in">sort</span></span><br></pre></td></tr></table></figure>
+<p>上述代碼會創建一個包含兩個進程的前台作業，兩個進程之間由 Unix 管道連接。</p>
+<p>shell 會為每個作業創建獨立的進程組，通常選擇作業中的父進程PID作為進程組ID。</p>
+<p>使用<code>ctrl + c</code>會使內核發送<code>SIGINT</code>到前台進程組中的每個進程。使用<code>ctrl + z</code>會發送<code>SIGSTP</code>到前台進程組，導致掛起前台作業。</p>
+<h3 id="用kill函數發送信號"><a href="#用kill函數發送信號" class="headerlink" title="用kill函數發送信號"></a>用<code>kill</code>函數發送信號</h3><p>使用<code>int kill(pid_t pid, int sig)</code>可以發送信號。若<code>pid</code>大於0，則直接發送信號給進程<code>pid</code>。若等於0，則發送信號給當前進程所屬的進程組中的所有進程(包括自身)。若小於0，則發送給進程組<code>|pid|</code>中的每個進程。</p>
+<h3 id="用alarm函數發送信號"><a href="#用alarm函數發送信號" class="headerlink" title="用alarm函數發送信號"></a>用<code>alarm</code>函數發送信號</h3><p>進程通過<code>unsigned int alarm(unsigned int secs)</code>在<code>secs</code>秒後，向自身發送<code>SIGALRM</code>信號。</p>
+<p>一旦調用<code>alarm</code>函數，就會取消任何待處理的鬧鐘，並返回該鬧鐘在被發送前剩下的秒數。如果沒有任何待處理的鬧鐘，就返回0。</p>
+<h2 id="接收信號"><a href="#接收信號" class="headerlink" title="接收信號"></a>接收信號</h2><p>當進程<code>p</code>從內核模式返回到用戶模式(完成系統調用或上下文切換)，內核會檢查<code>p</code>的未被阻塞待處理信號(<code>pending &amp; ~blocked</code>)。若該集合為空，控制將轉移到<code>p</code>的邏輯控制流的下條指令$I<em>{next}$ 。否則，內核選擇集合中某個信號<code>k</code>(通常為最小的<code>k</code>)，然後強制進程接收。進程接收信號並完成指定行為，將控制傳遞給$I</em>{next}$ 。</p>
+<p>每個信號都有定義接收者接收到信號的默認行為：</p>
+<ul>
+<li>進程終止。</li>
+<li>進程終止並轉儲內存。</li>
+<li>進程停止(掛起)直到被<code>SIGCONT</code>重啟。</li>
+<li>進程忽略該信號。</li>
+</ul>
+<p>我們可以使用<code>signal</code>函數修改這種默認行為，需要注意<code>SIGSTOP</code>和<code>SIGKILL</code>的默認行為無法更改。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Linux 調用 signal() 的原始形式 */</span></span><br><span class="line"><span class="type">void</span> (*signal(<span class="type">int</span> signum, <span class="type">void</span> (*handler)(<span class="type">int</span>)))(<span class="type">int</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* typedef 簡化形式 */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="title function_">void</span> <span class="params">(*<span class="type">sighandler_t</span>)</span><span class="params">(<span class="type">int</span>)</span>;</span><br><span class="line"><span class="type">sighandler_t</span> <span class="title function_">signal</span><span class="params">(<span class="type">int</span> signum, sighandler handler)</span>;</span><br></pre></td></tr></table></figure>
+<p>對於原始較難讀懂的函數聲明，可以使用<code>typedef</code>進行簡化。</p>
+<p>以下我們解釋原始形式代碼應如何解讀：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原始声明： </span></span><br><span class="line"><span class="type">void</span> (*signal(<span class="type">int</span> signum, <span class="type">void</span> (*handler)(<span class="type">int</span>)))(<span class="type">int</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">// 等价于： </span></span><br><span class="line"><span class="comment">// Step 1: signal 是一个函数(因為有參數)，参数为 (int, void(*)(int)) </span></span><br><span class="line">signal(<span class="type">int</span>, <span class="type">void</span>(*)(<span class="type">int</span>)) </span><br><span class="line"></span><br><span class="line"><span class="comment">// Step 2: signal 的返回值类型是 void (*)(int) </span></span><br><span class="line"><span class="type">void</span> (* ... )(<span class="type">int</span>) <span class="comment">// 此部分描述返回值的类型</span></span><br></pre></td></tr></table></figure>
+<p>通過設置<code>handler</code>更改行為：</p>
+<ul>
+<li><code>SIG_IGN</code>：忽略該信號。</li>
+<li><code>SIG_DFL</code>：恢復默認行為。</li>
+<li>用戶定義函數：該函數稱為<strong>信號處理程序(signal handler)</strong>，通過把處理程序的地址傳給<code>signal</code>函數而改變行為的過程叫<strong>設置信號處理程序(installing the handler)</strong>。調用信號處理程序稱為<strong>捕獲信號(catching the signal)</strong>，執行信號處理程序稱為<strong>處理信號(handling the signal)</strong>。</li>
+</ul>
+<h3 id="練習題-5"><a href="#練習題-5" class="headerlink" title="練習題"></a>練習題</h3><p>8.7</p>
+<p>注意，只要休眠收到一個未被忽略的信號，<code>sleep</code>就會提前返回。所以對我們的<code>handler</code>來說，甚麼都不用做，只要立即返回即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">sighandler</span><span class="params">(<span class="type">int</span> signum)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">snooze</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> secs)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> rc = sleep(secs);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;\nSlept for %d of %d secs\n&quot;</span>, secs - rc, secs);</span><br><span class="line">	<span class="keyword">return</span> rc;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">int</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (signal(SIGINT, sighandler) == SIG_ERR) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;signal error: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    snooze(atoi(argv[<span class="number">1</span>]));</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="阻塞和解除阻塞信號"><a href="#阻塞和解除阻塞信號" class="headerlink" title="阻塞和解除阻塞信號"></a>阻塞和解除阻塞信號</h2><p><strong>隱式阻塞機制(Implicit blocking mechanism)</strong>：內核默認阻塞與處理程序當前處理的信號相同類型者。例如程序捕獲信號$s$，正在運行處理程序 $S$，此時若發送第二次信號$s$，則$s$會一直保持待處理直到$S$返回。</p>
+<p><strong>顯式阻塞機制(Explicit blocking mechanism)</strong>：使用<code>sigprocmask</code>與其輔助函數阻塞或解除阻塞指定信號。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回：成功0，失敗-1。 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigprocmask</span><span class="params">(<span class="type">int</span> how, <span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">sigset_t</span> *oldset)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigemptyset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigfillset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigaddset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigdelset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* signum 是 set 的成員1，不是0，錯誤-1。 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigismember</span><span class="params">(<span class="type">const</span> <span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br></pre></td></tr></table></figure>
+<p><code>sigprocmask</code>通過<code>how</code>的值決定如何改變<code>blocked</code>位向量(阻塞信號集合)：</p>
+<ul>
+<li><code>SIG_BLOCK</code>：<code>blocked = blocked | set</code></li>
+<li><code>SIG_UNBLOCK</code>：<code>blocked = blocked &amp; ~set</code></li>
+<li><code>SIG_SETMASK</code>：<code>blocked = set</code></li>
+</ul>
+<h2 id="編寫信號處理程序"><a href="#編寫信號處理程序" class="headerlink" title="編寫信號處理程序"></a>編寫信號處理程序</h2><p>信號處理程序因為以下因素導致難以編寫：</p>
+<ul>
+<li>處理程序與主程序並發運行，共享相同全局變量，導致可能與主程序或其他處理程序互相干擾。</li>
+<li>接收信號的規則有違直覺。</li>
+<li>不同系統有不同信號處理語意。</li>
+</ul>
+<h3 id="安全的信號處理"><a href="#安全的信號處理" class="headerlink" title="安全的信號處理"></a>安全的信號處理</h3><p><strong>處理程序應盡可能簡單</strong>：處理程序儘量只是設置全局標誌並立即返回，由主程序通過週期性的檢查和崇智標誌，以接收信號和處理。</p>
+<p><strong>處理程序僅調用異步信號安全的函數</strong>：<strong>異步信號安全(async-signal-safe)</strong> 函數可以安全的被處理程序調用，因為其可<strong>重入(reentrant)</strong> (被中斷後返回依舊可以正常運行，例如只訪問局部變量)，或不能被信號處理程序中斷。</p>
+<p>以下列出一些異步信號安全的函數：</p>
+<p><img src="/pictures/CSAPP_U8/5.png" alt="5"></p>
+<p><strong>保存和恢復<code>errno</code></strong>：在處理程序中調用異步信號安全函數仍可能干擾其他依賴於<code>errno</code>的代碼。在進入處理程序時應先將<code>errno</code>保存在局部變量中，返回時再恢復。</p>
+<p><strong>阻塞所有信號</strong>：若處理程序和主程序或其他處理程序共享全局數據結構，則在訪問該數據結構時需要阻塞所有信號，避免一系列訪問數據結構的指令被其他代碼中斷。</p>
+<p><strong>用<code>volatile</code>聲明全局變量</strong>：<code>volatile</code>可以告訴編譯器不要緩存該變量，將變量的值視為時刻在改變，每次訪問變量皆從內存中讀取。避免變量被並行代碼修改，卻仍從緩存中讀取未被修改的數值。</p>
+<p><strong>用<code>sig_atmoic_t</code>聲明標誌</strong>：EH通常會寫全局標誌紀錄信號的接收，主程序會週期性讀標誌並響應信號，再清除該標誌。對這種標誌，整形數據類型<code>sig_atomic_t</code>保證讀寫是<strong>原子性的(atomic)</strong> (不可中斷)。由於原子性，我們可以安全的讀寫標誌而不需暫時阻塞信號。注意，這裡的原子性僅包含單個讀寫。如<code>flag++</code>或<code>flag = flag + 10</code>是不適用的，因其需要多於一條指令實現。</p>
+<h3 id="正確的信號處理"><a href="#正確的信號處理" class="headerlink" title="正確的信號處理"></a>正確的信號處理</h3><p>注意，信號不會排隊。若連續發送兩次信號$k$，則待處理信號集合中只會有一個信號$k$，因為<code>pending</code>每種信號只有一位。</p>
+<p>所以在父進程回收子進程的處理程序編寫上，需要小心這點。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">handler</span><span class="params">(<span class="type">int</span> signum)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> olderrno = errno;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * waitpid 返回值：</span></span><br><span class="line"><span class="comment">	 *     若成功回收：子進程pid</span></span><br><span class="line"><span class="comment">	 *     若沒有子進程終止：0</span></span><br><span class="line"><span class="comment">	 *     若錯誤：-1</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* </span></span><br><span class="line"><span class="comment">	 * 不使用 if (waitpid(-1, NULL, WNOHANG) &lt; 0) 判斷錯誤(若用if可能導致無法完全回收子進程)，</span></span><br><span class="line"><span class="comment">	 * 而使用 while 判斷 waitpid 的返回值，是否還有未回收的子進程</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">while</span> (waitpid(<span class="number">-1</span>, <span class="literal">NULL</span>, WNOHANG) &gt; <span class="number">0</span>)</span><br><span class="line">		Sio_puts(<span class="string">&quot;Handler reaped child\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 若 waitpid 正常結束 errno = ECHILD */</span></span><br><span class="line">	<span class="keyword">if</span> (errno != ECHILD)</span><br><span class="line">		Sio_error(<span class="string">&quot;waitpid error&quot;</span>);</span><br><span class="line">	</span><br><span class="line">	Sleep(<span class="number">1</span>);</span><br><span class="line">	</span><br><span class="line">	errno = olderrno;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="可移植的信號處理"><a href="#可移植的信號處理" class="headerlink" title="可移植的信號處理"></a>可移植的信號處理</h3><ul>
+<li><strong><code>signal</code>語意各有不同</strong>：有些老Unix系統在每次對信號$k$捕獲後，會將信號$k$綁定的信號處理程序恢復到默認，需要手動再次設置。</li>
+<li><strong>系統調用可被中斷</strong>：如<code>read, write, accept</code>這樣的系統調用會潛在地阻塞進程一段間，稱<strong>慢速系統調用(slow system calls)</strong>。在老Unix系統中，捕獲信號導致慢速系統調用中斷，在處理程序返回後，不會繼續執行系統調用。需要程序員手動重啟被中斷的系統調用。</li>
+</ul>
+<p>我們可以使用<code>int sigaction(int signum, struct sigaction *act, struct sigaction *oldact)</code>函數設置指定的信號處理語意。</p>
+<p>我們可以編寫一個<code>Signal</code>包裝函數：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">handler_t</span> *<span class="title function_">Signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">handler_t</span> *handler)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">action</span>, <span class="title">old_action</span>;</span></span><br><span class="line"></span><br><span class="line">	action.sa_handler = handler;</span><br><span class="line">	sigemptyset(&amp;action.sa_mask);  <span class="comment">/* Block sigs of type being handled */</span></span><br><span class="line">	action.sa_flags = SA_RESTART;  <span class="comment">/* Restart syscalls if possible */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sigaction(signum, &amp;action, &amp;old_action) &lt; <span class="number">0</span>)</span><br><span class="line">		unix_error(<span class="string">&quot;Signal error&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> (old_action.sahandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="練習題-6"><a href="#練習題-6" class="headerlink" title="練習題"></a>練習題</h3><p>8.8</p>
+<p>213</p>
+<h2 id="同步流以避免並發錯誤"><a href="#同步流以避免並發錯誤" class="headerlink" title="同步流以避免並發錯誤"></a>同步流以避免並發錯誤</h2><p>有一種稱<strong>競爭(race)</strong> 的同步錯誤，當調用兩個有前後相關的函數時，若因系統調度而造成調用前後順序錯誤，就會造成隱密的bug。</p>
+<p>比如我們想要在<code>fork</code>後，進行操作$p$，然後再回收子進程。此時，如果沒有專門處理，子進程可能在$p$還沒執行時就結束並發送信號<code>SIGCHLD</code>，導致先回收子進程才進行操作$p$。</p>
+<p>我們可以如下處理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">sigset_t</span> mask, mask_all, prev;</span><br><span class="line"></span><br><span class="line">Sigfillset(&amp;mask_all);</span><br><span class="line">Sigemptyset(&amp;mask);</span><br><span class="line">Sigaddset(&amp;mask, SIGCHLD);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Sigprocmask 是 sigprocmask 的封裝函數，進行了錯誤檢測 */</span></span><br><span class="line">Sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev);   <span class="comment">/* 阻塞 SIGCHLD */</span></span><br><span class="line"><span class="keyword">if</span> (Fork() == <span class="number">0</span>)  <span class="comment">/* Child */</span></span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Sigprocmask(SIG_BLOCK, &amp;mask_all, <span class="literal">NULL</span>); <span class="comment">/* 阻塞所有信號，避免影響原子操作 */</span></span><br><span class="line">do_something();                          <span class="comment">/* 原子操作 */</span></span><br><span class="line">Sigprocmask(SIG_SET, &amp;prev, <span class="literal">NULL</span>);       <span class="comment">/* 解除阻塞 SIGCHLD */</span></span><br></pre></td></tr></table></figure>
+<h2 id="顯式地等待信號"><a href="#顯式地等待信號" class="headerlink" title="顯式地等待信號"></a>顯式地等待信號</h2><p>我們使用函數<code>int sigsuspend(const sigset_t *mask)</code>等待信號。它會暫時使用<code>mask</code>替換當前的阻塞集合，然後掛起進程，直到收到信號。如果收到的信號的默認行為是終止，則進程不從<code>sigsuspend</code>返回就直接中指。</p>
+<p><code>sigsuspend</code>等價於以下代碼的<strong>原子</strong>版本：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sigprocmask(SIG_SETMASK, &amp;mask, &amp;prev);</span><br><span class="line"><span class="comment">/* 若此時收到信號，可能導致進程被無限掛起 */</span></span><br><span class="line">pause();</span><br><span class="line">sigprocmask(SIG_SETMASK, &amp;prev, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+<h1 id="非本地跳轉"><a href="#非本地跳轉" class="headerlink" title="非本地跳轉"></a>非本地跳轉</h1><p>C語言提供一種用戶級異常控制流形式，稱<strong>非本地跳轉(nonlocal jump)</strong>，將控制直接從一個函數轉移到另一個運行中的函數，而不須正常調用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;setjmp.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">setjmp</span><span class="params">(jmp_buf env)</span>;  <span class="comment">/* 返回0。返回值無法被賦予給變量，但可用做條件判斷測試 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigsetjmp</span><span class="params">(sigjmp_buf env, <span class="type">int</span> savesings)</span>; <span class="comment">/* 返回非0 */</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">longjmp</span><span class="params">(jmp_buf env, <span class="type">int</span> retval)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">siglongjmp</span><span class="params">(sigjmp_buf env, <span class="type">int</span> retval)</span>;</span><br></pre></td></tr></table></figure>
+<p><code>setjmp</code>經過一次調用，會有兩次返回：</p>
+<ol>
+<li>第一次調用，設置<code>env</code>緩衝區並返回0。</li>
+<li><code>longjmp</code>的<code>env</code>參數與<code>setjmp</code>設置的<code>env</code>緩衝區相同，<code>setjmp</code>會返回<code>longjmp</code>的參數<code>retval</code>的值。</li>
+</ol>
+<p>非本地跳轉可以用來從深層嵌套的函數中立即返回。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;csapp.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">jmp_buf buf;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> error1 = <span class="number">0</span>, error2 = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">void</span>)</span>, <span class="title function_">bar</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">switch</span>(setjmp(buf)) &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">		foo();</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Detected an error1 condition in foo\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Detected an error2 condition in foo-&gt;bar\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Detected an unknown error condition in foo\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (error1)</span><br><span class="line">		longjmp(env, <span class="number">1</span>);</span><br><span class="line">	bar();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">bar</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (error2)</span><br><span class="line">		longjmp(env, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>非本地跳轉還可以使信號處理程序返回到指定的位置，而不是中斷處。可以用來實現軟重啟。</p>
+<p><code>sigsetjmp, siglongjmp</code>是可以被信號處理程序使用的版本。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;csapp.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">sigjmp_buf buf;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">handler</span><span class="params">(<span class="type">int</span> sig)</span></span><br><span class="line">&#123;</span><br><span class="line">	siglongjmp(buf, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (!sigsetjmp(buf, <span class="number">1</span>)) &#123;</span><br><span class="line">		Signal(SIGINT, handler);</span><br><span class="line">		Sio_puts(<span class="string">&quot;starting\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		Sio_puts(<span class="string">&quot;restarting\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">		Sleep(<span class="number">1</span>);</span><br><span class="line">		Sio_puts(<span class="string">&quot;processing...\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意，信號處理程序需要在<code>sigsetjmp</code>後調用，否則要承受處理程序在<code>sigsetjmp</code>前被調用的風險。</p>
+<p>還有，因為<code>sigsetjmp, siglongjmp</code>不是異步信號安全函數，所以我們在<code>siglongjmp</code>可達處只調用異步信號安全函數。</p>
+<h1 id="操作進程的工具"><a href="#操作進程的工具" class="headerlink" title="操作進程的工具"></a>操作進程的工具</h1><ul>
+<li><code>strace</code>：打印運行程序與其子進程的每個系統調用軌跡。</li>
+<li><code>ps</code>：列出系統中的進程(包括殭屍進程)。</li>
+<li><code>top</code>：列出當前進程資源使用的信息。</li>
+<li><code>pmap</code>：顯示進程的內存映射。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/08/01/CSAPP-U8-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/">https://ilsao.github.io/2025/08/01/CSAPP-U8-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/CSAPP_U8.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/01/CSAPP-Shell-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Shell Lab 題解"><img class="cover" src="/pictures/ShellLab.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP Shell Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Shell Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/22/CSAPP-U7-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/" title="CSAPP U7 筆記與(部分)練習題解答"><img class="cover" src="/pictures/CSAPP_U7.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP U7 筆記與(部分)練習題解答</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第七章筆記</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%95%B0%E5%B8%B8"><span class="toc-number">1.</span> <span class="toc-text">異常</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%95%B0%E5%B8%B8%E8%99%95%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">異常處理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%95%B0%E5%B8%B8%E7%9A%84%E9%A1%9E%E5%88%A5"><span class="toc-number">1.2.</span> <span class="toc-text">異常的類別</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E6%96%B7"><span class="toc-number">1.2.1.</span> <span class="toc-text">中斷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%B7%E9%98%B1%E5%92%8C%E7%B3%BB%E7%B5%B1%E8%AA%BF%E7%94%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">陷阱和系統調用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%85%E9%9A%9C"><span class="toc-number">1.2.3.</span> <span class="toc-text">故障</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B5%82%E6%AD%A2"><span class="toc-number">1.2.4.</span> <span class="toc-text">終止</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-x86-64-%E7%B3%BB%E7%B5%B1%E4%B8%AD%E7%9A%84%E7%95%B0%E5%B8%B8"><span class="toc-number">1.3.</span> <span class="toc-text">Linux&#x2F;x86-64 系統中的異常</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%B2%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">進程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%8F%E8%BC%AF%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="toc-number">2.1.</span> <span class="toc-text">邏輯控制流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A6%E7%99%BC%E6%B5%81"><span class="toc-number">2.2.</span> <span class="toc-text">並發流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C"><span class="toc-number">2.2.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B6%E6%A8%A1%E5%BC%8F%E8%88%87%E5%85%A7%E6%A0%B8%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">用戶模式與內核模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8F%9B"><span class="toc-number">2.4.</span> <span class="toc-text">上下文切換</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%B5%B1%E8%AA%BF%E7%94%A8%E9%8C%AF%E8%AA%A4%E8%99%95%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">系統調用錯誤處理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%B2%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">4.</span> <span class="toc-text">進程控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8D%B2%E5%8F%96PID"><span class="toc-number">4.1.</span> <span class="toc-text">獲取PID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%B2%E7%A8%8B%E5%89%B5%E5%BB%BA%E8%88%87%E7%B5%82%E6%AD%A2"><span class="toc-number">4.2.</span> <span class="toc-text">進程創建與終止</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E6%94%B6%E5%AD%90%E9%80%B2%E7%A8%8B"><span class="toc-number">4.3.</span> <span class="toc-text">回收子進程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-2"><span class="toc-number">4.3.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%93%E9%80%B2%E7%A8%8B%E4%BC%91%E7%9C%A0"><span class="toc-number">4.4.</span> <span class="toc-text">讓進程休眠</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-3"><span class="toc-number">4.4.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E8%BC%89%E4%B8%A6%E9%81%8B%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-number">4.5.</span> <span class="toc-text">加載並運行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-4"><span class="toc-number">4.5.1.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E8%99%9F"><span class="toc-number">5.</span> <span class="toc-text">信號</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E8%99%9F%E8%A1%93%E8%AA%9E"><span class="toc-number">5.1.</span> <span class="toc-text">信號術語</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BC%E9%80%81%E4%BF%A1%E8%99%9F"><span class="toc-number">5.2.</span> <span class="toc-text">發送信號</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%B2%E7%A8%8B%E7%B5%84"><span class="toc-number">5.2.1.</span> <span class="toc-text">進程組</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-bin-kill%E7%99%BC%E9%80%81%E4%BF%A1%E8%99%9F"><span class="toc-number">5.2.2.</span> <span class="toc-text">使用&#x2F;bin&#x2F;kill發送信號</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%9E%E9%8D%B5%E7%9B%A4%E7%99%BC%E9%80%81%E4%BF%A1%E8%99%9F"><span class="toc-number">5.2.3.</span> <span class="toc-text">從鍵盤發送信號</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8kill%E5%87%BD%E6%95%B8%E7%99%BC%E9%80%81%E4%BF%A1%E8%99%9F"><span class="toc-number">5.2.4.</span> <span class="toc-text">用kill函數發送信號</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8alarm%E5%87%BD%E6%95%B8%E7%99%BC%E9%80%81%E4%BF%A1%E8%99%9F"><span class="toc-number">5.2.5.</span> <span class="toc-text">用alarm函數發送信號</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E4%BF%A1%E8%99%9F"><span class="toc-number">5.3.</span> <span class="toc-text">接收信號</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-5"><span class="toc-number">5.3.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E5%92%8C%E8%A7%A3%E9%99%A4%E9%98%BB%E5%A1%9E%E4%BF%A1%E8%99%9F"><span class="toc-number">5.4.</span> <span class="toc-text">阻塞和解除阻塞信號</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%A8%E5%AF%AB%E4%BF%A1%E8%99%9F%E8%99%95%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.5.</span> <span class="toc-text">編寫信號處理程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E4%BF%A1%E8%99%9F%E8%99%95%E7%90%86"><span class="toc-number">5.5.1.</span> <span class="toc-text">安全的信號處理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%A2%BA%E7%9A%84%E4%BF%A1%E8%99%9F%E8%99%95%E7%90%86"><span class="toc-number">5.5.2.</span> <span class="toc-text">正確的信號處理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%A7%BB%E6%A4%8D%E7%9A%84%E4%BF%A1%E8%99%9F%E8%99%95%E7%90%86"><span class="toc-number">5.5.3.</span> <span class="toc-text">可移植的信號處理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-6"><span class="toc-number">5.5.4.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%B5%81%E4%BB%A5%E9%81%BF%E5%85%8D%E4%B8%A6%E7%99%BC%E9%8C%AF%E8%AA%A4"><span class="toc-number">5.6.</span> <span class="toc-text">同步流以避免並發錯誤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%AF%E5%BC%8F%E5%9C%B0%E7%AD%89%E5%BE%85%E4%BF%A1%E8%99%9F"><span class="toc-number">5.7.</span> <span class="toc-text">顯式地等待信號</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%9E%E6%9C%AC%E5%9C%B0%E8%B7%B3%E8%BD%89"><span class="toc-number">6.</span> <span class="toc-text">非本地跳轉</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E9%80%B2%E7%A8%8B%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">7.</span> <span class="toc-text">操作進程的工具</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

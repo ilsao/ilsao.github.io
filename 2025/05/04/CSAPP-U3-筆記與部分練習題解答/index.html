@@ -1,0 +1,1961 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CSAPP U3 筆記與(部分)練習題解答 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="深入理解計算機系統第三章筆記">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP U3 筆記與(部分)練習題解答">
+<meta property="og:url" content="https://ilsao.github.io/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="深入理解計算機系統第三章筆記">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/CSAPP_U3.jpg">
+<meta property="article:published_time" content="2025-05-04T05:06:37.000Z">
+<meta property="article:modified_time" content="2025-05-04T05:11:59.038Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/CSAPP_U3.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CSAPP U3 筆記與(部分)練習題解答",
+  "url": "https://ilsao.github.io/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/",
+  "image": "https://ilsao.github.io/pictures/CSAPP_U3.jpg",
+  "datePublished": "2025-05-04T05:06:37.000Z",
+  "dateModified": "2025-05-04T05:11:59.038Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CSAPP U3 筆記與(部分)練習題解答',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/CSAPP_U3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">CSAPP U3 筆記與(部分)練習題解答</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CSAPP U3 筆記與(部分)練習題解答</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-04T05:06:37.000Z" title="发表于 2025-05-04 13:06:37">2025-05-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-04T05:11:59.038Z" title="更新于 2025-05-04 13:11:59">2025-05-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">8.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>37分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="第三章-程序的機器級表示"><a href="#第三章-程序的機器級表示" class="headerlink" title="第三章 程序的機器級表示"></a>第三章 程序的機器級表示</h2><h3 id="程序編碼"><a href="#程序編碼" class="headerlink" title="程序編碼"></a>程序編碼</h3><h4 id="機器級代碼"><a href="#機器級代碼" class="headerlink" title="機器級代碼"></a>機器級代碼</h4><p>x86-64的虛擬地址由64位的字表示，但在目前實現中，地址的高16位必須設為0，所以實際能指定的範圍是2^48 = 256TB的一個字節。</p>
+<h3 id="數據格式"><a href="#數據格式" class="headerlink" title="數據格式"></a>數據格式</h3><ul>
+<li>字(word)：16位</li>
+<li>雙字(double words)：32位</li>
+<li>四字(quad words)：64位</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>C聲明</th>
+<th>Intel數據類型</th>
+<th>匯編代碼後輟</th>
+<th>大小(字節)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char</td>
+<td>字節</td>
+<td>b</td>
+<td>1</td>
+</tr>
+<tr>
+<td>short</td>
+<td>字</td>
+<td>w</td>
+<td>2</td>
+</tr>
+<tr>
+<td>int</td>
+<td>雙字</td>
+<td>l</td>
+<td>4</td>
+</tr>
+<tr>
+<td>long</td>
+<td>四字</td>
+<td>q</td>
+<td>8</td>
+</tr>
+<tr>
+<td>char*</td>
+<td>四字</td>
+<td>q</td>
+<td>8</td>
+</tr>
+<tr>
+<td>float</td>
+<td>單精度</td>
+<td>s</td>
+<td>4</td>
+</tr>
+<tr>
+<td>double</td>
+<td>雙精度</td>
+<td>l</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="訪問信息"><a href="#訪問信息" class="headerlink" title="訪問信息"></a>訪問信息</h3><p>一個x86-64的CPU單元包含一組16個儲存64位值的<strong>通用目的寄存器</strong>，用來儲存數值和指針。由%rax到%rsp，與%r8到%r15。</p>
+<p>%rax：返回值</p>
+<p>%rbx：被調用者保存</p>
+<p>%rcx：第4個參數</p>
+<p>%rdx：第3個參數</p>
+<p>%rsi：第2個參數</p>
+<p>%rdi：第1個參數</p>
+<p>%rbp：被調用者保存</p>
+<p>%rsp：棧指針</p>
+<p>%r8：第5個參數</p>
+<p>%r9：第6個參數</p>
+<p>%r10：調用者保存</p>
+<p>%r11：調用者保存</p>
+<p>%r12：被調用者保存</p>
+<p>%r13：被調用者保存</p>
+<p>%r14：被調用者保存</p>
+<p>%r15：被調用者保存</p>
+<p>訪問低位；</p>
+<ul>
+<li>%rax -&gt; %eax -&gt; %ax -&gt; %al</li>
+<li>%r8 -&gt; %r8d -&gt; %r8w -&gt; %r8b</li>
+</ul>
+<p>生成小於8字節指令：</p>
+<ul>
+<li>生成1或2字節：保持剩下字節不變</li>
+<li>生成4字節：將高位4個字節置為0</li>
+</ul>
+<h4 id="操作數指示符"><a href="#操作數指示符" class="headerlink" title="操作數指示符"></a>操作數指示符</h4><p>操作數(operand)：指示要使用的原數據值與存放結果的位置</p>
+<ol>
+<li><p>立即數(immediate)：常數</p>
+<p>ATT格式中，立即數的表示為：’$’後跟標準C表示法表示的整數</p>
+<p>例如：$-577或$0x1F</p>
+</li>
+<li><p>寄存器(register)：表示某個寄存器中的內容</p>
+<p>在下表中，我以r_a表示任意寄存器a，用引用R[r_a]表示他的值</p>
+</li>
+<li><p>內存引用：根據有效地址訪問某個內存地址</p>
+<p>以M_b[Addr]表示對儲存在內存中從地址Addr開始的b個字節的引用</p>
+</li>
+</ol>
+<p>下表展示不同<strong>尋址模式</strong>，如表底所用Imm(r_b, r_i, s)為最常用的形式。一個立即數偏移Imm，一個基址寄存器r_b，一個變址寄存器r_i和一個比例因子s，其中，s必須是1、2、4、8。基址和變址寄存器都必須是64位寄存器。有效地址被記算為`Imm + R[r_b] +R[r_i] * s。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>格式</th>
+<th>操作數值</th>
+<th>名稱</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>立即數</td>
+<td>$Imm</td>
+<td>Imm</td>
+<td>立即數尋址</td>
+</tr>
+<tr>
+<td>寄存器</td>
+<td>r_a</td>
+<td>R[r_a]</td>
+<td>寄存器尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>Imm</td>
+<td>M[Imm]</td>
+<td>絕對尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>(r_a)</td>
+<td>M[R[r_a]]</td>
+<td>間接尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>Imm(r_b)</td>
+<td>M[Imm + R[r_b]]</td>
+<td>(基址 + 偏移量) 尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>(r_b, r_i)</td>
+<td>M[R[r_b] + R[r_i]]</td>
+<td>變址尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>Imm(r_b, r_i)</td>
+<td>M[Imm + R[r_b] + R[r_i]]</td>
+<td>變址尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>(,r_i, s)</td>
+<td>M[R[r_i] * s]</td>
+<td>比例變址尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>Imm(,r_i, s)</td>
+<td>M[Imm + R[r_i] * s]</td>
+<td>比例變址尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>(r_b, r_i, s)</td>
+<td>M[R[r_b] + R[r_i] * s]</td>
+<td>比例變址尋址</td>
+</tr>
+<tr>
+<td>存儲器</td>
+<td>Imm(r_b, r_i, s)</td>
+<td>M[Imm + R[r_b] + R[r_i] * s]</td>
+<td>比例變址尋址</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="練習題"><a href="#練習題" class="headerlink" title="練習題"></a>練習題</h4><p>3.1</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作數</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%rax</td>
+<td>0x100</td>
+</tr>
+<tr>
+<td>0x104</td>
+<td>0xAB</td>
+</tr>
+<tr>
+<td>$0x108</td>
+<td>0x108</td>
+</tr>
+<tr>
+<td>(%rax)</td>
+<td>0xFF</td>
+</tr>
+<tr>
+<td>4(%rax)</td>
+<td>0xAB</td>
+</tr>
+<tr>
+<td>9(%rax, %rdx)</td>
+<td>0x11</td>
+</tr>
+<tr>
+<td>260(%rcx, %rdx) // 此處260為dec</td>
+<td><strong>0x13</strong></td>
+</tr>
+<tr>
+<td>0xFC(, %rcx, 4)</td>
+<td>0xFF</td>
+</tr>
+<tr>
+<td>(%rax, %rdx, 4)</td>
+<td>0x11</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="數據傳送指令"><a href="#數據傳送指令" class="headerlink" title="數據傳送指令"></a>數據傳送指令</h4><p><strong>MOV類</strong>：movb, movw, movl, movq, movabsq</p>
+<p>一般來說，MOV指令只會更新目的操作數指定的寄存器字節或內存地址。</p>
+<p>例外：<strong>若movl以寄存器為目的時，他會把該寄存器的高位4字節設為0</strong></p>
+<p><strong>MOVZ類</strong>：<strong>零拓展</strong>複製</p>
+<p><strong>MOVS類</strong>：<strong>符號拓展</strong>複製，其中cltq將%eax拓展為%rax</p>
+<h4 id="練習題-1"><a href="#練習題-1" class="headerlink" title="練習題"></a>練習題</h4><p>3.2</p>
+<p>movl</p>
+<p>movw</p>
+<p>movb</p>
+<p>movb</p>
+<p>movq</p>
+<p>movw</p>
+<p>3.3</p>
+<p><strong>在64位系統下，使用(%ebx)32位地址會造成不可預知的錯誤</strong> ^49e227</p>
+<p>%rax並不是4字節</p>
+<p>源與目的不能都是內存地址</p>
+<p>沒有%sl這個寄存器</p>
+<p>不能將值賦予立即數$0x123</p>
+<p>%rdx不是4字節</p>
+<p>%rbp並不是1字節</p>
+<p>3.4</p>
+<p><code>src_t *sp</code></p>
+<p><code>dest_t *dp;</code></p>
+<p><em>`dp = (dest_t) </em>sp;`</p>
+<p>其中sp存在%rdi，dp存在%rsi</p>
+<p>long -&gt; long：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movq (%rdi), (%rax)</span><br><span class="line">movq %rax, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>char -&gt; int</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movsbl (%rdi), %eax</span><br><span class="line">movl %eax, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>char -&gt; unsigned</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movsbl (%rdi), %eax</span><br><span class="line">movl %eax, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>unsigned char -&gt; long</p>
+<p>注意：此處<strong>沒有</strong>指令為movzbq</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movzbl (%rdi), %eax</span><br><span class="line">movq %rax, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>int -&gt; char</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movl (%rdi), %eax</span><br><span class="line">movb %al, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>unsigned -&gt; unsigned char</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movl (%rdi), %(eax)</span><br><span class="line">movb %al, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>char -&gt; short</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movsbw (%rdi), %ax</span><br><span class="line">movw %ax, (%rsi)</span><br></pre></td></tr></table></figure>
+<p>3.5</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// %rdi: xp, %rsi: yp, %rdx: zp</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">decode1</span><span class="params">(<span class="type">long</span> *xp, <span class="type">long</span> *yp, <span class="type">long</span> *zp)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> a, b, c;</span><br><span class="line">    a = *xp;</span><br><span class="line">    b = *yp;</span><br><span class="line">    c = *zp;</span><br><span class="line">    *yp = a;</span><br><span class="line">    *zp = b;</span><br><span class="line">    *xp = c;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="壓入和彈出棧數據"><a href="#壓入和彈出棧數據" class="headerlink" title="壓入和彈出棧數據"></a>壓入和彈出棧數據</h4><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pushq %rbp</span><br></pre></td></tr></table></figure>
+<p>等價於</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">subq %8, %rsp	; 64位下地址減8，32位下地址減4</span><br><span class="line">movq %rbp, (%rsp)</span><br></pre></td></tr></table></figure>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">popq %rax</span><br></pre></td></tr></table></figure>
+<p>等價於</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movq (%rsp), %rax</span><br><span class="line">addq %8, %rsp	; 注意push與pop的指令順序</span><br></pre></td></tr></table></figure>
+<h3 id="算數與邏輯操作"><a href="#算數與邏輯操作" class="headerlink" title="算數與邏輯操作"></a>算數與邏輯操作</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">指令</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">NEG</td>
+<td style="text-align:center">取負</td>
+</tr>
+<tr>
+<td style="text-align:center">IMUL</td>
+<td style="text-align:center">乘</td>
+</tr>
+<tr>
+<td style="text-align:center">SAL</td>
+<td style="text-align:center">左移</td>
+</tr>
+<tr>
+<td style="text-align:center">SHL</td>
+<td style="text-align:center">左移(相等於SAL)</td>
+</tr>
+<tr>
+<td style="text-align:center">SAR</td>
+<td style="text-align:center">算術右移(shift arithmetic right)</td>
+</tr>
+<tr>
+<td style="text-align:center">SHR</td>
+<td style="text-align:center">邏輯右移(shift logical right)</td>
+</tr>
+<tr>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="加載有效地址"><a href="#加載有效地址" class="headerlink" title="加載有效地址"></a>加載有效地址</h4><p>leaq和movq的差別：</p>
+<ul>
+<li>leaq：讀取源操作數<strong>地址</strong>並賦予目標操作數</li>
+<li>movq：讀取源操作數<strong>地址中存放的值</strong>並賦予目標操作數</li>
+</ul>
+<h4 id="練習題-2"><a href="#練習題-2" class="headerlink" title="練習題"></a>練習題</h4><p>3.6</p>
+<p>%rax = x</p>
+<p>%rcx = y</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>表達式</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>leaq 6(%rax), %rdx</td>
+<td>6+x</td>
+</tr>
+<tr>
+<td>leaq (%rax, %rcx), %rdx</td>
+<td>x+y</td>
+</tr>
+<tr>
+<td>leaq (%rax, %rcx, 4), %rdx</td>
+<td>x+4y</td>
+</tr>
+<tr>
+<td>leaq 7(%rax, %rax, 8), %rdx</td>
+<td>7+9x</td>
+</tr>
+<tr>
+<td>leaq 0xA(, %rcx, 4), %rdx</td>
+<td>10+4y</td>
+</tr>
+<tr>
+<td>leaq 9(%rax, %rcx, 2), %rdx</td>
+<td>9+x+2y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>3.7</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> t = <span class="number">5</span> * x + <span class="number">2</span> * y + <span class="number">8</span> * z;</span><br></pre></td></tr></table></figure>
+<p>3.8</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%rax = 0x100</td>
+<td><del>0x101</del> 0xFF+0x3 = 0x100</td>
+</tr>
+<tr>
+<td>8+%rax = 0x108</td>
+<td>A8</td>
+</tr>
+<tr>
+<td>%rax + 8 * %rdx = 0x118</td>
+<td><del>176</del> 0x10($16轉hex) * 0x11 = 0x110</td>
+</tr>
+<tr>
+<td>0x10 + %rax = 0x110</td>
+<td>0x14</td>
+</tr>
+<tr>
+<td><del>0x1</del> %rcx</td>
+<td>0x0</td>
+</tr>
+<tr>
+<td><del>0x100</del> %rax</td>
+<td>0xFD</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>3.9</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shlq $4, %rax</span><br><span class="line">sarq %cl, %rax</span><br></pre></td></tr></table></figure>
+<p>3.10</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">arith2</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y, <span class="type">long</span> z)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> t1 = x | y;</span><br><span class="line">    <span class="type">long</span> t2 = t1 &gt;&gt; <span class="number">3</span>;</span><br><span class="line">    <span class="type">long</span> t3 = ~t2;</span><br><span class="line">    <span class="type">long</span> t4 = z - t3;    </span><br><span class="line">    <span class="keyword">return</span> t4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.11</p>
+<p>A. 將%rdx置零</p>
+<p>B. movq $0, %rdx</p>
+<p>C. xorq較短(3字節)，movq(7字節)</p>
+<h4 id="特殊的算數操作"><a href="#特殊的算數操作" class="headerlink" title="特殊的算數操作"></a>特殊的算數操作</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>imulq</td>
+<td>有符號乘法</td>
+</tr>
+<tr>
+<td>mulq</td>
+<td>無符號乘法</td>
+</tr>
+<tr>
+<td>cqto</td>
+<td>四字轉換為八字(符號拓展)</td>
+</tr>
+<tr>
+<td>idivq</td>
+<td>有符號除法</td>
+</tr>
+<tr>
+<td>divq</td>
+<td>無符號除法</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>mulq/imulq：要求將被乘數儲存在%rax中，乘數由作為指令的操作數提供</p>
+<p>idivq：將%rdx的高64位與%rax的低64位做為一個128位的被除數，除數由作為的指令的操作數提供。對於大多數64位應用，被除數應是一個64位值，此值應被存放於%rax中，且%rdx應被設置為全0(U)或%rax的符號位(T)，此操作可由cqto完成。指令將商存在%rax，餘數存在%rdx</p>
+<p>cqto：不須操作數，隱含的讀出%rax的符號位，並將他複製到%rdx的所有位中</p>
+<h4 id="練習題-3"><a href="#練習題-3" class="headerlink" title="練習題"></a>練習題</h4><p>3.12</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">uremdiv:</span><br><span class="line">	movq %rdx, %r8</span><br><span class="line">	movq %rdi, %rax</span><br><span class="line">	movq $0, %rdx</span><br><span class="line">	divq %rsi</span><br><span class="line">	movq %rax, (%r8)</span><br><span class="line">	movq %rdx, (%rcx)</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
+<h3 id="控制"><a href="#控制" class="headerlink" title="控制"></a>控制</h3><h4 id="條件碼"><a href="#條件碼" class="headerlink" title="條件碼"></a>條件碼</h4><p>CF(Carry Flag)：進位標誌。最近的操作使最高位進位。用來<strong>檢查無符號操作的溢出</strong>。</p>
+<p>ZF：零標誌。最近的操作得到0。</p>
+<p>SF：符號標誌。最近的操作得到的結果為<strong>負數</strong>。</p>
+<p>OF：溢出標誌。最近的操作導致一個<strong>補碼</strong>溢出。</p>
+<p>其中：</p>
+<ul>
+<li>leaq不會改變任何條件碼</li>
+<li>邏輯操作，如xor，進位與溢出標誌會被置零</li>
+<li>移位操作，進位標誌被置為<strong>最後一個被移出的位</strong>，溢出標誌置零</li>
+<li>inc和dec會設置溢出和零標誌，但<strong>不會改變進位標誌</strong></li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>基於</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CMP S1, S2</code></td>
+<td>S2 - S1</td>
+</tr>
+<tr>
+<td><code>TEST S1, S2</code></td>
+<td>S2 &amp; S1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>上表指令只設置條件碼而不改變目的寄存器</p>
+<h4 id="訪問條件碼"><a href="#訪問條件碼" class="headerlink" title="訪問條件碼"></a>訪問條件碼</h4><p>條件碼通常不會直接讀取，常用的方法有：</p>
+<ol>
+<li>根據條件碼組合，將一個字節置0或1：SET指令</li>
+<li>條件跳轉</li>
+<li>有條件地傳送數據</li>
+</ol>
+<p>SET指令：<strong>後輟表示不同條件而不是操作數大小</strong>，目的操作數是低位單字節寄存器或一個字節的內存地址。為得到32或64位結果，需先將高位置零</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>同意名</th>
+<th>效果</th>
+<th>設置條件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>setz D</td>
+<td>sete</td>
+<td>D &lt;- ZF</td>
+<td>相等/零</td>
+</tr>
+<tr>
+<td>setnz D</td>
+<td>setne</td>
+<td>D &lt;- ~ZF</td>
+<td>不等/非零</td>
+</tr>
+<tr>
+<td>sets D</td>
+<td></td>
+<td>D &lt;- SF</td>
+<td>負數</td>
+</tr>
+<tr>
+<td>setns D</td>
+<td></td>
+<td>D &lt;- ~SF</td>
+<td>非負數</td>
+</tr>
+<tr>
+<td>setg D</td>
+<td>setnle</td>
+<td>D &lt;- ~(SF^OF) &amp; ~ZF</td>
+<td>大於(T)</td>
+</tr>
+<tr>
+<td>setge D</td>
+<td>setnl</td>
+<td>D &lt;- ~(SF^OF)</td>
+<td>大於等於</td>
+</tr>
+<tr>
+<td>setl D</td>
+<td>setnge</td>
+<td>D &lt;- SF ^ OF</td>
+<td>小於</td>
+</tr>
+<tr>
+<td>setle D</td>
+<td>setng</td>
+<td>D &lt;- (SF^OF) \</td>
+<td>ZF</td>
+<td>小於等於</td>
+</tr>
+<tr>
+<td>seta D</td>
+<td>setnbe</td>
+<td>D &lt;- ~CF &amp; ~ZF</td>
+<td>超過(U)</td>
+</tr>
+<tr>
+<td>setae D</td>
+<td>setnb</td>
+<td>D &lt;- ~CF</td>
+<td>超過或相等</td>
+</tr>
+<tr>
+<td>setb D</td>
+<td>setnae</td>
+<td>D &lt;- CF</td>
+<td>低於</td>
+</tr>
+<tr>
+<td>setbe D</td>
+<td>setna</td>
+<td>D &lt;- CF \</td>
+<td>ZF</td>
+<td>低於或相等</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>計算a &lt; b (long)的彙編指令如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">comp:</span><br><span class="line">	cmpq %rsi, %rdi</span><br><span class="line">	setl %al		 ; Set low-order byte of %eax to 0 or 1</span><br><span class="line">	movzbl %al, %eax ; Clear rest of %eax (and rest of %rax)</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
+<h4 id="練習題-4"><a href="#練習題-4" class="headerlink" title="練習題"></a>練習題</h4><p>3.13</p>
+<p>A</p>
+<p>int a &lt; b</p>
+<p>B</p>
+<p>short a &gt;= b</p>
+<p>C</p>
+<p>unsigned char a &lt;= b</p>
+<p>D</p>
+<p>long a != b</p>
+<p><strong>unsigned long / 某種形式的指針</strong></p>
+<p>3.14</p>
+<p>A</p>
+<p>long a &gt;= b</p>
+<p>B</p>
+<p>short / unsinged short  a == b</p>
+<p>C</p>
+<p>unsigned char a &gt; b</p>
+<p>D</p>
+<p>int a &lt;= b</p>
+<h4 id="跳轉指令"><a href="#跳轉指令" class="headerlink" title="跳轉指令"></a>跳轉指令</h4><p>jmp *%rax：以%rax的值做目標</p>
+<p>jmp *(%rax)：以%rax的值作為讀地址，從內存中讀出跳轉目標</p>
+<h4 id="跳轉指令的編碼"><a href="#跳轉指令的編碼" class="headerlink" title="跳轉指令的編碼"></a>跳轉指令的編碼</h4><p>PC相對尋址：假設jmp 後實際編碼的數字是x，jmp的下一條指令地址是y，jmp的目標地址是z。則$z = x + y$</p>
+<h4 id="練習題-5"><a href="#練習題-5" class="headerlink" title="練習題"></a>練習題</h4><p>3.15</p>
+<p>A</p>
+<p>4003FE</p>
+<p>B</p>
+<p>400525</p>
+<p>C</p>
+<p>ja: 400543</p>
+<p>pop: 400545</p>
+<p>D</p>
+<p>F73 = 1111 0111 0011 = -141</p>
+<p>400560</p>
+<h4 id="用條件控制來實現條件分支"><a href="#用條件控制來實現條件分支" class="headerlink" title="用條件控制來實現條件分支"></a>用條件控制來實現條件分支</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (test-expr)</span><br><span class="line">    then-statement</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">else</span>-statement</span><br></pre></td></tr></table></figure>
+<p>轉換成彙編邏輯</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!test-expr)</span><br><span class="line">    <span class="keyword">goto</span> False;</span><br><span class="line">then-statement</span><br><span class="line"><span class="keyword">goto</span> Done;</span><br><span class="line">False:</span><br><span class="line">	<span class="keyword">else</span>-statement</span><br><span class="line">Done:</span><br></pre></td></tr></table></figure>
+<h4 id="練習題-6"><a href="#練習題-6" class="headerlink" title="練習題"></a>練習題</h4><p>3.16</p>
+<p>A</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">cond</span><span class="params">(<span class="type">long</span> a, <span class="type">long</span> *p)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(p = <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">goto</span> Done;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(*p &gt;= a)	&#123;</span><br><span class="line">    	<span class="keyword">goto</span> Done;</span><br><span class="line">    &#125;</span><br><span class="line">    *p = a;</span><br><span class="line">Done:</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B</p>
+<p>拆分”&amp;&amp;”操作符</p>
+<p>3.17</p>
+<p>A</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">absdiff_se</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> result;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; y)</span><br><span class="line">        <span class="keyword">goto</span> True;</span><br><span class="line">    ge_cnt++;</span><br><span class="line">    <span class="keyword">goto</span> Done;</span><br><span class="line">True:</span><br><span class="line">    lt_cnt++;</span><br><span class="line">    result = y - x;</span><br><span class="line"></span><br><span class="line">Done:</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B</p>
+<p>不行。</p>
+<p>3.18</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">test</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y, <span class="type">long</span> z)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> val = x + y + z;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; <span class="number">-3</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(y &lt; z) &#123;</span><br><span class="line">            va; = x * y;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            val = y * z;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(x &gt; <span class="number">2</span>) &#123;</span><br><span class="line">        val = x * z;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="用條件傳送來實現條件分支"><a href="#用條件傳送來實現條件分支" class="headerlink" title="用條件傳送來實現條件分支"></a>用條件傳送來實現條件分支</h4><p>處理器運行時依靠預讀取連續指令來提升性能，但當執行到條件跳轉時，處理器並不知道接下來要跳轉與否。處理器使用分支預測邏輯來猜測跳轉指令是否會執行，若猜測錯誤，則浪費多個時間週期。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&設執行代碼的時間T_{ok}，預測錯誤的處罰是T_{MP}，預測錯誤的機率是p \\
+&那麼執行代碼的平均時間是： \\
+&T_{avg}(p) = (1 - p)T_{ok} + p(T_{ok} + T_{MP}) \\
+&= T_{ok} + pT_{MP}
+\end{align}</script><p>條件傳送指令：當條件被滿足時方執行mov，且源和目的的值可以是16位、32位或64位，不支持單字節的條件傳送。且其mov不須加操作數長度單位，彙編器可以從目標寄存器的名字推斷出條件傳送指令的操作數長度。</p>
+<p>ex：cmovz / cmovg / cmova</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v = test-expr ? then-expr : <span class="keyword">else</span>-expr;</span><br></pre></td></tr></table></figure>
+<p>使用<strong>條件控制</strong>轉移後轉為</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!test-expr)</span><br><span class="line">    <span class="keyword">goto</span> False;</span><br><span class="line">v = then-expr;</span><br><span class="line"><span class="keyword">goto</span> Done;</span><br><span class="line">False:</span><br><span class="line">	v = <span class="keyword">else</span>-expr;</span><br><span class="line">Done:</span><br></pre></td></tr></table></figure>
+<p>使用條件傳送則為</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t = test-expr;</span><br><span class="line">v = then-expr;</span><br><span class="line">ve = <span class="keyword">else</span>-expr;</span><br><span class="line"><span class="keyword">if</span>(!t) v = ve;</span><br></pre></td></tr></table></figure>
+<p>代碼的最後一條使用條件傳送實現</p>
+<h4 id="練習題-7"><a href="#練習題-7" class="headerlink" title="練習題"></a>練習題</h4><p>3.19</p>
+<p>A</p>
+<p>T_ok = 16</p>
+<p>T_avg(0.5) = 16 + 0.5 * T_MP = 31</p>
+<p>=&gt; T_MP = 30</p>
+<p>B</p>
+<p>T_ok + T_MP = 16 + 30 = 46</p>
+<p>3.20</p>
+<p>-16</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> OP /</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">arith</span><span class="params">(<span class="type">long</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x OP <span class="number">8</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">; long arith(long x)</span><br><span class="line">; x in %rdi</span><br><span class="line">arith:</span><br><span class="line">	leaq 7(%rdi), %rax ; v = 7 + x</span><br><span class="line">	testq %rdi, %rdi</span><br><span class="line">	cmovns %rdi, %rax ; if x &gt;= 0, v = x</span><br><span class="line">	sarq %3, %rax ; v /= 8</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
+<p>注意，<strong>如果x為負數，需要加上偏移量(2^k)-1 = 7</strong>，這是因為取整的方式不同</p>
+<p>若為數學除法，則為向零取整，可位移操作是向下取整，所以需要調整。即：</p>
+<script type="math/tex; mode=display">
+\lfloor{\frac{x + (2^k-1)}{2^k}}\rfloor = \lceil{\frac{x}{2^k}}\rceil</script><p>3.21</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">test</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> val = x * <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">if</span>(y &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(x &lt; y)</span><br><span class="line">            val = y - x;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            val = x &amp; y;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(y &lt;= <span class="number">-2</span>) </span><br><span class="line">        val = x + y;</span><br><span class="line">    retunr val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="循環"><a href="#循環" class="headerlink" title="循環"></a>循環</h4><h5 id="do-while循環"><a href="#do-while循環" class="headerlink" title="do-while循環"></a>do-while循環</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span></span><br><span class="line">    body-<span class="function">statement</span></span><br><span class="line"><span class="function">    <span class="title">while</span> <span class="params">(test-expr)</span></span></span><br></pre></td></tr></table></figure>
+<p>翻譯為</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">loop:</span><br><span class="line">	body-statement</span><br><span class="line">	t = test-expr;</span><br><span class="line">	if (t)</span><br><span class="line">		goto loop;</span><br></pre></td></tr></table></figure>
+<h5 id="while循環"><a href="#while循環" class="headerlink" title="while循環"></a>while循環</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (test-expr)</span><br><span class="line">    body-statement</span><br></pre></td></tr></table></figure>
+<ol>
+<li>跳轉到中間(jump to middle)：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">goto</span> Test;</span><br><span class="line">Loop:</span><br><span class="line">	body-statement</span><br><span class="line">Test:</span><br><span class="line">	t = test-expr;</span><br><span class="line">	<span class="keyword">if</span> (t)</span><br><span class="line">        <span class="keyword">goto</span> Loop;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>guarded-do：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">t = test-expr;</span><br><span class="line"><span class="keyword">if</span> (!t)</span><br><span class="line">    <span class="keyword">goto</span> Done;</span><br><span class="line">Loop:</span><br><span class="line">	body-statement</span><br><span class="line">	t = test-expr;</span><br><span class="line">	<span class="keyword">if</span> (t)</span><br><span class="line">        <span class="keyword">goto</span> Loop;</span><br><span class="line">Done:</span><br></pre></td></tr></table></figure>
+<h5 id="for循環"><a href="#for循環" class="headerlink" title="for循環"></a>for循環</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (init-expr; test-expr; update-expr)</span><br><span class="line">    body-statement</span><br></pre></td></tr></table></figure>
+<p>等價於</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">init-expr;</span><br><span class="line"><span class="keyword">while</span> (test-expr) &#123;</span><br><span class="line">    body-statement</span><br><span class="line">	update-expr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>jump to middle: </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">init-expr;</span><br><span class="line"><span class="keyword">goto</span> Test;</span><br><span class="line">Loop:</span><br><span class="line">	body-expr;</span><br><span class="line">	update-expr;</span><br><span class="line">Test:</span><br><span class="line">	t = test-expr;</span><br><span class="line">	<span class="keyword">if</span> (t)</span><br><span class="line">        got Loop;</span><br></pre></td></tr></table></figure>
+<p>guarded-do:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">inti-expr;</span><br><span class="line">t = test-expr;</span><br><span class="line"><span class="keyword">if</span> (!t)</span><br><span class="line">    <span class="keyword">goto</span> Done;</span><br><span class="line">Loop:</span><br><span class="line">	body-statement</span><br><span class="line">	update-expr;</span><br><span class="line">	t = test-expr;</span><br><span class="line">	<span class="keyword">if</span> (t)</span><br><span class="line">        <span class="keyword">goto</span> Loop;</span><br><span class="line">Done:</span><br></pre></td></tr></table></figure>
+<h4 id="練習題-8"><a href="#練習題-8" class="headerlink" title="練習題"></a>練習題</h4><p>3.22</p>
+<p>略</p>
+<p>3.23</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dw_loop:</span><br><span class="line">	movq %rdi, %rax ; %rax = x</span><br><span class="line">	movq %rdi, %rcx ; %rcx = x</span><br><span class="line">	imulq %rdi, %rcx ; %rcx = y = x * x</span><br><span class="line">	leaq (rdi, %rdi), %rdx ; %rdx = n</span><br><span class="line">.L2:</span><br><span class="line">	leaq 1(%rcx, %rax), %rax ; x = 1 + y + x</span><br><span class="line">	subq $1, %rdx ; n--</span><br><span class="line">	testq %rdx, %rdx</span><br><span class="line">	jg .L2 ; while(rdx &gt; 0)</span><br><span class="line">	rep; ret</span><br></pre></td></tr></table></figure>
+<p>A</p>
+<p>x in %rax, y in %rcx and n in %rdx</p>
+<p>B</p>
+<p>以leaq 1(%rcx, %rax), %rax一行直接表示x += y;與(*p)++;</p>
+<p>3.24</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> loop-<span class="keyword">while</span>(<span class="type">long</span> a, <span class="type">long</span> b) &#123;</span><br><span class="line">    <span class="type">long</span> result = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (a &lt; b) &#123;</span><br><span class="line">        result = result * (a + b);</span><br><span class="line">        a = a + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.25</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">loop_while2</span><span class="params">(<span class="type">long</span> a, <span class="type">long</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> result = b;</span><br><span class="line">    <span class="keyword">while</span> (b &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        result = result * a;</span><br><span class="line">        b = b - a;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.26</p>
+<p>A</p>
+<p>jump to middle</p>
+<p>B</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">fun_a</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (x != <span class="number">0</span>) &#123;</span><br><span class="line">        val ^= x;</span><br><span class="line">        x &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> val &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>C</p>
+<p><strong>計算x的奇偶，即x有奇數個1返回1，否則返回0</strong></p>
+<p>3.27</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">fact_for_gd_goto</span><span class="params">(<span class="type">long</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> i = <span class="number">2</span>;</span><br><span class="line">    <span class="type">long</span> result = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (i &gt; n)</span><br><span class="line">        <span class="keyword">goto</span> Done;</span><br><span class="line">Loop:</span><br><span class="line">    result *= i;</span><br><span class="line">    i++;</span><br><span class="line">    <span class="keyword">if</span>(i &lt;= n)</span><br><span class="line">        <span class="keyword">goto</span> Loop;</span><br><span class="line">Done:</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.28</p>
+<p>A</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">fun_b</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> val = <span class="number">0</span>;</span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">64</span>; i != <span class="number">0</span>; i--;) &#123;</span><br><span class="line">        val = (val &lt;&lt; <span class="number">1</span>) | (x &amp; <span class="number">0x1</span>);</span><br><span class="line">        x &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B</p>
+<p>因為i初始化為64，必不可能等於0</p>
+<p>C</p>
+<p><strong>反轉x的位</strong></p>
+<p>3.29</p>
+<p>A</p>
+<p>update-expr不會被執行，導致死循環</p>
+<p>B</p>
+<p>直接goto update-expr部分，而不是跳過整個while循環</p>
+<h4 id="switch語句"><a href="#switch語句" class="headerlink" title="switch語句"></a>switch語句</h4><p>switch使用跳轉表(jump table)實現。跳轉表是一個數組，表項i是一個代碼段的地址，相當於switch索引值是i時該採取的動作</p>
+<p>其中，&amp;&amp;創建一指向代碼位置的指針</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> *jt[<span class="number">7</span>] = &#123;</span><br><span class="line">    &amp;&amp;loc_A, &amp;&amp;loc_def, &amp;&amp;loc_B,</span><br><span class="line">    %%loc_C, &amp;&amp;loc_D, &amp;&amp;loc_def,</span><br><span class="line">    &amp;&amp;loc_D</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> index = n;</span><br><span class="line"><span class="keyword">goto</span> *jt[index];</span><br><span class="line"></span><br><span class="line">loc_A:</span><br><span class="line">loc_B:</span><br><span class="line">loc_C:</span><br><span class="line">loc_D:</span><br><span class="line">loc_def:</span><br></pre></td></tr></table></figure>
+<h4 id="練習題-9"><a href="#練習題-9" class="headerlink" title="練習題"></a>練習題</h4><p>3.30</p>
+<p>A</p>
+<p>-1 0 1 2 4 5 7</p>
+<p>B</p>
+<p>0 7 2 4</p>
+<p>3.31</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// default = .L2</span></span><br><span class="line"><span class="comment">// 0 2 4 5 7</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">switcher</span><span class="params">(<span class="type">long</span> a, <span class="type">long</span> b, <span class="type">long</span> c, <span class="type">long</span> *dest)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> val;</span><br><span class="line">    <span class="keyword">switch</span> (a) &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">		c = b ^ <span class="number">15</span>;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">		val = <span class="number">112</span> + c;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">	<span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">		val = (b + c) &lt;&lt; <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">		val = a;</span><br><span class="line">		<span class="keyword">break</span>;	</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		val = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="過程"><a href="#過程" class="headerlink" title="過程"></a>過程</h3><ul>
+<li>傳遞控制：進入過程Q時，程序計數器必須被設置為Q的代碼起始地址，返回時必須設置為調用Q後面那條指令的地址</li>
+<li>傳遞數據：調用者必須能夠向過程Q提供一個或多個參數，Q必須能夠向調用者返回一個值</li>
+<li>分配和釋放內存：在開始時，Q可能需要為局部變量分配空間。在返回前，必須釋放這些儲存空間</li>
+</ul>
+<h4 id="傳遞控制"><a href="#傳遞控制" class="headerlink" title="傳遞控制"></a>傳遞控制</h4><p>調用函數Q時，程序計數器(PC)設置為Q的起始位置，同時壓入返回地址，該動作由指令call Q完成。對應的指令ret會將返回地址彈出，並將PC設為返回地址</p>
+<h4 id="練習題-10"><a href="#練習題-10" class="headerlink" title="練習題"></a>練習題</h4><p>3.32</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>標號</th>
+<th>PC</th>
+<th>指令</th>
+<th>%rdi</th>
+<th>%rsi</th>
+<th>%rax</th>
+<th>%rsp</th>
+<th>*%rsp</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>0x400560</td>
+<td>callq</td>
+<td>10</td>
+<td>-</td>
+<td>-</td>
+<td>0x7fffffffe820</td>
+<td>-</td>
+<td>調用first(10)</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>0x400548</td>
+<td>lea</td>
+<td>10</td>
+<td>-</td>
+<td>-</td>
+<td>0x7fffffffe818</td>
+<td>0x400565</td>
+<td>進入first</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>0x40054c</td>
+<td>sub</td>
+<td>10</td>
+<td>11</td>
+<td>-</td>
+<td>0x7fffffffe818</td>
+<td>0x400565</td>
+<td>繼續first</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>0x400550</td>
+<td>callq</td>
+<td>9</td>
+<td>11</td>
+<td>-</td>
+<td>0x7fffffffe818</td>
+<td>0x400565</td>
+<td>調用last(9, 11)</td>
+</tr>
+<tr>
+<td>L1</td>
+<td>0x400540</td>
+<td>mov</td>
+<td>9</td>
+<td>11</td>
+<td>-</td>
+<td>0x7fffffffe810</td>
+<td>0x400555</td>
+<td>進入last</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>0x400543</td>
+<td>imul</td>
+<td>9</td>
+<td>11</td>
+<td>9</td>
+<td>0x7fffffffe810</td>
+<td>0x400555</td>
+<td>繼續last</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>0x400547</td>
+<td>retq</td>
+<td>9</td>
+<td>11</td>
+<td>99</td>
+<td>0x7fffffffe810</td>
+<td>0x400555</td>
+<td>從last返回99</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>0x400555</td>
+<td>repz retq</td>
+<td>9</td>
+<td>11</td>
+<td>99</td>
+<td>0x7fffffffe818</td>
+<td>0x400565</td>
+<td>從first返回99</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>0x400565</td>
+<td>mov</td>
+<td>9</td>
+<td>11</td>
+<td>99</td>
+<td>0x7fffffffe820</td>
+<td>-</td>
+<td>繼續main</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="數據傳輸"><a href="#數據傳輸" class="headerlink" title="數據傳輸"></a>數據傳輸</h4><p>x86-64中，最多通過寄存器傳遞6個整型參數(整數和指針)，若有大於6個整型參數，超出部分則用棧傳遞</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作數大小(位)</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>64</td>
+<td>%rdi</td>
+<td>%rsi</td>
+<td>%rdx</td>
+<td>%rcx</td>
+<td>%r8</td>
+<td>%r9</td>
+</tr>
+<tr>
+<td>32</td>
+<td>%edi</td>
+<td>%esi</td>
+<td>%edx</td>
+<td>%ecx</td>
+<td>%r8d</td>
+<td>%r9d</td>
+</tr>
+<tr>
+<td>16</td>
+<td>%di</td>
+<td>%si</td>
+<td>%dx</td>
+<td>%cx</td>
+<td>%r8w</td>
+<td>%r9w</td>
+</tr>
+<tr>
+<td>8</td>
+<td>%dil</td>
+<td>%sil</td>
+<td>%dl</td>
+<td>%cl</td>
+<td>%r8b</td>
+<td>%r9b</td>
+</tr>
+<tr>
+<td>^DataTransfer</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="練習題-11"><a href="#練習題-11" class="headerlink" title="練習題"></a>練習題</h4><p>3.33</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* %rdx: u</span></span><br><span class="line"><span class="comment">* %rcx: v</span></span><br><span class="line"><span class="comment">* %edi: a</span></span><br><span class="line"><span class="comment">* %sil: b</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Since both function can be implemented by the same assembly code, so the order of a, b isn&#x27;t very important</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">procprob</span><span class="params">(<span class="type">int</span> a, <span class="type">short</span> b, <span class="type">long</span> *u, <span class="type">char</span>* v)</span></span>; </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">procprob</span><span class="params">(<span class="type">int</span> b, <span class="type">short</span> a, <span class="type">long</span> *v, <span class="type">char</span>* u)</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="棧上的局部儲存"><a href="#棧上的局部儲存" class="headerlink" title="棧上的局部儲存"></a>棧上的局部儲存</h4><p>在以下三種情況下，局部數據必須存放在內存中</p>
+<ul>
+<li>寄存器不足夠存放所有的本地數據</li>
+<li>對一個局部變量使用”&amp;”，因為必須為它產生一個地址</li>
+<li>此局部變量是數組或結構，所以必須能通過數組或結構引用被訪問到</li>
+</ul>
+<p>通常，過程通過減小棧指針的值在棧上分配空間，分配的結果作為棧幀的一部份。離開時，加回減少的值即可</p>
+<h4 id="寄存器中的局部儲存空間"><a href="#寄存器中的局部儲存空間" class="headerlink" title="寄存器中的局部儲存空間"></a>寄存器中的局部儲存空間</h4><p>以%rbx、%rbp和%r12~%r15被劃分為==被調用者保存寄存器==當過程P調用過程Q時，Q必須==保存這些寄存器的值==，使從Q返回到P時這些寄存器的值保持不變</p>
+<p>其他寄存器，除了%rsp，稱為==調用者保存寄存器==，即任何函數都能修改它們</p>
+<h4 id="練習題-12"><a href="#練習題-12" class="headerlink" title="練習題"></a>練習題</h4><p>3.34</p>
+<p>A<br>$a_0 \sim a_5$ </p>
+<p>B<br>$a_6 \sim a_7$ </p>
+<p>C<br><del>需要保存Q返回的值</del> 被調用者保存寄存器被用盡</p>
+<p>3.35</p>
+<p>A<br>x</p>
+<p>B<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">rfun</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (x == <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> nx = x &gt;&gt; <span class="number">2</span>;</span><br><span class="line">	<span class="type">long</span> rv = <span class="built_in">rfun</span>(nx);</span><br><span class="line">	<span class="keyword">return</span> x + rv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="數組分配與訪問"><a href="#數組分配與訪問" class="headerlink" title="數組分配與訪問"></a>數組分配與訪問</h3><h4 id="基本原則"><a href="#基本原則" class="headerlink" title="基本原則"></a>基本原則</h4><p>對於數據類型$T$和整形常數$N$，聲明如下:<br><code>T A[N];</code> </p>
+<p>起始位置表示為$x_A$</p>
+<p>首先，此聲明會在內存中分配一個$L(T的字節大小) \cdot N$字節的連接區域。其次，引入標示符$A$，表示指向數組開頭的指針，其值為$x_A$</p>
+<p>並使用$0 \sim N - 1$的索引訪問數組，元素$i$會被存放在地址$x_A + L \cdot i$的地方</p>
+<p>x86-64使用內存引用指令訪問數組，假設E是int型數組，且E存放於%rdx，i存放於%rcx，則訪問<code>E[i]</code>的指令為:<br><code>movl (%rdx, %rcx, 4), %eax</code></p>
+<p>即，$x_E + 4i$</p>
+<h4 id="練習題-13"><a href="#練習題-13" class="headerlink" title="練習題"></a>練習題</h4><p>3.36</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>數組</th>
+<th>元素大小</th>
+<th>整個數組的大小</th>
+<th>起始地址</th>
+<th>元素$i$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S</td>
+<td>2</td>
+<td>14</td>
+<td>$x_S$</td>
+<td>$x_S + i \cdot 2$</td>
+</tr>
+<tr>
+<td>T</td>
+<td>8</td>
+<td>24</td>
+<td>$x_T$</td>
+<td>$x_T + i \cdot 8$</td>
+</tr>
+<tr>
+<td>U</td>
+<td>8</td>
+<td>48</td>
+<td>$x_U$</td>
+<td>$x_U + i \cdot 8$</td>
+</tr>
+<tr>
+<td>V</td>
+<td>4</td>
+<td>32</td>
+<td>$x_V$</td>
+<td>$x_V + i \cdot 4$</td>
+</tr>
+<tr>
+<td>W</td>
+<td>8</td>
+<td>32</td>
+<td>$x_W$</td>
+<td>$x_W + i \cdot 8$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="指針運算"><a href="#指針運算" class="headerlink" title="指針運算"></a>指針運算</h4><p>若$p$指向$T$，且$p$的值為$x_p$，那麼表達式<code>p + i</code>的值為$x_p + L \cdot i$，其中$L$為$T$的大小(字節)</p>
+<p>表達式<strong><code>Expr</code>與<code>* &amp;Expr</code>是等價的，數組引用<code>A[i]</code>與表達式<code>* (A + i)</code>也是等價的</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>表達式</th>
+<th>類型</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;E[2]</code></td>
+<td>int*</td>
+<td>$x_E + 8$</td>
+</tr>
+<tr>
+<td><code>E[i]</code></td>
+<td>int</td>
+<td>$M[x_E+4i]$</td>
+</tr>
+<tr>
+<td><code>&amp;E[i] - E</code></td>
+<td>long</td>
+<td>$i$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="練習題-14"><a href="#練習題-14" class="headerlink" title="練習題"></a>練習題</h4><p>3.37</p>
+<p>S(short)的地址: $x_S$，存放於%rdx</p>
+<p>索引$i$存放於: %rcx</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>表達式</th>
+<th>類型</th>
+<th>值</th>
+<th>匯編代碼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S + 1</code></td>
+<td><code>short*</code></td>
+<td>$x_S + 2$</td>
+<td><code>leaq 2(%rdx), %rax</code></td>
+</tr>
+<tr>
+<td><code>S[3]</code></td>
+<td><code>short</code></td>
+<td>$M[x_S + 6]$</td>
+<td><code>movw 6(%rdx), %ax</code></td>
+</tr>
+<tr>
+<td><code>&amp;S[i]</code></td>
+<td><code>short*</code></td>
+<td>$x_S + 2i$</td>
+<td><code>leaq (%rdx, %rcx, 2), %rax</code></td>
+</tr>
+<tr>
+<td><code>S[4 * i + 1]</code></td>
+<td><code>short</code></td>
+<td>$M[x_S + 8i + 2]$</td>
+<td><code>movw 2(%rdx, %rcx, 8), %ax</code></td>
+</tr>
+<tr>
+<td><code>S + i - 5</code></td>
+<td><code>short*</code></td>
+<td>$x_S + 2i - 10$</td>
+<td><code>leaq -10(%rdx, %rcx, 2). %rax</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="嵌套的數組-多維數組"><a href="#嵌套的數組-多維數組" class="headerlink" title="嵌套的數組(多維數組)"></a>嵌套的數組(多維數組)</h4><p>若聲明如下數組:<br><code>T D[R][C]</code></p>
+<p>它的數組元素<code>D[i][j]</code>的內存地址為:</p>
+<script type="math/tex; mode=display">
+\&D[i][j] = x_D + L(C \cdot i + j)</script><h4 id="練習題-15"><a href="#練習題-15" class="headerlink" title="練習題"></a>練習題</h4><p>3.38</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">; i in %rdi, j in %rsi</span><br><span class="line">sum_element:</span><br><span class="line">	leaq 0(, %rdi, 8), %rdx ; %rdx = 8i</span><br><span class="line">	subq %rdi, %rdx ; %rdx = 7i</span><br><span class="line">	addq %rsi, %rdx ; %rdx = 7i + j</span><br><span class="line">	leaq (%rsi, %rsi, 4), %rax ; %rax = 5j</span><br><span class="line">	addq %rax, %rdi ; %rdi = i + 5j</span><br><span class="line">	movq Q(, %rdi, 8), %rax ; %rax = Q + 8(i + 5j)</span><br><span class="line">	addq P(, %rdx, 8), %rax ; %rax = [Q + 8(i + 5j)] + [P + 8(7i + j)]</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
+<p><code>P[i][j] = P + T(N * i + j)</code><br><code>Q[j][i] = Q + T(M * j + i)</code></p>
+<p>M = 5</p>
+<p>N = 7</p>
+<h4 id="定長數組"><a href="#定長數組" class="headerlink" title="定長數組"></a>定長數組</h4><p>以下展示優化等級為<code>-O1</code>時GCC採用的優化</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> N 16</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> fix_matrixs[N][N];</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Compute i, k of fixed matrix product */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">fix_prod_ele</span> <span class="params">(fix_matrix A, fix_matrix B, <span class="type">long</span> i, <span class="type">long</span> k)</span> </span>&#123;</span><br><span class="line">	<span class="type">long</span> j;</span><br><span class="line">	<span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">		result += A[i][j] * B[j][k];</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(原始的C代碼)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">fix_prod_ele_opt</span> <span class="params">(fix_matrix A, fix_matrix B, <span class="type">long</span> i, <span class="type">long</span> k)</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span>* Aptr = &amp;A[i][<span class="number">0</span>];</span><br><span class="line">	<span class="type">int</span>* Bptr = &amp;B[<span class="number">0</span>][k];</span><br><span class="line">	<span class="type">int</span>* Bend = &amp;B[N][k];</span><br><span class="line">	<span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span> &#123;</span><br><span class="line">		result += *Aptr * *Bptr;</span><br><span class="line">		Aptr++;</span><br><span class="line">		Bptr += N;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span> (Bptr != Bend);</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(優化過的C代碼)</p>
+<h4 id="練習題-16"><a href="#練習題-16" class="headerlink" title="練習題"></a>練習題</h4><p>3.39</p>
+<p>$A[i][0]=x_A + 4(16i + 0)$</p>
+<p>$B[0][k] = x_B + 4(0 + k)$</p>
+<p>$B[N][k] = x_B + 4(16 \times 16 + k)$</p>
+<p>3.40</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">fix_set_diag_opt</span><span class="params">(fix_matrix A, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line"><span class="type">int</span>* Aptr = &amp;A[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line"><span class="type">int</span>* Aend = &amp;A[N][N];</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">	*Aptr = val;</span><br><span class="line">	Aptr += N + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">while</span> (Aptr != Aend);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(我的)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">fix_set_diag_opt</span><span class="params">(fix_matrix A, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line"><span class="type">int</span>* Aptr = &amp;A[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line"><span class="type">long</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="type">long</span> iend = N*(N<span class="number">+1</span>);</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">	Aptr[i] = val;</span><br><span class="line">	i += (N<span class="number">+1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">while</span> (i != iend);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(解答的)</p>
+<p>(兩個代碼功能完全相同)</p>
+<h3 id="異質的數據結構"><a href="#異質的數據結構" class="headerlink" title="異質的數據結構"></a>異質的數據結構</h3><p><code>struct</code>: 將多個對象集合到一個單位中</p>
+<p><code>union</code>: 用幾種不同的類型來引用一個對象</p>
+<h4 id="結構"><a href="#結構" class="headerlink" title="結構"></a>結構</h4><blockquote>
+<p>[!Note] 傳遞結構<br>利用指針可以傳遞結構，而不是複製它們<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">area</span><span class="params">(<span class="keyword">struct</span> rect* rp)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*rp).width * (*rp).height;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>注意，此處須使用<code>(*rp).width</code>而非<code>*rp.width</code><br>同時，<code>rp-&gt;width</code>等價於<code>(*rp).width</code></p>
+</blockquote>
+<p>考慮以下結構聲明:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">rec</span> &#123;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="type">int</span> j;</span><br><span class="line">	<span class="type">int</span> a[<span class="number">2</span>];</span><br><span class="line">	<span class="type">int</span> *p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<pre><code class="highlight mermaid">packet-beta
+title rec在內存中的排列
+0-3: &quot;i&quot;
+4-7: &quot;j&quot;
+8-11: &quot;a[0]&quot;
+12-15: &quot;a[1]&quot;
+16-24: &quot;p&quot;</code></pre>
+<h4 id="練習題-17"><a href="#練習題-17" class="headerlink" title="練習題"></a>練習題</h4><p>3.41</p>
+<p>A</p>
+<p><code>p</code>: 0</p>
+<p><code>s.x</code>: 8</p>
+<p><code>s.y</code>: 12</p>
+<p><code>next</code>: 16</p>
+<p>B</p>
+<p>24</p>
+<p>C</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">sp_init</span><span class="params">(<span class="keyword">struct</span> prob *sp)</span> </span>&#123;</span><br><span class="line">	sp-&gt;s.x = sp-&gt;s.y;</span><br><span class="line">	sp-&gt;p = &amp;(sp-&gt;s.x);</span><br><span class="line">	sp-&gt;next = sp; <span class="comment">// Caution: not &amp;(sp-&gt;s.x) because its %rdi, not (%rdi)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.42</p>
+<p>A</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">fun</span><span class="params">(<span class="keyword">struct</span> ELE *ptr)</span> </span>&#123;</span><br><span class="line">	<span class="type">long</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (ptr) &#123;</span><br><span class="line">		result += ptr-&gt;v;</span><br><span class="line">		ptr = ptr-&gt;p;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>B</p>
+<p>ELE為數據結構: 鏈表，fun實現功能為加總鏈表的和</p>
+<h4 id="聯合-union"><a href="#聯合-union" class="headerlink" title="聯合(union)"></a>聯合(union)</h4><p>考慮以下聲明: </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="title class_">U3</span> &#123;</span><br><span class="line">	<span class="type">char</span> c;</span><br><span class="line">	<span class="type">int</span> i[<span class="number">2</span>];</span><br><span class="line">	<span class="type">double</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>對於<code>union U3 *p</code>，<code>p-&gt;c</code>、<code>p-&gt;i[0]</code>、<code>p-&gt;v</code>引用的都是==數據結構的起始位置==。而且，==一個聯合的總大小等於最大字段的大小==</p>
+<p>使用<code>union</code>的好處: </p>
+<ul>
+<li><strong>減少分配空間總量</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">node_s</span> &#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">node_s</span> *left;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">node_s</span> *right;</span><br><span class="line">	<span class="type">double</span> data[<span class="number">2</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>(占用32字節)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> &#123;N_LEAF, N_INTERNAL&#125; <span class="type">nodetype_t</span>;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">node_t</span> &#123;</span><br><span class="line">	<span class="type">nodetype_t</span> type;</span><br><span class="line">	<span class="keyword">union</span> &#123;</span><br><span class="line">		<span class="keyword">struct</span> &#123;</span><br><span class="line">			<span class="keyword">struct</span> <span class="title class_">node_t</span> *left;</span><br><span class="line">			sturct <span class="type">node_t</span> *right;</span><br><span class="line">		&#125; internal;</span><br><span class="line">		<span class="type">double</span> data[<span class="number">2</span>];</span><br><span class="line">	&#125; info;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>(占用24字節: 4字節的type，16字節的data，type和聯合之間的4字節填充)</p>
+<ul>
+<li><strong>訪問不同類型的位模式</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">uu2double</span><span class="params">(<span class="type">unsigned</span> word0, <span class="type">unsigned</span> word1)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">union</span> &#123;</span><br><span class="line">		<span class="type">double</span> d;</span><br><span class="line">		<span class="type">unsigned</span> u[<span class="number">2</span>];</span><br><span class="line">	&#125; temp;</span><br><span class="line"></span><br><span class="line">	temp.u[<span class="number">0</span>] = word0;</span><br><span class="line">	temp.u[<span class="number">1</span>] = word1;</span><br><span class="line">	<span class="keyword">return</span> tmep.d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>[!Warning] 注意<br>如上的函數位模式轉換需要注意機器的大小端，因為<code>word0</code>與<code>word1</code>代表的4字節在大小端機器上剛好相反</p>
+</blockquote>
+<h4 id="練習題-18"><a href="#練習題-18" class="headerlink" title="練習題"></a>練習題</h4><p>3.43</p>
+<p>略，不想寫</p>
+<blockquote>
+<p>[!Warning] 注意<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> &#123;</span><br><span class="line">	<span class="keyword">struct</span> &#123;</span><br><span class="line">		<span class="type">long</span> u;</span><br><span class="line">		<span class="type">short</span> v;</span><br><span class="line">		<span class="type">char</span> w;</span><br><span class="line">	&#125; t1;</span><br><span class="line">	<span class="keyword">struct</span> &#123;</span><br><span class="line">		<span class="type">int</span> a[<span class="number">2</span>];</span><br><span class="line">		<span class="type">char</span> *p;</span><br><span class="line">	&#125;t2;</span><br><span class="line">&#125;utype;</span><br></pre></td></tr></table></figure><br>若<code>union</code>中包含<code>struct</code>，則訪問變量時，<code>t1</code>中<code>u</code>的偏移量為0，<code>t1</code>中<code>v</code>的偏移量為8。<code>t2</code>中<code>a</code>的偏移量為0，<code>t2</code>中<code>p</code>的偏移量為8</p>
+</blockquote>
+<h4 id="數據對齊"><a href="#數據對齊" class="headerlink" title="數據對齊"></a>數據對齊</h4><p>==K字節的類型，地址必須是K的倍數==</p>
+<p>對於包含結構的代碼，編譯器可能需要在==字段的分配中插入間隙==，保證每個元素都滿足對齊要求</p>
+<p>考慮以下結構: </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">S1</span> &#123;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="type">char</span> c;</span><br><span class="line">	<span class="type">int</span> j;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre><code class="highlight mermaid">packet-beta
+title 使用最小的9字節分配
+0-3: &quot;i&quot;
+4: &quot;c&quot;
+5-9: &quot;j&quot;</code></pre>
+<pre><code class="highlight mermaid">packet-beta
+title 數據對齊
+0-3: &quot;i&quot;
+4: &quot;c&quot;
+5-7: &quot;empty&quot;
+8-11: &quot;j&quot;</code></pre>
+<blockquote>
+<p>[!Warning] 注意<br>因為要保證數據對齊，所以若有指針指向S1，編譯器必須保證此指針的地址也為4的倍數</p>
+</blockquote>
+<h4 id="練習題-19"><a href="#練習題-19" class="headerlink" title="練習題"></a>練習題</h4><p>3.44</p>
+<p>A</p>
+<p>16</p>
+<p>B</p>
+<p>16</p>
+<p>C</p>
+<p>10</p>
+<p>D</p>
+<p>40</p>
+<p>E</p>
+<p>40</p>
+<p>3.45</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="type">char</span> *a;    <span class="comment">// 8</span></span><br><span class="line">	<span class="type">short</span> b;    <span class="comment">// 2</span></span><br><span class="line">	<span class="type">double</span> c;   <span class="comment">// 8</span></span><br><span class="line">	<span class="type">char</span> d;     <span class="comment">// 1</span></span><br><span class="line">	<span class="type">float</span> e;    <span class="comment">// 4</span></span><br><span class="line">	<span class="type">char</span> f;     <span class="comment">// 1</span></span><br><span class="line">	<span class="type">long</span> g;     <span class="comment">// 8</span></span><br><span class="line">	<span class="type">int</span> h;      <span class="comment">// 4</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>A</p>
+<p>52</p>
+<p>B</p>
+<p>56(滿足第一項char *a的對齊)</p>
+<p>C</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="type">char</span> *a;</span><br><span class="line">	<span class="type">double</span> c;</span><br><span class="line">	<span class="type">long</span> g;</span><br><span class="line">	<span class="type">float</span> e;</span><br><span class="line">	<span class="type">int</span> h;</span><br><span class="line">	<span class="type">short</span> b;</span><br><span class="line">	<span class="type">char</span> d;</span><br><span class="line">	<span class="type">char</span> f;</span><br><span class="line">&#125; rec;</span><br></pre></td></tr></table></figure>
+<p><del>36</del> 40 (不對齊的大小為36字節，但偏移量為35，所以必須將地址對齊到40)</p>
+<h3 id="在機器級程序終將控制與數據結合起來"><a href="#在機器級程序終將控制與數據結合起來" class="headerlink" title="在機器級程序終將控制與數據結合起來"></a>在機器級程序終將控制與數據結合起來</h3><h4 id="理解指針"><a href="#理解指針" class="headerlink" title="理解指針"></a>理解指針</h4><ul>
+<li><p><strong>每個指針都對應一個類型</strong><br>  特殊的，<code>void *</code>類型代表通用指針。==指針類型<strong>不是機器代碼中的一部份</strong>==，它們是C語言提供的一種抽象，幫助程序員避免尋址錯誤。</p>
+</li>
+<li><p><strong>每個指針都有一個值</strong><br>  特殊的，NULL(0)表示該指針沒有指向任何地方</p>
+</li>
+<li><p><strong>將指針從一種類型強制轉換到另一種類型，只改變它的類型，而不改變它的值</strong><br>  例如，<code>p</code>是一個<code>char *</code>類型指針，它的值為<code>p</code>。則表達式<code>(int *)p + 7</code>計算為<code>p + 28</code>，而<code>(int *)(p + 7)</code>計算為<code>p + 7</code> (強制類型轉換的優先級高於加法)</p>
+</li>
+<li><p><strong>指針也可以指向函數</strong>(函數指針)<br>  假設我們有一個函數: </p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">fun</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> *p)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>  然後，我們可以聲明一個指針<code>fp</code>，將它賦予這個函數: </p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> (*fp)(<span class="type">int</span>, <span class="type">int</span> *);</span><br><span class="line">fp = fun</span><br></pre></td></tr></table></figure>
+<p>  然後用這個指針來調用函數: </p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> y = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> result = <span class="built_in">fp</span>(<span class="number">3</span>, &amp;y);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="內存越界引用和緩衝區溢出"><a href="#內存越界引用和緩衝區溢出" class="headerlink" title="內存越界引用和緩衝區溢出"></a>內存越界引用和緩衝區溢出</h4><p><strong>緩衝區溢出(buffer overflow)</strong>：例如，在棧中分配某個字符數組來保存一個字符串，但字符串長度超過分配的空間就會發生這種問題。</p>
+<h4 id="練習題-20"><a href="#練習題-20" class="headerlink" title="練習題"></a>練習題</h4><p>3.46</p>
+<p>A</p>
+<p>01 23 45 67 89 AB CD EF: push %rbx的值</p>
+<p>null</p>
+<p>null &lt;- %rsp</p>
+<p>(我猜測此處sub %0x10, %rsp是為了數據對齊)</p>
+<p>B</p>
+<blockquote>
+<p>[!Warning] 注意<br><code>gets()</code>函數讀取的值會在棧上朝高地址處增長</p>
+</blockquote>
+<p>00 00 00 00 00 40 00 34: 返回地址</p>
+<p>33 32 31 30 39 38 37 36: push %rbx的值</p>
+<p>35 34 33 32 31 30 39 38</p>
+<p>37 36 35 34 33 32 31 30 &lt;- %rsp</p>
+<p>C</p>
+<p><code>0x400034</code></p>
+<p>D</p>
+<p>%rbx</p>
+<p>E</p>
+<p>使用<code>strlen(buf) + 1</code>取代<code>strlen(buf)</code>，且代碼還需檢查返回是否為NULL</p>
+<blockquote>
+<p>[!Warning] 注意<br><code>strlen()</code>計算的是字符串可見字符的長度，即不包含結尾的<code>&#39;\0&#39;</code>，所以需要使用<code>strlen(buf) + 1</code>取代<code>strlen(buf)</code></p>
+</blockquote>
+<h4 id="對抗緩衝區溢出攻擊"><a href="#對抗緩衝區溢出攻擊" class="headerlink" title="對抗緩衝區溢出攻擊"></a>對抗緩衝區溢出攻擊</h4><ol>
+<li><p>棧隨機化<br> 地址空間布局隨機化(Address-Space Layout Rndomization ASLR)</p>
+<p> 如何破解?<br> 使用一種叫做nop sled(空操作雪橇)的技術。即在shellcode前面插入很長一段nop，如果EIP返回到nop sled的任意地址，那麼在達到shellcode之前，每執行一條nop指令EIP都會遞增。也就是說，只要返回地址被nop sled所覆蓋，EIP就會將sled滑向shellcode</p>
+</li>
+<li><p>棧破壞檢測<br> 在棧幀中任何局部緩衝區與棧狀態間儲存一個金絲雀(canary)值，亦稱為哨兵值(guard value)，此值在每次運行時隨機產生。在恢復寄存器狀態和從函數返回前，會檢查這個金絲雀值使否被更改，若更改則程序異常終止</p>
+</li>
+<li><p>限制可執行代碼區域<br> 限制只有編譯器產生的代碼部分內存可執行，其他部分被限制為只允許讀和寫</p>
+</li>
+</ol>
+<h4 id="練習題-21"><a href="#練習題-21" class="headerlink" title="練習題"></a>練習題</h4><p>3.47</p>
+<p>A</p>
+<p>8192 = $2^{13}$</p>
+<p>B</p>
+<p>128 = $2^{7}$<br>$\frac{2^{13}}{2^{7}} = 2^{6} = 64$</p>
+<p>3.48</p>
+<p>A</p>
+<p>a)<br>    buf: %rdi，即%rsp<br>    v: %rsi, 即%rsp+24<br>    不存在金絲雀值</p>
+<p>b)<br>    buf: %rdi，即%rsp + 16<br>    v: %rsi，即%rsp+8<br>    canary: %rsp+40</p>
+<p>B</p>
+<p>將v放在比buf更低地址處，這樣就算溢出也不會覆蓋v的值，而是會先覆蓋到金絲雀值</p>
+<h4 id="支持變長棧幀"><a href="#支持變長棧幀" class="headerlink" title="支持變長棧幀"></a>支持變長棧幀</h4><p>我們目前見過的代碼在編譯期就可以確認棧幀大小，但有些函數的局部儲存需要在運行期間才能確定，比如使用<code>malloc</code>申請的內存</p>
+<p>以下代碼需要分配一個局部變量<code>i</code>，且含有一個含有n項的變長數組，這要求在棧上分配8n個字節。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">vframe</span><span class="params">(<span class="type">long</span> n, <span class="type">long</span> idx, <span class="type">long</span> *q)</span> </span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> *p[n];</span><br><span class="line">	p[<span class="number">0</span>] = &amp;i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; n; i++)</span><br><span class="line">		p[i] = q;</span><br><span class="line">	<span class="keyword">return</span> *p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">; n in %rdi, idx in %rsi, q in %rdx</span><br><span class="line">vframe:</span><br><span class="line">	pushq %rbp</span><br><span class="line">	mov %rsp, %rbp</span><br><span class="line">	subq $16, %rsp    ; allocate space for i (%rsp = s1)</span><br><span class="line">	leaq 22(, %rdi, 8), %rax</span><br><span class="line">	andq $-16, %rax</span><br><span class="line">	subq %rax, %rsp    ; allocate space for array p (%rsp = s2)</span><br><span class="line">	leaq 7(%rsp), %rax</span><br><span class="line">	shrq $3, %rax</span><br><span class="line">	leaq 0(, %rax, 8), %r8    ; set %r8 to &amp;p[0]</span><br><span class="line">	movq %r8, %rcx    ; set %rcx to &amp;p[0] (%rcx = p)</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">; L3, L2 =&gt; for loop</span><br><span class="line">; i in %rax and on stack, n in %rdi, p in %rcx, q in %rdx</span><br><span class="line">.L3:</span><br><span class="line">	movq %rdx, (%rcx, %rax, 8)</span><br><span class="line">	andq $1, %rax</span><br><span class="line">	movq %rax, -8(%rbp)    ; modify local variable</span><br><span class="line">.L2:</span><br><span class="line">	movq -8(%rbp), %rax    ; store local variable</span><br><span class="line">	cmpq %rdi, %rax</span><br><span class="line">	jl .L3</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	leave    ; restore %rbp and %rsp</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure>
+<p>(省略部分代碼)</p>
+<p>以下則為關鍵部分代碼，即32位系統創建棧幀的必經過程，但在64位系統中僅在需要棧幀長可變的情況下使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">push rbp  </span><br><span class="line">mov rbp, rsp</span><br><span class="line">  </span><br><span class="line">...  </span><br><span class="line">  </span><br><span class="line">leave  </span><br><span class="line">ret </span><br></pre></td></tr></table></figure>
+<h4 id="練習題-22"><a href="#練習題-22" class="headerlink" title="練習題"></a>練習題</h4><p>3.49</p>
+<p>A</p>
+<p>%rax = 22 + 8n</p>
+<p>-16 = 11111111111111111111111111110000</p>
+<p>%rax = %rax &amp; (-16)</p>
+<p>其中，對%rax與-16做與運算是用來對其數據</p>
+<p>B</p>
+<p>$rax = 7+%rsp</p>
+<p>%rax /= 8</p>
+<p>實現將s2向上捨入到8的倍數(正常應為向零捨入，但+7實現向上捨入)</p>
+<p>C</p>
+<p>略</p>
+<p>D</p>
+<p>略</p>
+<h3 id="浮點代碼"><a href="#浮點代碼" class="headerlink" title="浮點代碼"></a>浮點代碼</h3><p>媒體(media)指令：稱為<strong>單指令多數據</strong>或<strong>SIMD</strong>(讀作sim-dee)，該指令模式允許對多個不同的數據並行執行同一個操作</p>
+<p>寄存器組：YMM(256位) -&gt; XMM(128位) -&gt; MM(64位)</p>
+<p>AVX(Advanced Vector Extension，高級向量擴展)：該體系結構允許數據儲存在16個YMM寄存器中，它們的名字為%ymm0 ~ ymm15。對標量數據操作時，它們只保存浮點數，且==只使用低32位(float)或低64位(double)==。彙編代碼用寄存器的SSE(Streaming SIMD Extension，流式SIMD擴展) XMM寄存器名字%mm0 ~ %xmm15來引用它們。每個XMM寄存器都是對應YMM寄存器的低128位(16字節)</p>
+<h4 id="浮點傳送和轉換操作"><a href="#浮點傳送和轉換操作" class="headerlink" title="浮點傳送和轉換操作"></a>浮點傳送和轉換操作</h4><p>標量指令：只對單個而不是一組封裝好的數據值進行操作(例：引用內存的指令)</p>
+<p>數據要麼保存在內存中(表中$M<em>{32}$和$M</em>{64}$)，要麼保存在XMM寄存器中(表中$X$)。無論數據對齊與否，這些指令都可以正確的運行</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>源</th>
+<th>目的</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vmovss</code></td>
+<td>$M_{32}$</td>
+<td>$X$</td>
+<td>傳送單精度數</td>
+</tr>
+<tr>
+<td><code>vmovss</code></td>
+<td>$X$</td>
+<td>$M_{32}$</td>
+<td>傳送單精度數</td>
+</tr>
+<tr>
+<td><code>vmovsd</code></td>
+<td>$M_{64}$</td>
+<td>$X$</td>
+<td>傳送雙精度數</td>
+</tr>
+<tr>
+<td><code>vmovsd</code></td>
+<td>$X$</td>
+<td>$M_{64}$</td>
+<td>傳送雙精度數</td>
+</tr>
+<tr>
+<td><code>vmovaps</code></td>
+<td>$X$</td>
+<td>$X$</td>
+<td>傳送對齊的封裝好的單精度數</td>
+</tr>
+<tr>
+<td><code>vmovapd</code></td>
+<td>$X$</td>
+<td>$X$</td>
+<td>傳送對齊的封裝好的雙精度數</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>源</th>
+<th>目的</th>
+<th>描述(用截斷方式把浮點數轉為整數，即向零取整)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vcvttss2si</code></td>
+<td>$X$/$M_{32}$</td>
+<td>$R_{32}$</td>
+<td>單精度數-&gt;整數</td>
+</tr>
+<tr>
+<td><code>vcvttsd2si</code></td>
+<td>$X$/$M_{64}$</td>
+<td>$R_{32}$</td>
+<td>雙精度數-&gt;整數</td>
+</tr>
+<tr>
+<td><code>vcvttss2siq</code></td>
+<td>$X$/$M_{32}$</td>
+<td>$R_{64}$</td>
+<td>單精度數-&gt;四字整數</td>
+</tr>
+<tr>
+<td><code>vcvttsd2siq</code></td>
+<td>$X$/$M_{64}$</td>
+<td>$R_{64}$</td>
+<td>雙精度數-&gt;四字整數</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>源1</th>
+<th>源2</th>
+<th>目的</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vcvtsi2ss</code></td>
+<td>$M<em>{32}$/$R</em>{32}$</td>
+<td>$X$</td>
+<td>$X$</td>
+<td>整數-&gt;單精度數</td>
+</tr>
+<tr>
+<td><code>vcvtsi2sd</code></td>
+<td>$M<em>{32}$/$R</em>{32}$</td>
+<td>$X$</td>
+<td>$X$</td>
+<td>整數-&gt;雙精度數</td>
+</tr>
+<tr>
+<td><code>vcvtsi2ssq</code></td>
+<td>$M<em>{64}$/$R</em>{64}$</td>
+<td>$X$</td>
+<td>$X$</td>
+<td>四字整數-&gt;單精度數</td>
+</tr>
+<tr>
+<td><code>vcvtsi2sdq</code></td>
+<td>$M<em>{64}$/$R</em>{64}$</td>
+<td>$X$</td>
+<td>$X$</td>
+<td>四字整數-&gt;雙精度數</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>上表把整數轉成浮點數，他使用的是不太常見的三操作數格式。第一個操作數從內存或一個通用寄存器，這裡可以忽略第二個操作數，因為他的值只會影響結果的高位字節。而我們的目標必須是XMM寄存器。在最常見的使用場景中，第二個源與目的的操作數是一樣的，如以下指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vcvtsi2sdq %rax, %xmm1, %xmma</span><br></pre></td></tr></table></figure>
+<p>想要將一個==單精度數轉換為雙精度數==，可使用以下指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vunpcklps %xmm0, %xmm0, %xmm0    ; Replicate first vector element</span><br><span class="line">vcvtps2pd %xmm0, %xmm0    ; Convert two vector elements to double</span><br></pre></td></tr></table></figure>
+<p>想要將==雙精度數轉換為單精度數==，可使用以下指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vmovddup %xmm0, %xmm0    ; Replicate first vector element</span><br><span class="line">vcvtpd2psx %xmm0, %xmm0    ; Convert two vector elements to single</span><br></pre></td></tr></table></figure>
+<h4 id="練習題-23"><a href="#練習題-23" class="headerlink" title="練習題"></a>練習題</h4><p>3.50</p>
+<p>val1: <code>d</code></p>
+<p>val2: <code>i</code></p>
+<p>val3: <code>l</code></p>
+<p>val4: <code>f</code></p>
+<p>3.51</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$T_{x}$</th>
+<th>$T_{y}$</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>long</code></td>
+<td><code>double</code></td>
+<td><code>vcvtsi2sdq %rdi, %xmm0</code></td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td><code>int</code></td>
+<td><code>vcvttsd2si %xmm0, %eax</code></td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td><code>float</code></td>
+<td><code>vmovddup %xmm0, %xmm0 \n vcvtpd2psx %xmm0, %xmm0</code>(?本人認為書中答案有問題，如有誤歡迎指正)</td>
+</tr>
+<tr>
+<td><code>long</code></td>
+<td><code>float</code></td>
+<td><code>vcvtsi2ssq %rdi, %xmm0, %xmm0</code></td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td><code>long</code></td>
+<td><code>vcvttss2siq %xmm0, %rax</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="過程中的浮點代碼"><a href="#過程中的浮點代碼" class="headerlink" title="過程中的浮點代碼"></a>過程中的浮點代碼</h4><ul>
+<li>XMM寄存器%xmm0 ~ %xmm7最多可傳遞8個浮點參數。依照參數列出的順序使用這些寄存器，可以通過棧傳遞額外的浮點參數</li>
+<li>函數使用寄存器%xmm0返回浮點數</li>
+<li>所有XMM寄存器都是調用者保存的，被調用者可以不用保存就覆蓋這些寄存器中任意一個</li>
+</ul>
+<blockquote>
+<p>[!Note] 通用寄存器的傳遞順序<br>參考數據傳輸部分：[[CSAPP_U3#^DataTransfer]]</p>
+</blockquote>
+<h4 id="練習題-24"><a href="#練習題-24" class="headerlink" title="練習題"></a>練習題</h4><p>A </p>
+<p>a: %xmm0</p>
+<p>b: %rdi</p>
+<p>c: %xmm1</p>
+<p>d: %esi</p>
+<p>B</p>
+<p>a: %edi</p>
+<p>b: %rsi</p>
+<p>c: %rdx</p>
+<p>d: %rcx</p>
+<p>C</p>
+<p>a: %rdi</p>
+<p>b: %xmm0</p>
+<p>c: %esi</p>
+<p>d: %xmm1</p>
+<p>D</p>
+<p>a: %xmm0</p>
+<p>b: %rdi</p>
+<p>c: %xmm1</p>
+<p>d: %xmm2</p>
+<h4 id="浮點運算操作"><a href="#浮點運算操作" class="headerlink" title="浮點運算操作"></a>浮點運算操作</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>單精度</th>
+<th>雙精度</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vaddss</td>
+<td>vaddsd</td>
+<td>$D \leftarrow S<em>{2} + S</em>{1}$</td>
+</tr>
+<tr>
+<td>vsubss</td>
+<td>vsubsd</td>
+<td>$D \leftarrow S<em>{2} - S</em>{1}$</td>
+</tr>
+<tr>
+<td>vmulss</td>
+<td>vmulsd</td>
+<td>$D \leftarrow S<em>{2} \times S</em>{1}$</td>
+</tr>
+<tr>
+<td>vdivss</td>
+<td>vdivsd</td>
+<td>$D \leftarrow S<em>{2} \ / \ S</em>{1}$</td>
+</tr>
+<tr>
+<td>vmaxss</td>
+<td>vmaxsd</td>
+<td>$D \leftarrow max(S<em>{2} , \  S</em>{1})$</td>
+</tr>
+<tr>
+<td>vminss</td>
+<td>vminsd</td>
+<td>$D \leftarrow min(S<em>{2} , \  S</em>{1})$</td>
+</tr>
+<tr>
+<td>sqrtss</td>
+<td>sqrtsd</td>
+<td>$D \leftarrow \sqrt{ S_{1} }$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="練習題-25"><a href="#練習題-25" class="headerlink" title="練習題"></a>練習題</h4><p>3.53<br>%rsi = long<br>%xmm2 = float<br>%xmm0 = float<br>%edi = int</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">funct1</span><span class="params">(<span class="type">int</span> p, <span class="type">float</span> q, <span class="type">long</span> r, <span class="type">double</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">funct1</span><span class="params">(<span class="type">int</span> p, <span class="type">long</span> q, <span class="type">double</span> r, <span class="type">double</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>3.54</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">funct2</span><span class="params">(<span class="type">double</span> w, <span class="type">int</span> x, <span class="type">float</span> y, <span class="type">long</span> z)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x * y - w / z;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="定義和使用浮點常數"><a href="#定義和使用浮點常數" class="headerlink" title="定義和使用浮點常數"></a>定義和使用浮點常數</h4><p>和整數運算操作不同，AVX浮點操作不能用立即數作為操作數。編譯器必須為所有的常量值分配和初始化儲存空間，然後把這些值從內存中讀入</p>
+<p>以下函數說明了這個問題：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">cel2fahr</span><span class="params">(<span class="type">double</span> temp)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1.8</span> * temp + <span class="number">32.0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cel2fahr:</span><br><span class="line">	vmulsd .LC2(%rip), %xmm0, %xmm0</span><br><span class="line">	vaddsd .LC3(%rip), %xmm0, %xmm0</span><br><span class="line">	ret</span><br><span class="line">.LC2:</span><br><span class="line">	.long 3435973837    ; Low-order 4 bytes of 1.8</span><br><span class="line">	.long 1073532108    ; High-order 4 bytes of 1.8</span><br><span class="line">.LC3&quot;</span><br><span class="line">	.long 0</span><br><span class="line">	.long 1077936128</span><br></pre></td></tr></table></figure>
+<p>(因為為小端機器，所以第一個值給出的是低位4字節，第二個值是高位4字節)</p>
+<h4 id="練習題-26"><a href="#練習題-26" class="headerlink" title="練習題"></a>練習題</h4><p>3.55</p>
+<p>[[CSAPP_U2#IEEE浮點表示]]</p>
+<p>1077936128(dec) = 01000000010000000000000000000000(bin)</p>
+<p>取指數字段為01000000100(1028)，減去偏移1023等於5。且$2^{5} = 32$</p>
+<h4 id="在浮點代碼中使用位級操作"><a href="#在浮點代碼中使用位級操作" class="headerlink" title="在浮點代碼中使用位級操作"></a>在浮點代碼中使用位級操作</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>單精度</th>
+<th>雙精度</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vxorps</code></td>
+<td><code>xorpd</code></td>
+<td>$D \leftarrow S<em>{2} \oplus S</em>{1}$</td>
+</tr>
+<tr>
+<td><code>vandps</code></td>
+<td><code>andpd</code></td>
+<td>$D \leftarrow S<em>{2} \ \&amp; \ S</em>{1}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="浮點比較操作"><a href="#浮點比較操作" class="headerlink" title="浮點比較操作"></a>浮點比較操作</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>基於</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vucomiss S1, S2</code></td>
+<td>$S<em>{2} - S</em>{1}$</td>
+<td>比較單精度值</td>
+</tr>
+<tr>
+<td><code>vucomisd S1, S2</code></td>
+<td>$S<em>{2} - S</em>{1}$</td>
+<td>比較雙精度值</td>
+</tr>
+<tr>
+<td>(參數$S<em>{2}$必須在XMM寄存器中，$S</em>{1}$可以在XMM寄存器中，也可以在內存中)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>[[CSAPP_U3#控制]]</p>
+<p>浮點比較指令會設置三個條件碼：零標誌位<code>ZF</code>、進位標誌位<code>CF</code>和奇偶標誌位<code>PF</code>。對於<strong>整數操作</strong><code>PF</code>不太常見，但當最近的一次算數或邏輯運算產生的值的最低位字節是<strong>偶繳驗</strong>的(==即這個字節有偶數個1==)，就會設置這個標誌位。對<strong>浮點操作</strong>來說，==若兩個操作數中的其中一個是NaN==，就會設置該位。根據慣例，C語言中果有個參數為NaN，就會認為比對失敗。此時就算比較<code>x == x</code>都會返回0。當任意操作數為Nan時，就會出現<strong>無序</strong>的情況</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>順序$S<em>{2}$ : $S</em>{1}$</th>
+<th><code>CF</code></th>
+<th><code>ZF</code></th>
+<th><code>PF</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>無序的</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>$S<em>{2}&lt;S</em>{1}$</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>$S<em>{2} = S</em>{1}$</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>$S<em>{2} &gt; S</em>{1}$</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>通常<code>jp</code>(jump on parity)指令是條件跳轉，條件就是浮點比較得到一個無序的結果。</p>
+<h4 id="練習題-27"><a href="#練習題-27" class="headerlink" title="練習題"></a>練習題</h4><p>3.57</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">funct3</span><span class="params">(<span class="type">int</span> *ap, <span class="type">double</span> b, <span class="type">long</span> c, <span class="type">float</span> *dp)</span> </span>&#123;</span><br><span class="line">	<span class="type">float</span> tmp = *dp;</span><br><span class="line">	<span class="keyword">if</span> (b &lt;= *ap) &#123;</span><br><span class="line">		tmp *= <span class="number">2</span>;</span><br><span class="line">		c += tmp;</span><br><span class="line">		<span class="keyword">return</span> c;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		tmp *= c;</span><br><span class="line">		<span class="keyword">return</span> tmp;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/">https://ilsao.github.io/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/CSAPP_U3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%A9%9F%E5%99%A8%E7%B4%9A%E8%A1%A8%E7%A4%BA"><span class="toc-number">1.</span> <span class="toc-text">第三章 程序的機器級表示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%B7%A8%E7%A2%BC"><span class="toc-number">1.1.</span> <span class="toc-text">程序編碼</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A9%9F%E5%99%A8%E7%B4%9A%E4%BB%A3%E7%A2%BC"><span class="toc-number">1.1.1.</span> <span class="toc-text">機器級代碼</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B8%E6%93%9A%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">數據格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A8%AA%E5%95%8F%E4%BF%A1%E6%81%AF"><span class="toc-number">1.3.</span> <span class="toc-text">訪問信息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%95%B8%E6%8C%87%E7%A4%BA%E7%AC%A6"><span class="toc-number">1.3.1.</span> <span class="toc-text">操作數指示符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C"><span class="toc-number">1.3.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B8%E6%93%9A%E5%82%B3%E9%80%81%E6%8C%87%E4%BB%A4"><span class="toc-number">1.3.3.</span> <span class="toc-text">數據傳送指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-1"><span class="toc-number">1.3.4.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A3%93%E5%85%A5%E5%92%8C%E5%BD%88%E5%87%BA%E6%A3%A7%E6%95%B8%E6%93%9A"><span class="toc-number">1.3.5.</span> <span class="toc-text">壓入和彈出棧數據</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E6%95%B8%E8%88%87%E9%82%8F%E8%BC%AF%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.</span> <span class="toc-text">算數與邏輯操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BC%89%E6%9C%89%E6%95%88%E5%9C%B0%E5%9D%80"><span class="toc-number">1.4.1.</span> <span class="toc-text">加載有效地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-2"><span class="toc-number">1.4.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E7%9A%84%E7%AE%97%E6%95%B8%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.3.</span> <span class="toc-text">特殊的算數操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-3"><span class="toc-number">1.4.4.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">控制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A2%9D%E4%BB%B6%E7%A2%BC"><span class="toc-number">1.5.1.</span> <span class="toc-text">條件碼</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A8%AA%E5%95%8F%E6%A2%9D%E4%BB%B6%E7%A2%BC"><span class="toc-number">1.5.2.</span> <span class="toc-text">訪問條件碼</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-4"><span class="toc-number">1.5.3.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%89%E6%8C%87%E4%BB%A4"><span class="toc-number">1.5.4.</span> <span class="toc-text">跳轉指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%89%E6%8C%87%E4%BB%A4%E7%9A%84%E7%B7%A8%E7%A2%BC"><span class="toc-number">1.5.5.</span> <span class="toc-text">跳轉指令的編碼</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-5"><span class="toc-number">1.5.6.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%A2%9D%E4%BB%B6%E6%8E%A7%E5%88%B6%E4%BE%86%E5%AF%A6%E7%8F%BE%E6%A2%9D%E4%BB%B6%E5%88%86%E6%94%AF"><span class="toc-number">1.5.7.</span> <span class="toc-text">用條件控制來實現條件分支</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-6"><span class="toc-number">1.5.8.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%A2%9D%E4%BB%B6%E5%82%B3%E9%80%81%E4%BE%86%E5%AF%A6%E7%8F%BE%E6%A2%9D%E4%BB%B6%E5%88%86%E6%94%AF"><span class="toc-number">1.5.9.</span> <span class="toc-text">用條件傳送來實現條件分支</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-7"><span class="toc-number">1.5.10.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AA%E7%92%B0"><span class="toc-number">1.5.11.</span> <span class="toc-text">循環</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#do-while%E5%BE%AA%E7%92%B0"><span class="toc-number">1.5.11.1.</span> <span class="toc-text">do-while循環</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#while%E5%BE%AA%E7%92%B0"><span class="toc-number">1.5.11.2.</span> <span class="toc-text">while循環</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#for%E5%BE%AA%E7%92%B0"><span class="toc-number">1.5.11.3.</span> <span class="toc-text">for循環</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-8"><span class="toc-number">1.5.12.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#switch%E8%AA%9E%E5%8F%A5"><span class="toc-number">1.5.13.</span> <span class="toc-text">switch語句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-9"><span class="toc-number">1.5.14.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%8E%E7%A8%8B"><span class="toc-number">1.6.</span> <span class="toc-text">過程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%82%B3%E9%81%9E%E6%8E%A7%E5%88%B6"><span class="toc-number">1.6.1.</span> <span class="toc-text">傳遞控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-10"><span class="toc-number">1.6.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B8%E6%93%9A%E5%82%B3%E8%BC%B8"><span class="toc-number">1.6.3.</span> <span class="toc-text">數據傳輸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-11"><span class="toc-number">1.6.4.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%A7%E4%B8%8A%E7%9A%84%E5%B1%80%E9%83%A8%E5%84%B2%E5%AD%98"><span class="toc-number">1.6.5.</span> <span class="toc-text">棧上的局部儲存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E4%B8%AD%E7%9A%84%E5%B1%80%E9%83%A8%E5%84%B2%E5%AD%98%E7%A9%BA%E9%96%93"><span class="toc-number">1.6.6.</span> <span class="toc-text">寄存器中的局部儲存空間</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-12"><span class="toc-number">1.6.7.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B8%E7%B5%84%E5%88%86%E9%85%8D%E8%88%87%E8%A8%AA%E5%95%8F"><span class="toc-number">1.7.</span> <span class="toc-text">數組分配與訪問</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%89%87"><span class="toc-number">1.7.1.</span> <span class="toc-text">基本原則</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-13"><span class="toc-number">1.7.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E9%87%9D%E9%81%8B%E7%AE%97"><span class="toc-number">1.7.3.</span> <span class="toc-text">指針運算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-14"><span class="toc-number">1.7.4.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E7%9A%84%E6%95%B8%E7%B5%84-%E5%A4%9A%E7%B6%AD%E6%95%B8%E7%B5%84"><span class="toc-number">1.7.5.</span> <span class="toc-text">嵌套的數組(多維數組)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-15"><span class="toc-number">1.7.6.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E9%95%B7%E6%95%B8%E7%B5%84"><span class="toc-number">1.7.7.</span> <span class="toc-text">定長數組</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-16"><span class="toc-number">1.7.8.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%B0%E8%B3%AA%E7%9A%84%E6%95%B8%E6%93%9A%E7%B5%90%E6%A7%8B"><span class="toc-number">1.8.</span> <span class="toc-text">異質的數據結構</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B5%90%E6%A7%8B"><span class="toc-number">1.8.1.</span> <span class="toc-text">結構</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-17"><span class="toc-number">1.8.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%81%AF%E5%90%88-union"><span class="toc-number">1.8.3.</span> <span class="toc-text">聯合(union)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-18"><span class="toc-number">1.8.4.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B8%E6%93%9A%E5%B0%8D%E9%BD%8A"><span class="toc-number">1.8.5.</span> <span class="toc-text">數據對齊</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-19"><span class="toc-number">1.8.6.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E6%A9%9F%E5%99%A8%E7%B4%9A%E7%A8%8B%E5%BA%8F%E7%B5%82%E5%B0%87%E6%8E%A7%E5%88%B6%E8%88%87%E6%95%B8%E6%93%9A%E7%B5%90%E5%90%88%E8%B5%B7%E4%BE%86"><span class="toc-number">1.9.</span> <span class="toc-text">在機器級程序終將控制與數據結合起來</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E6%8C%87%E9%87%9D"><span class="toc-number">1.9.1.</span> <span class="toc-text">理解指針</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A7%E5%AD%98%E8%B6%8A%E7%95%8C%E5%BC%95%E7%94%A8%E5%92%8C%E7%B7%A9%E8%A1%9D%E5%8D%80%E6%BA%A2%E5%87%BA"><span class="toc-number">1.9.2.</span> <span class="toc-text">內存越界引用和緩衝區溢出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-20"><span class="toc-number">1.9.3.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8D%E6%8A%97%E7%B7%A9%E8%A1%9D%E5%8D%80%E6%BA%A2%E5%87%BA%E6%94%BB%E6%93%8A"><span class="toc-number">1.9.4.</span> <span class="toc-text">對抗緩衝區溢出攻擊</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-21"><span class="toc-number">1.9.5.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E8%AE%8A%E9%95%B7%E6%A3%A7%E5%B9%80"><span class="toc-number">1.9.6.</span> <span class="toc-text">支持變長棧幀</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-22"><span class="toc-number">1.9.7.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%AE%E9%BB%9E%E4%BB%A3%E7%A2%BC"><span class="toc-number">1.10.</span> <span class="toc-text">浮點代碼</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%AE%E9%BB%9E%E5%82%B3%E9%80%81%E5%92%8C%E8%BD%89%E6%8F%9B%E6%93%8D%E4%BD%9C"><span class="toc-number">1.10.1.</span> <span class="toc-text">浮點傳送和轉換操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-23"><span class="toc-number">1.10.2.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%81%8E%E7%A8%8B%E4%B8%AD%E7%9A%84%E6%B5%AE%E9%BB%9E%E4%BB%A3%E7%A2%BC"><span class="toc-number">1.10.3.</span> <span class="toc-text">過程中的浮點代碼</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-24"><span class="toc-number">1.10.4.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%AE%E9%BB%9E%E9%81%8B%E7%AE%97%E6%93%8D%E4%BD%9C"><span class="toc-number">1.10.5.</span> <span class="toc-text">浮點運算操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-25"><span class="toc-number">1.10.6.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E7%BE%A9%E5%92%8C%E4%BD%BF%E7%94%A8%E6%B5%AE%E9%BB%9E%E5%B8%B8%E6%95%B8"><span class="toc-number">1.10.7.</span> <span class="toc-text">定義和使用浮點常數</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-26"><span class="toc-number">1.10.8.</span> <span class="toc-text">練習題</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%B5%AE%E9%BB%9E%E4%BB%A3%E7%A2%BC%E4%B8%AD%E4%BD%BF%E7%94%A8%E4%BD%8D%E7%B4%9A%E6%93%8D%E4%BD%9C"><span class="toc-number">1.10.9.</span> <span class="toc-text">在浮點代碼中使用位級操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%AE%E9%BB%9E%E6%AF%94%E8%BC%83%E6%93%8D%E4%BD%9C"><span class="toc-number">1.10.10.</span> <span class="toc-text">浮點比較操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-27"><span class="toc-number">1.10.11.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

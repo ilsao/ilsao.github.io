@@ -1,0 +1,439 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>淺談內存分配器設計 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="基於 malloc lab 實現自己的內存分配器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="淺談內存分配器設計">
+<meta property="og:url" content="https://ilsao.github.io/2025/08/09/%E6%B7%BA%E8%AB%87%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E8%A8%AD%E8%A8%88/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="基於 malloc lab 實現自己的內存分配器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/MallocLab.jpg">
+<meta property="article:published_time" content="2025-08-09T08:54:47.000Z">
+<meta property="article:modified_time" content="2025-08-09T09:01:42.725Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/MallocLab.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "淺談內存分配器設計",
+  "url": "https://ilsao.github.io/2025/08/09/%E6%B7%BA%E8%AB%87%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E8%A8%AD%E8%A8%88/",
+  "image": "https://ilsao.github.io/pictures/MallocLab.jpg",
+  "datePublished": "2025-08-09T08:54:47.000Z",
+  "dateModified": "2025-08-09T09:01:42.725Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/08/09/%E6%B7%BA%E8%AB%87%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E8%A8%AD%E8%A8%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '淺談內存分配器設計',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/MallocLab.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">淺談內存分配器設計</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">淺談內存分配器設計</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-09T08:54:47.000Z" title="发表于 2025-08-09 16:54:47">2025-08-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-08-09T09:01:42.725Z" title="更新于 2025-08-09 17:01:42">2025-08-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前置知識"><a href="#前置知識" class="headerlink" title="前置知識"></a>前置知識</h1><h2 id="獨立內存空間"><a href="#獨立內存空間" class="headerlink" title="獨立內存空間"></a>獨立內存空間</h2><p>下圖展示了獨立內存空間的分佈。<strong>動態內存分配器(dynamic memory allocator)</strong> 就是一種在<strong>運行時堆(run-time heap)</strong> 上動態分配空間的工具。這裡我們特別注意一個變量<code>brk</code>，它指向堆的頂部。內存分配器就是通過增加它的值請求空間的。</p>
+<p><img src="/pictures/MallocLab/1.png" alt="1"></p>
+<p>(引用書籍Computer Systems: A Programmer’s Perspective插圖，以下簡稱CSAPP)</p>
+<h2 id="內存分配"><a href="#內存分配" class="headerlink" title="內存分配"></a>內存分配</h2><p>內存分配器分為兩種：</p>
+<ul>
+<li><strong>顯式分配器(explicit allocator)</strong>：要求顯式地釋放已分配的塊。如<code>malloc, free</code>或<code>new delete</code>。</li>
+<li><strong>隱式分配器(implicit allocator)</strong>：或稱<strong>垃圾收集器(garbage collector)</strong>，自動釋放已分配的塊(垃圾收集, garbage collection)。</li>
+</ul>
+<p>本文主要介紹顯示分配器的實現。</p>
+<p>當一塊區域的內存被分配後(指被如<code>malloc</code>之類的內存分配器分配)，稱為<strong>已分配塊(allocated block)</strong>。</p>
+<p>反之，還沒被分配的塊稱<strong>空閒塊(free block)</strong>。</p>
+<h2 id="碎片"><a href="#碎片" class="headerlink" title="碎片"></a>碎片</h2><p><strong>碎片(fragmentation)</strong>：指雖有未使用的內存，但不能滿足分配請求的現象。</p>
+<p><strong>有效載荷(payload)</strong>：指分配器分配後，用戶實際可用的部分。(不包括 chunck header 和 pedding，這些名詞等下會解釋)</p>
+<p>碎片分為兩種：</p>
+<ul>
+<li>內部碎片：已分配塊比有效載荷大時發生。比如因內存對齊要求，使得分配塊比有效載荷大。內部碎片的大小，即已分配塊大小與有效載荷差的和。</li>
+<li>外部碎片：當空閒內存合計起來足以滿足分配請求，但沒有單獨的空閒空間可以處理此請求時發生。比如，空閒塊與已分配塊交錯出現，而單個空閒塊又太小無法滿足要求。量化外部碎片比量化碎片難，因為它不只取決於先前請求模式和分配器實現方式，還取決於將來請求的模式。</li>
+</ul>
+<h1 id="內存分配器架構"><a href="#內存分配器架構" class="headerlink" title="內存分配器架構"></a>內存分配器架構</h1><p>想實現一個分配器，必須考慮以下問題：</p>
+<ul>
+<li>空閒塊組織：如何記錄空閒塊？</li>
+<li>放置：如何選擇合適的空閒塊來分配？</li>
+<li>分割：當空閒塊被分配後，如何處理該空閒塊的剩餘部分？</li>
+<li>合併：如何處理剛被釋放的塊？</li>
+</ul>
+<p>我們可以使用一種稱<strong>空閒鏈表(free list)</strong> 的數據結構解決這些問題。</p>
+<h2 id="隱式空閒鏈表"><a href="#隱式空閒鏈表" class="headerlink" title="隱式空閒鏈表"></a>隱式空閒鏈表</h2><p><img src="/pictures/MallocLab/2.png" alt="2"></p>
+<p>(引用書籍CSAPP插圖)</p>
+<p>上圖展示了一個簡易的塊結構。</p>
+<p>若我們強加一個(塊總大小)對8的對齊要求，則塊大小的最低3位必是0，所以存儲塊大小只需要29個高位。在這種情況下，低3位就可以拿來編碼其他信息(特別妙的一種想法)。此時，我們利用低3位標記此塊是否已分配。</p>
+<p>例如，我們有一個已分配的塊，大小為24(0x18)字節。則他的頭部將是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x00000018</span> | <span class="number">0x1</span> = <span class="number">0x00000019</span></span><br></pre></td></tr></table></figure>
+<p>由上述的塊結構，我們可以將堆看做連續的已分配塊和空閒塊交錯出現的序列：</p>
+<p><img src="/pictures/MallocLab/3.png" alt="3"></p>
+<p>(引用書籍CSAPP插圖)</p>
+<p>我們稱這種結構<strong>隱式空閒鏈表(implicit free list)</strong>，因為空閒塊間由頭部的塊大小字段隱式連接著。在結構的最後，我們需要一種特殊標記的結束塊，此例中是一個設置已分配位且大小為零的<strong>終止頭部(terminating header)</strong>。</p>
+<p>此結構的優點是簡單，缺點則是操作的開銷大。比如，要為新分配的塊選擇空閒塊放置。此時要對空閒鏈表進行搜索，且時間與堆中已分配塊和空閒塊總數呈線性關係。</p>
+<p>注意，系統對齊要求和分配器塊數據結構格式會限制最小塊大小，沒有任何已分配塊可以比這個最小值小。例如，上述的塊格式導致最小的塊佔8字節。4字節作為 header，4字節用來維持對齊。</p>
+<h2 id="放置已分配塊"><a href="#放置已分配塊" class="headerlink" title="放置已分配塊"></a>放置已分配塊</h2><p>當應用請求塊，分配器搜索空閒鏈表，查找足夠放置所求塊的空閒塊。分配器執行搜索的方式由<strong>放置策略(placement policy)</strong> 確定。</p>
+<p>以下是常見的策略：</p>
+<ul>
+<li><strong>首次匹配</strong>：從頭開始搜索，選擇第一個適合的空閒塊。<ul>
+<li>優點：傾向於將大空閒塊留在鏈表後面。</li>
+<li>缺點：前面留下太多小空閒塊碎片，導致搜索較大塊的時間增加。</li>
+</ul>
+</li>
+<li><strong>下一次匹配</strong>：從上一次查詢結束的地方開始搜索，選擇第一個適合的塊。</li>
+<li><strong>最佳匹配</strong>：檢查每個空閒塊，找到最適合的。</li>
+</ul>
+<h2 id="分割空閒塊"><a href="#分割空閒塊" class="headerlink" title="分割空閒塊"></a>分割空閒塊</h2><p>一旦找到合適的空閒塊，就必須做出另一個策略決定，分配這個塊中多少空間。</p>
+<ul>
+<li>若匹配佳，選擇使用整個空閒塊。缺點：造成內部碎片。</li>
+<li>若匹配不佳，分割空閒塊。</li>
+</ul>
+<h2 id="合併空閒塊"><a href="#合併空閒塊" class="headerlink" title="合併空閒塊"></a>合併空閒塊</h2><p>當分配器釋放已分配塊時，可能有其他空閒塊與新釋放的空閒塊相鄰。相鄰的空閒塊可能導致<strong>假碎片(fault fragmentation)</strong>。</p>
+<p>為了解決此問題，分配器必須合併相鄰的空閒塊，此過程稱<strong>合併(coalescing)</strong>。合併分為立即合併與<strong>推遲合併(deferred coalescing)</strong>，延遲合併會等某個分配請求失敗，才會掃描整個堆進行合併。</p>
+<h2 id="帶邊界標記的合併"><a href="#帶邊界標記的合併" class="headerlink" title="帶邊界標記的合併"></a>帶邊界標記的合併</h2><p>假設我們稱想要釋放的塊為當前塊。想要合併處於當前塊的下一個空閒塊很簡單，只要檢查下一塊的頭部，並將它的大小加到當前塊的頭部即可。</p>
+<p>但是若想合併處於當前塊之前的空閒塊，則必須整個重新遍歷一次鏈表。釋放的時間與堆的大小成線性關係。</p>
+<p>Knuth提出<strong>邊界標記(boundary tag)</strong> 的技術，允許常數時間的合併。邊界標記通過往每個塊的結尾添加一個<strong>腳部(footer，亦稱邊界標記)</strong> 實現，腳部存放的是頭部的副本。當前塊可以通過訪問腳部來判斷當前塊之前的塊是否空閒。</p>
+<p>對每個塊添加腳部貌似有點奢侈，其實，只有未分配塊才需要腳部。已分配塊只需要將已分配/空閒位存儲在當前塊的頭部低位(當前塊腳部仍保持當前塊的已分配/空閒位)，就可以被當前塊識別，從而略過合併。但是，空閒塊仍需要腳部，因為當前塊需要從腳部取得塊大小。</p>
+<h2 id="顯式空閒鏈表"><a href="#顯式空閒鏈表" class="headerlink" title="顯式空閒鏈表"></a>顯式空閒鏈表</h2><p>由於隱式空閒鏈表的塊分配與塊數量呈線性關係，所以不適合用於通用分配器。這時，<strong>顯式空閒鏈表(explicit free list)</strong> 較適用。</p>
+<p>因為空閒塊不存儲用戶數據，我們可以將指針數據放在此處。例如，組織成一個雙向鏈表。這樣可以使分配時間從總塊數的線性時間減少到總空閒塊數的線性時間。</p>
+<p>將釋放塊插入空閒鏈表有兩種策略：</p>
+<ul>
+<li>後進先出(LIFO)：將新釋放的塊放在鏈表頭部。複雜度：$O(1)$。</li>
+<li>按地址順序：將新釋放的塊放在按地址大小排序的相應位置，因為必須遍歷找到新釋放塊的<code>pred</code>和<code>succ</code>，所以複雜度較高。複雜度：$O(n)$。</li>
+</ul>
+<p>按地址排序的首次適配有較高內存利用率，這也是為何就算時間複雜度較高也有人選用的原因。</p>
+<p>顯式鏈表的缺點是，最小塊大小增加，提高內部碎片的程度。</p>
+<p><img src="/pictures/MallocLab/4.png" alt="4"></p>
+<p>(引用書籍CSAPP插圖)</p>
+<h2 id="分離的空閒鏈表"><a href="#分離的空閒鏈表" class="headerlink" title="分離的空閒鏈表"></a>分離的空閒鏈表</h2><p><strong>分離的空閒鏈表(segregated free list)</strong> 的核心想法是，把不同大小的塊分開管理，每種大小一條鏈表。我們稱這些大小為等價類或<strong>大小類(size class)</strong>。</p>
+<ol>
+<li>簡單的分離存儲<br> 每個大小類的空閒鏈表都是大小相等的塊，每個塊的大小都是該大小類中最大元素的值。比如大小類定義為${ 17\sim 32 }$則每個塊大小都為32。</li>
+<li>分離適配<br> 對於不同大小類，分配器維護很多鏈表與之關聯。鏈表中，每個塊的大小都在相應大小類區間中。所以想要操作塊時，只要簡單的向對應鏈表搜索即可。</li>
+</ol>
+<h1 id="內存分配器實現"><a href="#內存分配器實現" class="headerlink" title="內存分配器實現"></a>內存分配器實現</h1><p>這裡我們選用CSAPP提供的 malloc lab 來實現一個簡化的內存分配器。</p>
+<p>可以從<a target="_blank" rel="noopener" href="https://csapp.cs.cmu.edu/3e/malloclab-handout.tar">這裡</a>下載 malloc lab 的壓縮文件，從<a target="_blank" rel="noopener" href="http://csapp.cs.cmu.edu/3e/malloclab.pdf">這裡</a>取得官方操作說明。</p>
+<p>閱讀以下內容前，請確保你已經下載並閱讀過官方操作說明。</p>
+<h2 id="選用架構"><a href="#選用架構" class="headerlink" title="選用架構"></a>選用架構</h2><p>空閒鏈表：segregated free list。</p>
+<p>大小類：共32條空閒鏈表，以2的冪做劃分，剛好可以覆蓋<code>unsigned int</code>的範圍。</p>
+<p>未分配塊搜尋策略：最佳匹配。</p>
+<p>空閒鏈表插入策略：LIFO。</p>
+<h2 id="常用宏實現"><a href="#常用宏實現" class="headerlink" title="常用宏實現"></a>常用宏實現</h2><p>我定義了一些宏，專門用來執行指針運算。以免後續代碼中全是這種噁心的指針運算。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* basic constants */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WSIZE 4</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DSIZE 8</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLASS_SIZE 32</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX(x, y)           ((x) &gt; (y) ? (x) : (y))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* pack a size and allocated bit into a word */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PACK(size, alloc)   ((size) | (alloc))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*read and write a word in p */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GET(p)          (*(unsigned int *) (p))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PUT(p, val)     (*(unsigned int *) (p) = (val))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* read the size and allocated bields from address p (that point to a block header) */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GETSIZE(p)  (GET(p) &amp; (~0x7))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GETALLOC(p) (GET(p) &amp; 0x1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* given block ptr bp, compute address of its header and footer */</span></span><br><span class="line"><span class="comment">/* we have to convert bp to (char *), this ensure pointer arithematic to btye level */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HDRP(bp) ((char *) (bp) - WSIZE)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FTRP(bp) ((char *) (bp) + GETSIZE(HDRP(bp)) - 2 * WSIZE)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* find next and previous block in the heap */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PREV_BLKP(bp) ((char *) (bp) - GETSIZE(HDRP(bp) - WSIZE))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NEXT_BLKP(bp) ((char *) (bp) + GETSIZE(HDRP(bp)))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* for each given index, return free_list[i] */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GETLIST(n) (*((void **) ((char *) (heap_listp + (n) * WSIZE))))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* find next and previous blocks in the segregated free list */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LIST_PREVP(bp) (*((void **) (bp)))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LIST_NEXTP(bp) (*((void **) ((char *) (bp) + WSIZE)))</span></span><br></pre></td></tr></table></figure>
+<h2 id="函數定義"><a href="#函數定義" class="headerlink" title="函數定義"></a>函數定義</h2><p><code>mm_init()</code>：這個函數實現分配器的初始化。</p>
+<p><code>mm_malloc()</code>：實現類似<code>malloc</code>功能。</p>
+<p><code>mm_free()</code>：實現類似<code>free</code>功能。</p>
+<p><code>mm_realloc()</code>：實現類似<code>realloc</code>功能(因為這個函數是我最後寫的，前面debug找的非常煩躁，寫的比較醜陋請見諒)。</p>
+<p><code>find_class()</code>：傳入空閒塊指針，返回對應大小類。</p>
+<p><code>insert_list()</code>：將空閒塊插入到對應空閒鏈表中。</p>
+<p><code>remove_list()</code>：將空閒塊從空閒鏈表中刪除(表示馬上要被分配了)。</p>
+<p><code>coalesce()</code>：檢查當前塊的前一塊與後一塊，若也是空閒塊則合併。</p>
+<p><code>extend_heap()</code>：設置<code>brk</code>，使堆增長。</p>
+<p><code>find_fit()</code>：在鏈表中尋找合適大小的空閒塊。</p>
+<p><code>place()</code>：修改空閒塊數據，使其成為已分配塊，並依大小決定是否分割。</p>
+<h2 id="代碼實現"><a href="#代碼實現" class="headerlink" title="代碼實現"></a>代碼實現</h2><p>代碼有一點點長，億點點醜陋，億點點臃腫… </p>
+<p>所以我把它放在了github上面，需要可以取用(包含CSAPP其他lab的實現)：<a target="_blank" rel="noopener" href="https://github.com/ilsao/CSAPP-lab-solutions/blob/main/malloc%20lab/mm.c">https://github.com/ilsao/CSAPP-lab-solutions/blob/main/malloc%20lab/mm.c</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/08/09/%E6%B7%BA%E8%AB%87%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E8%A8%AD%E8%A8%88/">https://ilsao.github.io/2025/08/09/%E6%B7%BA%E8%AB%87%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E8%A8%AD%E8%A8%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/MallocLab.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a><a class="pagination-related" href="/2025/08/06/CSAPP-U9-%E7%AD%86%E8%A8%98%E8%88%87%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/" title="CSAPP U9 筆記與練習題解答"><img class="cover" src="/pictures/CSAPP_U9.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP U9 筆記與練習題解答</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第九章筆記</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AD%98"><span class="toc-number">1.</span> <span class="toc-text">前置知識</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8D%A8%E7%AB%8B%E5%85%A7%E5%AD%98%E7%A9%BA%E9%96%93"><span class="toc-number">1.1.</span> <span class="toc-text">獨立內存空間</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-number">1.2.</span> <span class="toc-text">內存分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A2%8E%E7%89%87"><span class="toc-number">1.3.</span> <span class="toc-text">碎片</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E6%9E%B6%E6%A7%8B"><span class="toc-number">2.</span> <span class="toc-text">內存分配器架構</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%B1%E5%BC%8F%E7%A9%BA%E9%96%92%E9%8F%88%E8%A1%A8"><span class="toc-number">2.1.</span> <span class="toc-text">隱式空閒鏈表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BE%E7%BD%AE%E5%B7%B2%E5%88%86%E9%85%8D%E5%A1%8A"><span class="toc-number">2.2.</span> <span class="toc-text">放置已分配塊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%89%B2%E7%A9%BA%E9%96%92%E5%A1%8A"><span class="toc-number">2.3.</span> <span class="toc-text">分割空閒塊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E4%BD%B5%E7%A9%BA%E9%96%92%E5%A1%8A"><span class="toc-number">2.4.</span> <span class="toc-text">合併空閒塊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B6%E9%82%8A%E7%95%8C%E6%A8%99%E8%A8%98%E7%9A%84%E5%90%88%E4%BD%B5"><span class="toc-number">2.5.</span> <span class="toc-text">帶邊界標記的合併</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%AF%E5%BC%8F%E7%A9%BA%E9%96%92%E9%8F%88%E8%A1%A8"><span class="toc-number">2.6.</span> <span class="toc-text">顯式空閒鏈表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E9%9B%A2%E7%9A%84%E7%A9%BA%E9%96%92%E9%8F%88%E8%A1%A8"><span class="toc-number">2.7.</span> <span class="toc-text">分離的空閒鏈表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A7%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E5%AF%A6%E7%8F%BE"><span class="toc-number">3.</span> <span class="toc-text">內存分配器實現</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%B8%E7%94%A8%E6%9E%B6%E6%A7%8B"><span class="toc-number">3.1.</span> <span class="toc-text">選用架構</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%AE%8F%E5%AF%A6%E7%8F%BE"><span class="toc-number">3.2.</span> <span class="toc-text">常用宏實現</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B8%E5%AE%9A%E7%BE%A9"><span class="toc-number">3.3.</span> <span class="toc-text">函數定義</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A2%BC%E5%AF%A6%E7%8F%BE"><span class="toc-number">3.4.</span> <span class="toc-text">代碼實現</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

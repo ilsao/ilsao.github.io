@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CSAPP Bomb Lab 題解 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="深入理解計算機系統官方Lab題解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP Bomb Lab 題解">
+<meta property="og:url" content="https://ilsao.github.io/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="深入理解計算機系統官方Lab題解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/BombLab.png">
+<meta property="article:published_time" content="2025-05-10T12:51:15.000Z">
+<meta property="article:modified_time" content="2025-05-10T13:05:17.602Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/BombLab.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CSAPP Bomb Lab 題解",
+  "url": "https://ilsao.github.io/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/",
+  "image": "https://ilsao.github.io/pictures/BombLab.png",
+  "datePublished": "2025-05-10T12:51:15.000Z",
+  "dateModified": "2025-05-10T13:05:17.602Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CSAPP Bomb Lab 題解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/BombLab.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">CSAPP Bomb Lab 題解</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CSAPP Bomb Lab 題解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-10T12:51:15.000Z" title="发表于 2025-05-10 20:51:15">2025-05-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-10T13:05:17.602Z" title="更新于 2025-05-10 21:05:17">2025-05-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>閱讀本文需要擁有《深入理解計算機系統》第三章前置知識。本文不會對基礎指令做過多說明，但會說明部分較難知識。筆者學識稍淺，若有疏漏或錯誤處，歡迎各位大佬指正。</p>
+<h1 id="安裝Lab"><a href="#安裝Lab" class="headerlink" title="安裝Lab"></a>安裝Lab</h1><p>切換到想安裝Lab的目錄後，使用wget下載Lab。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget csapp.cs.cmu.edu/3e/bomb.tar</span><br></pre></td></tr></table></figure>
+<p>解壓Lab。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xvf bomb.tar</span><br></pre></td></tr></table></figure>
+<h1 id="前置GDB知識"><a href="#前置GDB知識" class="headerlink" title="前置GDB知識"></a>前置GDB知識</h1><h2 id="運行"><a href="#運行" class="headerlink" title="運行"></a>運行</h2><p><code>gdb &lt;filename&gt;</code>使用gdb調試文件</p>
+<p><code>r</code>運行程序，遇到斷點則停止</p>
+<p><code>c</code>繼續運行，直到遇到下一個斷點或程序結束</p>
+<p><code>si</code>單步步入(遇到函數則進入)</p>
+<p><code>ni</code>單步步過(遇到函數則直接執行完函數，不進入)</p>
+<p><code>until</code>運行到循環結束</p>
+<p><code>until &lt;line&gt;</code>運行到行號處</p>
+<h2 id="斷點"><a href="#斷點" class="headerlink" title="斷點"></a>斷點</h2><p><code>b &lt;line&gt;</code>在第n行設置斷點</p>
+<p><code>b &lt;function name&gt;</code>在某個函數入口設置斷點</p>
+<p><code>b *(&lt;address&gt;)</code>在地址處設置斷點</p>
+<p><code>info b</code>顯示當前設置的斷點</p>
+<p><code>delete &lt;breakpoint n&gt;</code>刪除第n個斷點</p>
+<p><code>delete breakpoints</code>刪除所有斷點</p>
+<p><code>disable &lt;breakpoint n&gt;</code>暫停第n個斷點</p>
+<p><code>enable &lt;breakpoint n&gt;</code>開啟第n個斷點</p>
+<h2 id="窗口"><a href="#窗口" class="headerlink" title="窗口"></a>窗口</h2><p><code>layout regs</code>顯示寄存器與反彙編窗口</p>
+<p><code>layout asm</code>顯示反彙編窗口</p>
+<h2 id="顯示內容"><a href="#顯示內容" class="headerlink" title="顯示內容"></a>顯示內容</h2><p><code>x/&lt;count&gt;&lt;format&gt; &lt;address/registers&gt;</code>打印內存值。從所給地址處開始，以format格式顯示count個值。<br>    <code>d</code>: 十進制<br>    <code>x</code>: 十六進制<br>    <code>t</code>: 二進制<br>    <code>f</code>: 浮點數<br>    <code>i</code>: 指令<br>    <code>c</code>: 字符<br>    <code>s</code>: 字符串</p>
+<p>example:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x/s <span class="variable">$rax</span></span><br><span class="line">x/100c 0x401000</span><br></pre></td></tr></table></figure></p>
+<p><code>Ctrl + L</code>清屏</p>
+<h1 id="Phase-1"><a href="#Phase-1" class="headerlink" title="Phase_1"></a>Phase_1</h1><p>首先使用objdump將反彙編代碼儲存，以方便覽閱。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d bomb &gt; bomb.asm</span><br></pre></td></tr></table></figure>
+<p>然後使用gdb打開程序，並給Phase_1打上斷點。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gdb bomb</span><br><span class="line">b phase_1</span><br></pre></td></tr></table></figure>
+<p>運行程序<code>r</code>，隨機輸入一些字符串後發現程序運行到斷點處。</p>
+<p><img src="/pictures/BombLab/1.png" alt=""></p>
+<p>顯示寄存器與反彙編窗口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">layout regs</span><br></pre></td></tr></table></figure>
+<p>觀察顯示的反彙編代碼。</p>
+<p><img src="/pictures/BombLab/2.png" alt=""></p>
+<p>發現在地址<code>0x400ee9</code>處調用了函數<code>strings_not_equal</code>，然後在<code>0x400eee</code>處測試返回值(<code>%eax</code>)使否等於0，如果等於0則跳轉到<code>0x400ef7</code>(<code>je</code>指令，即jump equal)，否則調用<code>0x400ef2</code>處的<code>explode_bomb</code>。</p>
+<p>複習CSAPP第三章內容，得知函數調用時數據傳輸的順序(第1個參數~第6個參數使用寄存器，如參數大於6個則使用棧傳遞)。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作數大小(位)</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>64</td>
+<td>%rdi</td>
+<td>%rsi</td>
+<td>%rdx</td>
+<td>%rcx</td>
+<td>%r8</td>
+<td>%r9</td>
+</tr>
+<tr>
+<td>32</td>
+<td>%edi</td>
+<td>%esi</td>
+<td>%edx</td>
+<td>%ecx</td>
+<td>%r8d</td>
+<td>%r9d</td>
+</tr>
+<tr>
+<td>16</td>
+<td>%di</td>
+<td>%si</td>
+<td>%dx</td>
+<td>%cx</td>
+<td>%r8w</td>
+<td>%r9w</td>
+</tr>
+<tr>
+<td>8</td>
+<td>%dil</td>
+<td>%sil</td>
+<td>%dl</td>
+<td>%cl</td>
+<td>%r8b</td>
+<td>%r9b</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>由以上推斷我們可以猜測<code>string_not_equal</code>的兩個參數就是我們的輸入與標準答案。運行到<code>0x400ee9</code>後，我們查看<code>%rdi</code>與<code>%rsi</code>的值觀察看看。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x/s <span class="variable">$rdi</span></span><br><span class="line">x/s <span class="variable">$rsi</span></span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/BombLab/3.png" alt=""></p>
+<p>得到答案</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Border relations with Canada have never been better.</span><br></pre></td></tr></table></figure>
+<h1 id="Phase-2"><a href="#Phase-2" class="headerlink" title="Phase_2"></a>Phase_2</h1><p>在<code>phase_2</code>處打斷點，隨機輸入幾個數字(我選擇1 2 4 8 16 32)，觀察其代碼。</p>
+<p><img src="/pictures/BombLab/4.png" alt=""></p>
+<p>發現有名為<code>read_six_numbers</code>的函數，跟進查看代碼。</p>
+<p><img src="/pictures/BombLab/5.png" alt=""></p>
+<p>發現有一個函數<code>sscanf</code>，查詢後發現<code>sscanf</code>函數是用來從指定字符串中按格式提取數據。</p>
+<p>其原型為：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sscanf</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *str, <span class="type">const</span> <span class="type">char</span> *format, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>參數解釋：</p>
+<ul>
+<li>str：待解析的字符串</li>
+<li>format：格式化字符串</li>
+<li>…：可變參數列表，用來接收解析後的數據 (須為變量地址)</li>
+</ul>
+<p>我們可以猜測<code>sscanf</code>就是用來提取用戶輸入。通過phase_1中展示的數據傳輸順序，查看<code>%rdi</code>與<code>%rsi</code>。</p>
+<p><img src="/pictures/BombLab/6.png" alt=""></p>
+<p>可以發現我們的猜測是正確的，故調用<code>sscanf</code>的參數應該是：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sscanf</span>(<span class="string">&quot;&lt;user input&gt;&quot;</span>, <span class="string">&quot;%d %d %d %d %d %d&quot;</span>, &amp;rdx, &amp;rcx, &amp;r8, &amp;r9, &amp;rsp, &amp;(rsp<span class="number">+8</span>))</span><br></pre></td></tr></table></figure>
+<p>通過閱讀<code>read_six_numbers</code>函數的代碼可以發現各參數存放的地址：</p>
+<p><img src="/pictures/BombLab/7.png" alt=""></p>
+<p>步過這個函數，繼續觀察<code>phase_2</code>的代碼。</p>
+<p><img src="/pictures/BombLab/8.png" alt=""></p>
+<p>首先<code>0x400f0a</code>檢查<code>(%rsp)</code>是否為<code>0x1</code>，如果不等則直接爆炸。由<code>0x400f02</code>處的代碼可知<code>%rsp = %rsi</code>，且在函數<code>read_six_numbers</code>中<code>%rsi = %rdx</code>，所以<code>(%rsp)</code>中的值就是用戶輸入的第一個數字(即檢查用戶輸入的第一個數字是否等於1)。</p>
+<p>如果通過該檢查，則跳轉到<code>0x400f30</code>處，初始化<code>%rbx</code>與<code>%rbp</code>。通過觀察，可以發現<code>0x400f17</code>~<code>0x400f2c</code>是一個for循環。</p>
+<p><img src="/pictures/BombLab/9.png" alt=""></p>
+<p>仔細觀察循環，發現<code>%eax</code>讀取<code>-0x4(%rbx)</code>中的值。因為<code>int</code>類型占4字節，所以若<code>%rbx</code>指向用戶輸入的第<code>i</code>個數，<code>M[%rbx - 0x4]</code>會讀取用戶輸入的第<code>i - 1</code>個數。同時，因為執行<code>add</code>指令比執行<code>mul</code>指令速度快，所以程序使用<code>add</code>指令優化<code>%eax *= 2</code>。</p>
+<p>最後兩條指令比對<code>%eax</code>與<code>(%rbx)</code>的值，若是不相等則爆炸。由此我們可以構造出一個長度為6的數組，首項為1，其後每一項都是前一項的兩倍。</p>
+<p>得到答案：1 2 4 8 16 32。</p>
+<h1 id="Phase-3"><a href="#Phase-3" class="headerlink" title="Phase_3"></a>Phase_3</h1><p>在phase_3處打斷點，輸入<code>1 2</code>，觀察該處代碼。</p>
+<p><img src="/pictures/BombLab/10.png" alt=""></p>
+<p>發現了熟悉的<code>sscanf</code>函數，如我們做phase_2時一樣，查看<code>sscanf</code>的幾個參數。</p>
+<p><img src="/pictures/BombLab/11.png" alt=""></p>
+<p>透過觀察<code>0x400f47</code>與<code>0x400f4c</code>處的<code>lea</code>指令發現將用戶輸入讀入<code>%rsp+0x8</code>與<code>%rsp+0xc</code>處。為更好理解，我們假設<code>%rsp+0x8</code>與<code>%rsp+0xc</code>為一個數組<code>userinput[2]</code>，<code>%rsp+0x8</code>為<code>userinput[0]</code>，<code>%rsp+0xc</code>為<code>userinput[1]</code>。</p>
+<p><img src="/pictures/BombLab/12.png" alt=""></p>
+<p><code>0x400f60</code>~<code>0x400f65</code>處的代碼檢查輸入長度，通過查看<code>sscanf</code>函數參數我們知道輸入應該為兩位。<code>0x400f6a</code>處的代碼檢查<code>userinput[0]</code>，若大於7則爆炸。然後<code>0x400f71</code>處的指令將<code>%eax</code>賦值<code>userinput[0]</code>。</p>
+<p><img src="/pictures/BombLab/13.png" alt=""></p>
+<p>特別注意<code>0x400f75</code>處的代碼，發現其為<code>switch</code>指令的跳轉表，跳轉的公式即：<code>&lt;基地址&gt; + &lt;寄存器值&gt; * &lt;表項類型大小&gt;</code>。查看<code>0x402470</code>中的值，即跳轉表的基地址。由<code>0x400f6a</code>處的判斷可以推測該跳轉表大小應為7項，因為跳轉表儲存的值佔8字節，所以跳轉表所佔的字節大小為$7 \times 8 = 56$字節。</p>
+<p><img src="/pictures/BombLab/14.png" alt=""></p>
+<p>因為該機器為小端序，所以地址是倒序的，恢復後地址如下。</p>
+<p><img src="/pictures/BombLab/15.png" alt=""></p>
+<p>觀察phase_3剩餘代碼，在跳轉表跳轉到的地址處，我標註了跳轉過來對應的<code>userinput[0]</code>值。我們可以看到在每個跳轉後代碼都會給<code>%eax</code>賦予一個特定的值。</p>
+<p><img src="/pictures/BombLab/16.png" alt=""></p>
+<p>觀察<code>0x400fbe</code>處的代碼，是一個判斷語句。若賦予<code>%eax</code>的特定值等於<code>userinput[1]</code>則成功，所以此題不僅一個解。其中一個解為<code>1 311(0x137)</code>。</p>
+<h1 id="Phase-4"><a href="#Phase-4" class="headerlink" title="Phase_4"></a>Phase_4</h1><p>依照慣例，在phase_4處打斷點，隨便輸入幾個數字，開始閱讀反彙編代碼。</p>
+<p><img src="/pictures/BombLab/17.png" alt=""></p>
+<p>注意觀察<code>0x40103a</code>~<code>0x401048</code>處的代碼，調用了<code>func4</code>函數。我們可以看到<code>0x40104d</code>要求<code>func4</code>的返回值要等於0才可正確解彈，我們還可以發現<code>0x401051</code>處要求用戶輸入的第二個數字等於0才可正確解彈。</p>
+<p>查看<code>func4</code>的反彙編代碼。</p>
+<p><img src="/pictures/BombLab/18.png" alt=""></p>
+<p>直接閱讀彙編碼並不好理解這段代碼的運行規則，我們人肉把這段代碼轉換成C++代碼，試試這樣可讀性會不會提高。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// func4(userinput[0], 0, 14);</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">func4</span><span class="params">(<span class="type">int</span> input, <span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> tmp1, tmp2;</span><br><span class="line">    tmp1 = b - a;</span><br><span class="line">    tmp2 = tmp1 &gt;&gt; <span class="number">31</span>;  <span class="comment">// Get sign</span></span><br><span class="line">    tmp1 += tmp2;       <span class="comment">// Add sign</span></span><br><span class="line">    tmp1 /= <span class="number">2</span>;</span><br><span class="line">    tmp2 = tmp1 + a;</span><br><span class="line">    <span class="keyword">if</span> (tmp2 &lt; input) &#123;</span><br><span class="line">        <span class="built_in">func4</span>(input, tmp2 + <span class="number">1</span>, b);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (tmp2 == input) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">func4</span>(input, a, tmp2 - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> tmp1 * <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這樣閱讀起來方便多了。還記得我們的目標是使<code>func4</code>返回0，最簡單的方式是使<code>tmp2 == input</code>。通過初始傳入的參數計算<code>tmp2</code>的值，我們可以得到<code>tmp2</code>等於7。</p>
+<p>得到答案：<code>7 0</code>(不僅一組解)。</p>
+<h1 id="Phase-5"><a href="#Phase-5" class="headerlink" title="Phase_5"></a>Phase_5</h1><p>對phase_5打斷點，隨便輸入幾個數字，開始我們的分析。</p>
+<p><img src="/pictures/BombLab/19.png" alt=""></p>
+<p>讀者可能會疑惑<code>0x40106a</code>處的<code>mov %fs:0x28, %rax</code>是甚麼？複習一下CSAPP第三章可以發現，這個位置存放著程序的金絲雀值(canary)，用來檢測棧溢出。</p>
+<p><img src="/pictures/BombLab/20.png" alt=""></p>
+<p>在代碼的末尾我們可以看到程序再次取出棧中之前儲存的金絲雀值，通過<code>xor</code>比對是否與真正的金絲雀值相等，如果不相等則代表發生棧溢出。</p>
+<p><code>0x40107a</code>~<code>0x40107f</code>與<code>0x4010d2</code>~<code>0x4010d7</code>處代碼檢測輸入長度是否為6，並置零<code>%rax</code>的值。</p>
+<p>接下來是重中之重，分析代碼中的循環，即<code>0x40108b</code>~<code>0x4010a8</code>處的代碼。</p>
+<p><img src="/pictures/BombLab/21.png" alt=""></p>
+<p>通過彙編代碼很難看懂代碼邏輯，我們同樣將其轉成C++觀察。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">EncryptLoop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">char</span>* tmp;      <span class="comment">// %rdx</span></span><br><span class="line">    <span class="type">char</span> msg[<span class="number">6</span>];    <span class="comment">// %rsp</span></span><br><span class="line">    <span class="type">char</span> userinput[<span class="number">6</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">        *tmp = userinput[i] &amp; <span class="number">0xf</span>; <span class="comment">// 1111</span></span><br><span class="line">        tmp = (<span class="type">char</span>*)(<span class="number">0x4024b0</span> + (<span class="type">int</span>)tmp);</span><br><span class="line">        msg[i<span class="number">+0x10</span>] = *tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我們發現在<code>0x401096</code>處的<code>and</code>指令，只取<code>%rdx</code>的最低一位。<code>0x401099</code>處的代碼中發現一個內存地址<code>0x4024b0</code>，查看其中內容。</p>
+<p><img src="/pictures/BombLab/22.png" alt=""></p>
+<p>我們用不到那麼長的內容，只取前面第一串內容即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tmp = (<span class="type">char</span>*)(<span class="number">0x4024b0</span> + (<span class="type">int</span>)tmp);</span><br><span class="line">msg[i<span class="number">+0x10</span>] = *tmp;</span><br></pre></td></tr></table></figure>
+<p>對於這兩段代碼，作用是將從<code>0x4024b0</code>開始的第<code>(int)tmp</code>個字符放入<code>msg[i+0x10]</code>(<code>M[%rsp+0x10]</code>)中，作為後續字符串對比的輸入。</p>
+<p><img src="/pictures/BombLab/23.png" alt=""></p>
+<p>觀察<code>0x4010ae</code>~<code>0x4010bd</code>處代碼，我們可以發現<code>strings_not_equal</code>調用的兩個參數分別是處理後的用戶輸入<code>M[%rsp+0x10]</code>與硬性寫入的內存地址<code>0x40245e</code>。查看<code>0x40245e</code>存放的內容。</p>
+<p><img src="/pictures/BombLab/24.png" alt=""></p>
+<p>對比<code>0x4024b0</code>處的字符串，我們需要計算如何使用<code>&quot;maduiersnfotvbylSo&quot;</code>湊出<code>&quot;flyers&quot;</code>。通過計算我們很容易可以得出每個字浮需要的偏移為<code>&quot;0x9 0xf 0xe 0x5 0x6 0x7&quot;</code>。(即：<code>0x4024b0 + 0x9</code>為<code>&#39;f&#39;</code>，<code>0x4024b0 + 0xf</code>為<code>&#39;l&#39;</code>…其餘類推)</p>
+<p>現在我們需要思考甚麼輸入可以造成<code>%rdx</code>依序為<code>&quot;0x9 0xf 0xe 0x5 0x6 0x7&quot;</code>。我們需要<code>&lt;輸入&gt; &amp; 0xf</code>後，可以得到所需的偏移，查詢<a target="_blank" rel="noopener" href="https://c.biancheng.net/c/ascii/">ASCII碼對照表</a>後，我們可以找到其中一組解：<code>9/.567</code>(十六進制為：<code>39 2f 2e 35 36 37</code>)。</p>
+<h1 id="Phase-6"><a href="#Phase-6" class="headerlink" title="Phase_6"></a>Phase_6</h1><p>這題有點難度，讀者們可以先去休息下，精神充沛後我們繼續解phase_6。</p>
+<p>我們可以看到phase_6中又出現了熟悉的<code>read_six_numbers</code>函數。打上斷點，隨便輸入六個數字，我們開始分析。</p>
+<p><img src="/pictures/BombLab/25.png" alt=""></p>
+<p>觀察代碼，我們可以看到<code>0x40110e</code>~<code>0x401151</code>是一個以<code>%r12d</code>為計數器的大循環(<code>Check 1 Loop</code>)。在這個大循環裡面，還套嵌著另一層循環<code>0x401135</code>~<code>0x401148</code>(<code>Loop 1</code>)。</p>
+<p><code>Loop 1</code>的作用是利用循環檢測<code>userinput[i]</code>之後的所有數字是否有任何一個數字與<code>userinput[i]</code>相等。<code>Check 1 Loop</code>的作用在遞增<code>i</code>，確保整個數組中的數字都不相等且皆不大於6。相等於以下代碼：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> j = i<span class="number">+1</span>; j &lt; <span class="number">6</span>; j++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (userinput[i] == userinput[j])</span><br><span class="line">			<span class="built_in">explode_bomb</span>();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/BombLab/26.png" alt=""></p>
+<p><code>0x401153</code>~<code>0x40116d</code>處代碼遍歷<code>userinput</code>，將每一項修改為<code>0x7 - userinput[i]</code>。相當於以下代碼：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">	userinput[i] = <span class="number">0x7</span> - userinput[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/BombLab/27.png" alt=""></p>
+<p>在<code>0x401183</code>處我們發現一個內存地址<code>0x6032d0</code>，通過gdb我們查看一下該內存地址內儲存的值。</p>
+<p><img src="/pictures/BombLab/28.png" alt=""></p>
+<p>通過名字與內存中的值，我們可以猜測這是一個鏈表的頭節點。鏈表的定義如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">	<span class="type">int</span> val;</span><br><span class="line">	<span class="type">int</span> key;        <span class="comment">// 說明該節點為node幾</span></span><br><span class="line">	Node *next;     <span class="comment">// 佔8字節，指向下一個鏈表節點的地址</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>首先看一進入此部分就跳轉到的地址<code>0x401197</code>處的代碼：首次執行時如果修改後的<code>userinput[0]</code>等於<code>0x1</code>則將<code>M[%rsp+0x20]</code>處寫入<code>0x6032d0</code>(即Node 1的內存地址)，否則則跳轉到<code>Loop 4</code>執行循環。觀察<code>Loop 4</code>的循環，我們可以發現這一段代碼就是讀取第<code>%ecx</code>個鏈表節點。<code>Loop 3</code>則將讀取的節點存入<code>M[%rsp + %rsi*2 + 0x20]</code>中。</p>
+<p>我們可以將其轉換成等價的C++代碼觀察。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 令%rsp+0x20 ~ %rsp+0x48為指向鏈表的指針，即：Node **NodeList[6]</span></span><br><span class="line"><span class="comment">// 令原本的鏈表按數字排序(即Node1後接Node2...依此類推)</span></span><br><span class="line"><span class="comment">// 此處的userinput為處理過的(0x7 - userinput[i])的數組</span></span><br><span class="line">Node *head;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">	head = <span class="number">0x6032d0</span>;    <span class="comment">// Node類型為指針，所以可以直接將第一個節點的內存地址賦予它</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; userinput[i]; j++) &#123;</span><br><span class="line">		head = head-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	*NodeList[i] = head;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/BombLab/29.png" alt=""></p>
+<p>這一段代碼稍微較好了解，比較容易困惑的點在<code>0x4011b5</code>處的<code>%rsp + 0x50</code>。讀者可能會想這個值好像不在我們的鏈表範圍內，但是仔細閱讀代碼後可以發現<code>0x4011c4</code>與<code>0x4011c8</code>處的代碼使用的是<code>%rax(計數器) + 0x8</code>的值與<code>%rsp + 0x50</code>比對，所以循環真正運行的範圍在<code>%rsp + 0x20</code>~ <code>%rsp + 0x48</code>的40個字節。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Node *head = *NodeList[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">	Node *next = *NodeList[i];</span><br><span class="line">	head -&gt; next = next;</span><br><span class="line">	head = head -&gt; next;</span><br><span class="line">&#125;</span><br><span class="line">head -&gt; next = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/BombLab/30.png" alt=""></p>
+<p><code>Loop 6</code>的功能是取得每個節點的值，並檢驗鏈表是否依節點的值由大排到小。與以下C++代碼功能相等</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Node *head = <span class="number">0x6032d0</span>;</span><br><span class="line">Node *next = head -&gt; next;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">	<span class="keyword">if</span> (head -&gt; val &lt; next -&gt; val) &#123;</span><br><span class="line">		<span class="built_in">explode_bomb</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	head = head -&gt; next;</span><br><span class="line">	next = next -&gt; next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>綜合以上分析，可以得知我們需要讓鏈表依據節點的值由大排到小，首先查看各節點的值。</p>
+<p><img src="/pictures/BombLab/31.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Node1-&gt;val: 0x14c = 332</span><br><span class="line"></span><br><span class="line">Node2-&gt;val: 0xa8 = 168</span><br><span class="line"></span><br><span class="line">Node3-&gt;val: 0x39c = 924</span><br><span class="line"></span><br><span class="line">Node4-&gt;val: 0x2b3 = 691</span><br><span class="line"></span><br><span class="line">Node5-&gt;val: 0x1dd = 477</span><br><span class="line"></span><br><span class="line">Node6-&gt;val: 0x1bb = 443</span><br></pre></td></tr></table></figure>
+<p>所以我們可以得知，被程序修改過的<code>userinput(0x7 - userinput[i])</code>應該為<code>3 4 5 6 1 2</code>。反推原始值我們可以得到答案：<code>4 3 2 1 6 5</code>。</p>
+<p>以上，phase_1到phase_6全部被我們解開。</p>
+<p><img src="/pictures/BombLab/32.png" alt=""></p>
+<p><img src="/pictures/BombLab/33.png" alt=""></p>
+<p>Lab在最後還留有一個secret_phase，在此就留作讀者讀完本文的課後練習。筆者寫完這篇題解準備溜去早點休息，為讀者們寫下一個Attack Lab題解做準備與學習。</p>
+<h1 id="後記"><a href="#後記" class="headerlink" title="後記"></a>後記</h1><p>筆者仍是一位正在學習的菜鳥，正利用高中畢業後與上大學前的空閒時間增強學習稍微底層一點的東西。這段時間也會是筆者發文的高發期，不知道進入大學後還有沒有這麼多時間進行創作或自由時間學習。若發現本文某些地方代碼錯誤或分析邏輯錯誤，歡迎各位大佬指正，筆者會虛心學習。日後可能會發一些CSAPP相關Lab的題解、密碼學、逆向工程相關的筆記或者教學創作，雖然筆者學識尚淺，但是仍希望可以將這些知識傳遞給擁有相同困惑或相同興趣的網友們。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/">https://ilsao.github.io/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/BombLab.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/04/CSAPP-U3-%E7%AD%86%E8%A8%98%E8%88%87%E9%83%A8%E5%88%86%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/" title="CSAPP U3 筆記與(部分)練習題解答"><img class="cover" src="/pictures/CSAPP_U3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP U3 筆記與(部分)練習題解答</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第三章筆記</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a><a class="pagination-related" href="/2025/08/01/CSAPP-Shell-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Shell Lab 題解"><img class="cover" src="/pictures/ShellLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-01</div><div class="info-item-2">CSAPP Shell Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Shell Lab題解</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%9DLab"><span class="toc-number">2.</span> <span class="toc-text">安裝Lab</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AEGDB%E7%9F%A5%E8%AD%98"><span class="toc-number">3.</span> <span class="toc-text">前置GDB知識</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%8B%E8%A1%8C"><span class="toc-number">3.1.</span> <span class="toc-text">運行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B7%E9%BB%9E"><span class="toc-number">3.2.</span> <span class="toc-text">斷點</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AA%97%E5%8F%A3"><span class="toc-number">3.3.</span> <span class="toc-text">窗口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%AF%E7%A4%BA%E5%85%A7%E5%AE%B9"><span class="toc-number">3.4.</span> <span class="toc-text">顯示內容</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-1"><span class="toc-number">4.</span> <span class="toc-text">Phase_1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-2"><span class="toc-number">5.</span> <span class="toc-text">Phase_2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-3"><span class="toc-number">6.</span> <span class="toc-text">Phase_3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-4"><span class="toc-number">7.</span> <span class="toc-text">Phase_4</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-5"><span class="toc-number">8.</span> <span class="toc-text">Phase_5</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-6"><span class="toc-number">9.</span> <span class="toc-text">Phase_6</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%8C%E8%A8%98"><span class="toc-number">10.</span> <span class="toc-text">後記</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

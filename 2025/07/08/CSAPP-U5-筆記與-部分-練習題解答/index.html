@@ -1,0 +1,503 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CSAPP U5 筆記與(部分)練習題解答 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="深入理解計算機系統第五章筆記">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP U5 筆記與(部分)練習題解答">
+<meta property="og:url" content="https://ilsao.github.io/2025/07/08/CSAPP-U5-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="深入理解計算機系統第五章筆記">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/CSAPP_U5.jpg">
+<meta property="article:published_time" content="2025-07-08T07:01:39.000Z">
+<meta property="article:modified_time" content="2025-07-08T07:19:25.560Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/CSAPP_U5.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CSAPP U5 筆記與(部分)練習題解答",
+  "url": "https://ilsao.github.io/2025/07/08/CSAPP-U5-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/",
+  "image": "https://ilsao.github.io/pictures/CSAPP_U5.jpg",
+  "datePublished": "2025-07-08T07:01:39.000Z",
+  "dateModified": "2025-07-08T07:19:25.560Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/07/08/CSAPP-U5-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CSAPP U5 筆記與(部分)練習題解答',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/CSAPP_U5.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">CSAPP U5 筆記與(部分)練習題解答</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CSAPP U5 筆記與(部分)練習題解答</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-08T07:01:39.000Z" title="发表于 2025-07-08 15:01:39">2025-07-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-08T07:19:25.560Z" title="更新于 2025-07-08 15:19:25">2025-07-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="優化編譯器的能力和侷限性"><a href="#優化編譯器的能力和侷限性" class="headerlink" title="優化編譯器的能力和侷限性"></a>優化編譯器的能力和侷限性</h1><p>編譯器只能對程序使用安全的優化。例如以下代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">twiddle1</span><span class="params">(<span class="type">long</span> *xp, <span class="type">long</span> *yp)</span> &#123;</span><br><span class="line">	*xp += *yp;![[A Way Out.url]]</span><br><span class="line">	*xp += *yp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">twiddle2</span><span class="params">(<span class="type">long</span> *xp, <span class="type">long</span> *yp)</span> &#123;</span><br><span class="line">	*xp += <span class="number">2</span> * (*yp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上兩函數看起來實現的功能相似。的確，當<code>*xp</code>與<code>*yp</code>指向兩個不同的內存地址時兩個函數的行為相同。但如果兩個指針指向相同的內存地址，則<code>twiddle1()</code>會把值翻4倍，而<code>twiddle2()</code>只會把值翻3倍。</p>
+<p>這種兩個指針可能指向同一個內存位置的情況稱<strong>內存別名使用(memory aliasing)</strong>，會嚴重限制編譯器優化代碼性能。</p>
+<p>還有一個妨礙優化的因素是函數調用，考慮以下代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">f</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">long</span> <span class="title function_">func1</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> f() + f();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">long</span> <span class="title function_">func2</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">2</span> * f();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直覺上可能會認為以上兩函數具有相同的行為，但是如果<code>f()</code>的結果跟隨其執行次數上升而有不同的執行結果時，二函數的返回值則會有所不同。</p>
+<h2 id="練習題"><a href="#練習題" class="headerlink" title="練習題"></a>練習題</h2><p>5.1</p>
+<p><code>*xp</code>與<code>*yp</code>的值都為0。</p>
+<p>5.2</p>
+<p>數學問題，此略。</p>
+<h1 id="表示程序性能"><a href="#表示程序性能" class="headerlink" title="表示程序性能"></a>表示程序性能</h1><p>我們使用<strong>每元素的周期數(Cycles Per Element, CPE)</strong> 表示程序性能。</p>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><p>我們定義一個向量數據結構：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="type">long</span> len;</span><br><span class="line">	<span class="type">data_t</span> *data;</span><br><span class="line">&#125;vec_rec, *vec_ptr;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>data_t</code>是我們自行使用<code>typedef</code>定義出來的數據類型。</p>
+<p>接著，我們定義一個函數，它的作用是對向量做一系列操作。之後都會針對這個函數進行一系列優化。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine1</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; vec_length(v); i++) &#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		get_vec_element(v, i, &amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>對以上代碼在具有Intel Core i7 Haswell的參考機上測試，得到以下結果(單位為CPE)。</p>
+<p><img src="/pictures/CSAPP_U5/1.png" alt="1"></p>
+<h1 id="消除循環的低效率"><a href="#消除循環的低效率" class="headerlink" title="消除循環的低效率"></a>消除循環的低效率</h1><p>在<code>combine1()</code>中，我們調用函數<code>vec_length()</code>作為<code>for</code>循環的邊界條件。由於向量的長度不會在此函數運行期間改變，所以每次循環都調用函數取得向量長度屬於浪費，我們將取得向量長度的代碼移動到循環外。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine2</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		get_vec_element(v, i, &amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/CSAPP_U5/2.png" alt="2"></p>
+<p>可以看到性能有了略微提升。我們稱這種優化<strong>代碼移動(code motion)</strong></p>
+<h1 id="減少過程調用"><a href="#減少過程調用" class="headerlink" title="減少過程調用"></a>減少過程調用</h1><p><code>combine2</code>的代碼給次循環都調用<code>get_vec_element()</code>獲取元素，非常低效。我們新設計一個函數<code>get_vec_start()</code>作為替代，然後使用數組形式訪問數據。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine3</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">		*dest = *dest OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/CSAPP_U5/3.png" alt="3"></p>
+<p>可惜，這次改動反而讓性能變得更差。循環中的其他操作造成瓶頸，限制性能超過調用<code>get_vec_element()</code>。</p>
+<h1 id="消除不必要的內存引用"><a href="#消除不必要的內存引用" class="headerlink" title="消除不必要的內存引用"></a>消除不必要的內存引用</h1><p>在<code>combine3</code>中，每次循環都需要從內存中讀取<code>*dest</code>的值。為了消除這種不必要的內存引用，我們引入一個臨時變量<code>acc</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine4</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/CSAPP_U5/4.png" alt="4"></p>
+<p>這次程序性能有了顯著提升。</p>
+<h2 id="練習題-1"><a href="#練習題-1" class="headerlink" title="練習題"></a>練習題</h2><p>5.4</p>
+<p>A. <code>%xmm0</code>在<code>-O2</code>中當累積者，在<code>-O1</code>中當臨時變量。</p>
+<p>B. 是的。</p>
+<p>C. 因為每次循環開頭讀取的值與循環末尾寫入的值相同，所以可以這樣變化。</p>
+<h1 id="理解現代處理器"><a href="#理解現代處理器" class="headerlink" title="理解現代處理器"></a>理解現代處理器</h1><p>有兩種下界限制了程序的最大性能：</p>
+<ol>
+<li>延遲界線(latnecy bound)：數據相關導致下一條代碼執行前，當前代碼必須先執行完。</li>
+<li>吞吐量界線(throughput bound)：處理器功能單元的原始計算能力。</li>
+</ol>
+<h2 id="整體操作"><a href="#整體操作" class="headerlink" title="整體操作"></a>整體操作</h2><p><img src="/pictures/CSAPP_U5/5.png" alt="5"></p>
+<p>上圖示現代微處理器的簡化版示意圖。這種處理器稱為<strong>超標量(superscalar)</strong>，可以在一個時鐘周期內執行多個操作，而且是<strong>亂序(out-of-order)</strong> 的。</p>
+<p>整個設計分為兩個部分：</p>
+<ol>
+<li><strong>指令控制單元(Instruction Control Unit, ICU)</strong>：從內存讀出指令序列，據此生成針對程序數據的基本操作。</li>
+<li><strong>執行單元(Execution Unit, EU)</strong>：執行ICU生成的操作。</li>
+</ol>
+<p>ICU從<strong>指令高速緩存(instruction cache)</strong> 中讀取指令。通常ICU會在當前執行指令的很早之前取指，這樣它才有時間對指令譯碼並發送到EU。</p>
+<p>當程序遇到分支，ICU使用一種稱為<strong>分支預測(branch prediction)</strong> 的技術。通過<strong>投機執行(speculative execution)</strong> ，處理器會在確定分支正確性前開始執行這些指令。如果之後發現預測錯誤，會將狀態重新設置道分支點的狀態，並取出正確的指令。標記為<strong>Fetch Control</strong>的塊包括分支預測，以確定取出那些指令。</p>
+<p><strong>Insturction Decode</strong> 接收程序指令，並將它們轉換成一組基本操作(或稱<strong>微操作</strong>)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addq %rax, %rdx</span><br></pre></td></tr></table></figure>
+<p>以上代碼在典型x86實現中，會被轉化成一個操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addq %rax, <span class="number">8</span>(%rdx)</span><br></pre></td></tr></table></figure>
+<p>以上代碼則會被轉換成三個操作，一個讀內存值，一個將<code>%rax</code>與內存值相加，一個寫內存值。</p>
+<p>EU接收來自取指單元的操作。這些操作被分派到<strong>功能單元(Functional Units)</strong> 中並執行實際操作。</p>
+<p>讀寫內存由加載和存儲單元實現，通過<strong>數據高速緩存(data cache)</strong> 來訪問內存。</p>
+<p>使用投機執行技術對操作求值，但結果暫時不會存放回寄存器或內存中。當分支操作送到EU，確定分支預測正確性後，若錯誤則丟棄計算結果，否則將數據寫回存儲器。</p>
+<p><strong>算術運算(Arithmetic operations)</strong> 塊通常不只一個，使得操作可以並行運行。</p>
+<p>ICU中的<strong>退役單元(retirement unit)</strong> 控制著指令的結束。譯碼時，指令被放在對列中，直到分支預測正確而退役，或分支預測錯誤而被<strong>清空(flushed)</strong>，此時丟棄計算出來的結果。</p>
+<p>控制操作數在執行單元間傳送的機制稱為<strong>寄存器重命名(register renaming)</strong>。</p>
+<h2 id="功能單元的性能"><a href="#功能單元的性能" class="headerlink" title="功能單元的性能"></a>功能單元的性能</h2><p><strong>延遲(latency)</strong>：完成運算所需的總時間。</p>
+<p><strong>發射時間(issue time)</strong>：兩個同類型指令連續執行之間所需的最短周期數。</p>
+<p><strong>容量(capacity)</strong>：能執行該計算的功能單元數量。</p>
+<p><strong>完全流水線化(fully pipelined)</strong>：發射時間為1者。</p>
+<p><strong>吞吐量</strong>：發射時間的倒數。</p>
+<h2 id="練習題-2"><a href="#練習題-2" class="headerlink" title="練習題"></a>練習題</h2><p>5.5</p>
+<p>A. $2n$次加法(答案說$n$次，我猜他省略了整數加法<code>i++</code>)，$2n$次乘法  </p>
+<p>B. 循環中消耗最大的是<code>a[i] * xpwr</code>和<code>x * xpwr</code>，而這兩個乘法可以並行，占五個時鐘週期。而<code>result</code>和<code>x</code>沒有依賴關係，可以將加法放到下次迭代計算，所以CPE為5。</p>
+<p>5.6</p>
+<p>A. $n$次加法，$n$次乘法。</p>
+<p>B. 此函數中<code>result</code>和<code>x</code>有先後依賴關係，不可將本次迭代的計算延遲到下次迭代計算。所以CPE為$5+3=8$。</p>
+<p>C. 5.5沒有數據冒險。</p>
+<h1 id="循環展開"><a href="#循環展開" class="headerlink" title="循環展開"></a>循環展開</h1><p>循環展開通過增加每次迭代計算元素的數量，減少循環迭代的次數。</p>
+<p>循環展開從兩方面增進程序的性能：</p>
+<ol>
+<li>減少不直接參與結果計算的操作數量，例如循環索引計算或條件分支。</li>
+<li>循環展開提供一些方法進一步變化代碼，減少計算中關鍵路徑上的操作數量。</li>
+</ol>
+<p>若將一個循環按任意因子$k$展開，稱$k\times 1$循環展開。</p>
+<p>我們令向量長度為$n$，則此循環的上限應為$n-k+1$，且循環內對元素$i$到$i+k-1$應合併運算。每次迭代索引$i$加$k$。</p>
+<p>由於最大循環索引$i+k-1$會小於$n$，所以我們需要第二個循環，每次循環處理一個元素直到最後。此循環會執行$0\sim k-1$次。</p>
+<p><img src="/pictures/CSAPP_U5/6.png" alt="6"></p>
+<p>觀察上圖我們可以發現，這種變換只改進了整數加法的性能。</p>
+<p><img src="/pictures/CSAPP_U5/7.png" alt="7"></p>
+<p>假設操作為<code>double</code>的乘法，每次操作需要從內存中加載一個數組元素並將這個值乘以累積值。</p>
+<p>通過上圖我們可以觀察出，雖然關鍵路徑上迭代的次數減半，但是每次迭代中仍有兩個順序的乘法操作，這就是限制性寧提升的關鍵。</p>
+<h3 id="練習題-3"><a href="#練習題-3" class="headerlink" title="練習題"></a>練習題</h3><p>5.7</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine5</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">4</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Combine 5 element at a time */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; limit; i += <span class="number">5</span>) &#123;</span><br><span class="line">		acc = (acc OP data[i]) OP data[i + <span class="number">1</span>];</span><br><span class="line">		acc = (acc OP data[i + <span class="number">2</span>]) OP data[i + <span class="number">3</span>];</span><br><span class="line">		acc = acc OP data[i + <span class="number">4</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Finish any remaining elements */</span></span><br><span class="line">	<span class="keyword">for</span> (; i &lt; length; i++) &#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="提高並行性"><a href="#提高並行性" class="headerlink" title="提高並行性"></a>提高並行性</h1><p>由於我們將累積值放在單個變量中，在前面的計算完成前，都不能計算<code>acc</code>的新值，導致性能被限制。</p>
+<h2 id="多個累積變量"><a href="#多個累積變量" class="headerlink" title="多個累積變量"></a>多個累積變量</h2><p>通過將偶數元素積累在<code>acc0</code>中，將奇數元素累積在<code>acc1</code>中，我們可以實現$2\times 2$循環展開。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine6</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc0 = IDENT;</span><br><span class="line">	<span class="type">data_t</span> acc1 = IDENT;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Combine 2 element at a time */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; limit; i += <span class="number">2</span>) &#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">		acc1 = acc1 OP data[i+<span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Finish any remaining elements */</span></span><br><span class="line">	<span class="keyword">for</span> (; i &lt; length; i++) &#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc0 OP acc1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/CSAPP_U5/8.png" alt="8"></p>
+<p>上表可知我們打破了延遲界線，代表我們不需要延遲一個加法或乘法以等待上一個操作完成。</p>
+<p><img src="/pictures/CSAPP_U5/9.png" alt="9"></p>
+<p><img src="/pictures/CSAPP_U5/10.png" alt="10"></p>
+<p>可以看到關鍵路徑上的操作減半，所以對比<code>combine5</code>和<code>combine6</code>可以發現CPE幾乎砍半。</p>
+<p>我們可以通過將循環展開$k$次，並行$k$次得到$k \times k$循環展開。</p>
+<p>通常，只有所有執行該操作的功能單元的流水線都是滿的時，程序才能達到吞吐量界線。</p>
+<p>對延遲$L$，容量$C$的操作而言，要求循環展開因子$k \geq C \cdot L$。</p>
+<p>例如，浮點乘有$C=2, \ L=5$，則循環因子為$k \geq 10$。</p>
+<h2 id="重新結合變換"><a href="#重新結合變換" class="headerlink" title="重新結合變換"></a>重新結合變換</h2><p>考慮將<code>combine5</code>中的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acc = (acc OP data[i]) OP data[i+<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+<p>括號修改順序形成新函數<code>combine7</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acc = acc OP (data[i] OP data[i+<span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
+<p>這種行為我們稱為<strong>重新結合變換(reassociation transformation)</strong>。</p>
+<p>因為括號改變元素與累積值<code>acc</code>的合併順序，我們稱$2\times 1a$循環展開。</p>
+<p><img src="/pictures/CSAPP_U5/11.png" alt="11"></p>
+<p>之所以會有這樣的提升是因為後者解除了數據依賴。</p>
+<h3 id="練習題-4"><a href="#練習題-4" class="headerlink" title="練習題"></a>練習題</h3><p>5.8 CPE = 5P/3</p>
+<p>A1: 5.00</p>
+<p>A2: 3.33</p>
+<p>A3: 1.67</p>
+<p>A4: 1.67</p>
+<p>A5: 3.33</p>
+<h1 id="一些限制因素"><a href="#一些限制因素" class="headerlink" title="一些限制因素"></a>一些限制因素</h1><h2 id="寄存器溢出"><a href="#寄存器溢出" class="headerlink" title="寄存器溢出"></a>寄存器溢出</h2><p>如果我們的並行度$p$超過可用的寄存器數量，那麼編譯器會訴諸<strong>溢出(spilling)</strong>，將某些臨時值存放在內存中，通常在運行時堆棧上分配空間。</p>
+<p>一旦編譯器必須訴諸溢出，那維護多個寄存器的優勢就可能會消失，使CPE上升。</p>
+<h2 id="分支預測和預測錯誤處罰"><a href="#分支預測和預測錯誤處罰" class="headerlink" title="分支預測和預測錯誤處罰"></a>分支預測和預測錯誤處罰</h2><p>因為條件傳送指令可以被實現為普通指令流水線化處理，沒必要猜測條件是否滿足，所以沒有猜測錯誤處罰。</p>
+<p>因為條件傳送指令不會改變PC，且現代處理器可以亂序執行，所以流水線可以先運行其他指令，等條件傳送指令計算完再執行該指令。</p>
+<p>現在我們關心如何保證分支預測處罰不會阻礙程序效率？</p>
+<ol>
+<li>不用過分關心可預測的分支：例如可預測的邊界檢查</li>
+<li>書寫適合用條件傳送實現的代碼<br> 之前說過條件傳送指令不會因預測錯誤而受處罰。所以如果可以，我們想要用條件重送指令替代分支。即，使用<strong>功能式</strong>指令替代<strong>命令式</strong>指令。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">minmax1</span><span class="params">(<span class="type">long</span> a[], <span class="type">long</span> b[], <span class="type">long</span> n)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (a[i] &gt; b[i]) &#123;</span><br><span class="line">			<span class="type">long</span> t = a[i];</span><br><span class="line">			a[i] = b[i];</span><br><span class="line">			b[i] = t;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">minmax2</span><span class="params">(<span class="type">long</span> a[], <span class="type">long</span> b[], <span class="type">long</span> n)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		<span class="type">long</span> min = a[i] &lt; b[i] ? a[i] : b[i];</span><br><span class="line">		<span class="type">long</span> max = a[i] &gt; b[i] ? a[i] : b[i];</span><br><span class="line">		a[i] = min;</span><br><span class="line">		b[i] = max;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代碼<code>minmax2()</code>更容易被編譯成條件傳送指令。</p>
+<h3 id="練習題-5"><a href="#練習題-5" class="headerlink" title="練習題"></a>練習題</h3><p>5.9</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> min = src1[i1] &lt; src2[i2] ? src1[i1++] : src2[i2++];</span><br><span class="line">dest[id++] = min;</span><br></pre></td></tr></table></figure>
+<h1 id="理解內存性能"><a href="#理解內存性能" class="headerlink" title="理解內存性能"></a>理解內存性能</h1><h2 id="加載的性能"><a href="#加載的性能" class="headerlink" title="加載的性能"></a>加載的性能</h2><p>我們可以簡單編寫一系列互相依賴的加載操作來計算加載性能：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">list_len</span><span class="params">(list_ptr ls)</span> &#123;</span><br><span class="line">	<span class="type">long</span> len = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(ls) &#123;</span><br><span class="line">		len++;</span><br><span class="line">		ls = ls -&gt; next;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.L3:</span><br><span class="line">	addq $<span class="number">1</span>, %rax</span><br><span class="line">	<span class="title function_">movq</span> <span class="params">(%rdi)</span>, %rdi</span><br><span class="line">	testq %rdi, %rdi</span><br><span class="line">	jne .L3</span><br></pre></td></tr></table></figure>
+<p>可以觀察出<code>movq</code>是循環中的性能瓶頸。後面的<code>%rdi</code>值都依賴於這個操作。在參考機上我們測得CPE為4.0，與參考機中L1級cache的4週期訪問時間一致。</p>
+<h2 id="存儲的性能"><a href="#存儲的性能" class="headerlink" title="存儲的性能"></a>存儲的性能</h2><p>存儲操作不影響任何寄存器值，除非有加載操作否則不會產生數據相關。</p>
+<p><img src="/pictures/CSAPP_U5/12.png" alt="12"></p>
+<p>由於<code>Example A</code>沒有產生<strong>寫/讀相關(write/read dependency)</strong> 所以CPE較小，CPE=1.3。</p>
+<p>而<code>Example B</code>產生寫/讀相關所以CPE較大，CPE=7.3。</p>
+<p><img src="/pictures/CSAPP_U5/13.png" alt="13"></p>
+<p>上圖是加載和存儲執行單元。</p>
+<p>存儲單元包含一個<strong>存儲緩衝區(store buffer)</strong>，它包含已經被發射到存儲單元但還沒完成(包括更新數據高速緩存)存儲操作的地址和數據。</p>
+<p><code>write_read()</code>內循環匯編碼如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># src in %rdi, dst in %rsi, val in %rax</span></span><br><span class="line">.L3:</span><br><span class="line">	movq %rax, (%rsi)</span><br><span class="line">	movq (%rdi), %rax</span><br><span class="line">	addq $<span class="number">1</span>, %rax</span><br><span class="line">	subq $<span class="number">1</span>, %rdx</span><br><span class="line">	jne .L3</span><br></pre></td></tr></table></figure>
+<p>其中，<code>movq %rax, (%rsi)</code>被拆分成兩步：<code>s_addr</code>計算地址，並在存儲緩衝區創建該條地址目的條目。<code>s_data</code>設置該條目的數據。</p>
+<p><img src="/pictures/CSAPP_U5/14.png" alt="14"></p>
+<p><code>s_data</code>和<code>load</code>有數據相關，但是有條件：如果地址相同，<code>load</code>必須等<code>s_data</code>將數據放入緩衝區。如果地址不同，兩個操作可以獨立運行。</p>
+<p><img src="/pictures/CSAPP_U5/15.png" alt="15"></p>
+<h3 id="練習題-6"><a href="#練習題-6" class="headerlink" title="練習題"></a>練習題</h3><p>5.10</p>
+<p>A. <code>a</code>全項左移</p>
+<p>B. <code>a</code>全項被設為<code>a[0]</code></p>
+<p>C. B沒有寫/讀相關</p>
+<p>D. CPE=1.2，因為沒有寫/讀相關，所以與A同</p>
+<p>5.11</p>
+<p>此次寫入的<code>p[i]</code>在<code>i</code>自增後，與下次的<code>p[i-1]</code>代表同一地址。產生寫/讀相關。</p>
+<p>5.12</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">psum</span><span class="params">(<span class="type">float</span> a[], <span class="type">float</span> p[], <span class="type">long</span> n)</span> &#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	p[<span class="number">0</span>] = a[<span class="number">0</span>];</span><br><span class="line">	<span class="type">float</span> tmp = a[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i&lt; n; i++)</span><br><span class="line">		tmp += a[i];</span><br><span class="line">		p[i] = tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="確認和消除性能瓶頸"><a href="#確認和消除性能瓶頸" class="headerlink" title="確認和消除性能瓶頸"></a>確認和消除性能瓶頸</h1><p>Unix系統提供一個程序<strong>剖析(profiling)</strong> 的工具GPROF。</p>
+<p>我們需要為需要剖析的程序添加標誌<code>-Og</code>和<code>-pg</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Og -pg prog.c -o prog</span><br></pre></td></tr></table></figure>
+<p>然後正常執行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./prog</span><br></pre></td></tr></table></figure>
+<p>它會產生一個文件<code>gmon.out</code>，且通常會運行的比正常慢2倍。</p>
+<p>調用GPROF來分析<code>gmon.out</code>中的數據：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gprof prog</span><br></pre></td></tr></table></figure>
+<p>需要注意，對於運行時間少於1秒的程序GPROF的計時不準確。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/07/08/CSAPP-U5-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/">https://ilsao.github.io/2025/07/08/CSAPP-U5-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/CSAPP_U5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/18/CSAPP-U6-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/" title="CSAPP U6 筆記與(部分)練習題解答"><img class="cover" src="/pictures/CSAPP_U6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP U6 筆記與(部分)練習題解答</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第六章筆記</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%84%AA%E5%8C%96%E7%B7%A8%E8%AD%AF%E5%99%A8%E7%9A%84%E8%83%BD%E5%8A%9B%E5%92%8C%E4%BE%B7%E9%99%90%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">優化編譯器的能力和侷限性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A1%A8%E7%A4%BA%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">表示程序性能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">程序示例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E5%BE%AA%E7%92%B0%E7%9A%84%E4%BD%8E%E6%95%88%E7%8E%87"><span class="toc-number">4.</span> <span class="toc-text">消除循環的低效率</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B8%9B%E5%B0%91%E9%81%8E%E7%A8%8B%E8%AA%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">減少過程調用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%85%A7%E5%AD%98%E5%BC%95%E7%94%A8"><span class="toc-number">6.</span> <span class="toc-text">消除不必要的內存引用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-1"><span class="toc-number">6.1.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E7%8F%BE%E4%BB%A3%E8%99%95%E7%90%86%E5%99%A8"><span class="toc-number">7.</span> <span class="toc-text">理解現代處理器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E9%AB%94%E6%93%8D%E4%BD%9C"><span class="toc-number">7.1.</span> <span class="toc-text">整體操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%96%AE%E5%85%83%E7%9A%84%E6%80%A7%E8%83%BD"><span class="toc-number">7.2.</span> <span class="toc-text">功能單元的性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-2"><span class="toc-number">7.3.</span> <span class="toc-text">練習題</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AA%E7%92%B0%E5%B1%95%E9%96%8B"><span class="toc-number">8.</span> <span class="toc-text">循環展開</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-3"><span class="toc-number">8.0.1.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%90%E9%AB%98%E4%B8%A6%E8%A1%8C%E6%80%A7"><span class="toc-number">9.</span> <span class="toc-text">提高並行性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E5%80%8B%E7%B4%AF%E7%A9%8D%E8%AE%8A%E9%87%8F"><span class="toc-number">9.1.</span> <span class="toc-text">多個累積變量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E7%B5%90%E5%90%88%E8%AE%8A%E6%8F%9B"><span class="toc-number">9.2.</span> <span class="toc-text">重新結合變換</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-4"><span class="toc-number">9.2.1.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E9%99%90%E5%88%B6%E5%9B%A0%E7%B4%A0"><span class="toc-number">10.</span> <span class="toc-text">一些限制因素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E6%BA%A2%E5%87%BA"><span class="toc-number">10.1.</span> <span class="toc-text">寄存器溢出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E9%A0%90%E6%B8%AC%E5%92%8C%E9%A0%90%E6%B8%AC%E9%8C%AF%E8%AA%A4%E8%99%95%E7%BD%B0"><span class="toc-number">10.2.</span> <span class="toc-text">分支預測和預測錯誤處罰</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-5"><span class="toc-number">10.2.1.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E5%85%A7%E5%AD%98%E6%80%A7%E8%83%BD"><span class="toc-number">11.</span> <span class="toc-text">理解內存性能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E8%BC%89%E7%9A%84%E6%80%A7%E8%83%BD"><span class="toc-number">11.1.</span> <span class="toc-text">加載的性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%84%B2%E7%9A%84%E6%80%A7%E8%83%BD"><span class="toc-number">11.2.</span> <span class="toc-text">存儲的性能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%B4%E7%BF%92%E9%A1%8C-6"><span class="toc-number">11.2.1.</span> <span class="toc-text">練習題</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A2%BA%E8%AA%8D%E5%92%8C%E6%B6%88%E9%99%A4%E6%80%A7%E8%83%BD%E7%93%B6%E9%A0%B8"><span class="toc-number">12.</span> <span class="toc-text">確認和消除性能瓶頸</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

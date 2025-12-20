@@ -1,0 +1,472 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Introduction to Computer Network | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="計算機網絡概概論">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Computer Network">
+<meta property="og:url" content="https://ilsao.github.io/2025/09/14/Introduction-to-Computer-Network/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="計算機網絡概概論">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/computer_network_intro.jpg">
+<meta property="article:published_time" content="2025-09-13T17:16:16.000Z">
+<meta property="article:modified_time" content="2025-09-13T17:23:04.837Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/computer_network_intro.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to Computer Network",
+  "url": "https://ilsao.github.io/2025/09/14/Introduction-to-Computer-Network/",
+  "image": "https://ilsao.github.io/pictures/computer_network_intro.jpg",
+  "datePublished": "2025-09-13T17:16:16.000Z",
+  "dateModified": "2025-09-13T17:23:04.837Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/09/14/Introduction-to-Computer-Network/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Introduction to Computer Network',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/computer_network_intro.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">Introduction to Computer Network</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Introduction to Computer Network</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-13T17:16:16.000Z" title="发表于 2025-09-14 01:16:16">2025-09-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Computer-Network/">Computer Network</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="甚麼是因特網"><a href="#甚麼是因特網" class="headerlink" title="甚麼是因特網"></a>甚麼是因特網</h1><h2 id="具體構成描述"><a href="#具體構成描述" class="headerlink" title="具體構成描述"></a>具體構成描述</h2><p>因特網是世界級計算機網絡。</p>
+<p><strong>主機(host，又稱端系統, end system)</strong>：所有連接到因特網上的設備。</p>
+<p><strong>通信鏈路(communication link)</strong>：由物理媒介組成，包含同軸電纜、銅線、光纖、無線電頻譜。</p>
+<p><strong>分組(packet)</strong>：當一台端系統要向另一台端系統發送信息，發送端系統會將數據分段，並為每段加上首部字節。這種信息包就稱分組。</p>
+<p><strong>分組交換機(packet switch)</strong>：用於向最終目的轉發分組，分組以等於該鏈路的最大速率通過通信鏈路。以下為兩種常見類型：</p>
+<ul>
+<li><strong>路由器(router)</strong>：通常用於網絡核心中。</li>
+<li><strong>鏈路層交換器(link-layer switch)</strong>：通常用於接入網中。</li>
+</ul>
+<p><strong>路徑(path)</strong>：從發送端系統到接收端系統，一個分組所通過的一系列通訊鏈路與交換機稱為通過該網絡的路徑。</p>
+<p><strong>協議(protocol)</strong>：協議控制因特網中信息的接收和發送。<strong>TCP(Transmission Control Protocol，運輸控制協議)</strong> 與 <strong>IP(Internet Protocol，網際協議)</strong> 是因特網中最為重要的協議。統稱因特網中的協議為 <strong>TCP/IP</strong>。協議定義了在多個通信實體間交換的報文格式和順序，以及報文的發送/接收等事件所採取的操作。</p>
+<p><strong>因特網服務提供商(ISP)</strong>：每個 ISP 都是多台分組交換機和多段通信鏈路組成的網絡。ISP 為內容提供者接入因特網。因為因特網把各處的端系統相連，所以 ISP 也必須互聯。每個 ISP 網絡都是獨立管理的，運行著 IP 協議，並遵從一定的命名與地址規則。</p>
+<h2 id="服務描述"><a href="#服務描述" class="headerlink" title="服務描述"></a>服務描述</h2><p><strong>分布式應用(distributed application)</strong>：涉及多個互相交換數據的端系統的應用。</p>
+<p><strong>套接字(socket interface)</strong>：發送數據的程序必須遵守的規則合集。</p>
+<h1 id="網絡邊緣"><a href="#網絡邊緣" class="headerlink" title="網絡邊緣"></a>網絡邊緣</h1><h2 id="接入網絡"><a href="#接入網絡" class="headerlink" title="接入網絡"></a>接入網絡</h2><p><strong>邊緣路由器(edge router)</strong>：端系統到其他遠程端系統路徑上的第一個路由器。</p>
+<p><strong>接入網</strong>：特指將端系統物理的連接到邊緣路由器的網絡。</p>
+<h3 id="家庭接入：DSL、電纜、FTTH-和-5G-固定式無線"><a href="#家庭接入：DSL、電纜、FTTH-和-5G-固定式無線" class="headerlink" title="家庭接入：DSL、電纜、FTTH 和 5G 固定式無線"></a>家庭接入：DSL、電纜、FTTH 和 5G 固定式無線</h3><p>寬帶住宅接入有以下兩種最流行的類型：</p>
+<ul>
+<li><strong>數字用戶線(Digital Subscriber Line, DSL)</strong></li>
+<li><strong>電纜</strong></li>
+</ul>
+<p>住戶通常從電話公司獲得 DSL 因特網接入，所以在使用 DSL 時，電話公司就是 ISP。</p>
+<p>DSL 調製解調器將數據轉換為高頻音，通過電話線與<strong>數字用戶線接入複用器(Digital Subscriber Line Access Multiplexer, DSLAM)</strong> 交換數據。這些轉換後的信號大多會在 DSLAM 處被轉換回數據。</p>
+<p>電話線同時承載數據和電話信號，它們以不同頻率編碼：</p>
+<ul>
+<li>高速下行(下載)信道：50kHz ~ 1MHz</li>
+<li>中速上行(上傳)信道：4kHz ~ 50kHz</li>
+<li>普通雙向電話信道：0 ~ 4kHz</li>
+</ul>
+<p>在用戶側，分頻器把到達的數據信號和電話信號分開，並將數據信號傳送給 DSL 調製解調器。在電話公司側，數字用戶線路接入複用器把數據和電話信號分開，並將數據送往因特網。上千家庭與同一 DSLAM 相連。</p>
+<p>由於住戶與中心局距離會影響傳輸速率，規定距離與中心局大於 5 ~ 10 英里則採用其他形式的因特網接入。</p>
+<p><strong>電纜因特網接入(cable Internet access)</strong>：利用有線電視設備接入。光纜(較快)將電纜頭端連接到地區樞紐(光纖節點)，從此透過同軸電纜(較慢)到達各戶。由於在此系統中運用到光纖與同軸電纜，所以稱<strong>混和光纖同軸(Hybrid Fiber Coax, HFC)</strong> 系統。</p>
+<p>電纜因特網接入需要特殊的調製解調器，稱為<strong>電纜調製解調器(cable modem)</strong>。</p>
+<p>在電纜頭端，<strong>電纜調製解調器端接系統(Cable Modem Termination System, CMTS)</strong> 將下行家庭中的電纜調製解調器發送的模擬信號轉換回數據。電纜調製解調器將 HFC 網絡劃分為下行與上行兩個信道。</p>
+<p>電纜因特網接入的一個重要特徵是：共享廣播媒體。即上行速度與下行速度會因同時使用的人數而波動。因為所有數據共享同一根電纜。</p>
+<p><strong>光纖到戶(Fiber To The Home, FTTH)</strong>：光纖直接從中心局鏈接到家中的光纖路徑。</p>
+<p>FTTH 分為兩種：<strong>有源光纖網絡(Active Optical Network, AON)</strong>，<strong>和無源光纖網絡(Passiv Optical Network, PON)</strong>。</p>
+<p>我們簡要介紹下 PON。每個家庭都有一個<strong>光纖網絡端接器(Optical Network Terminator, ONT)</strong>，它們由專門的光纖連接到鄰近的<strong>分配器(splitter)</strong>。分配器再把一些家庭連接到一根共享光纖，該光纖再連接到中心局中的<strong>光纖線路端接器(Optical Line Terminator, OLT)</strong>。OLT 提供光信號與電信號的轉換，經電話公司路由器與因特網相連。在家庭中，用戶由家庭路由器與光纖網絡端接器相連，並通過該路由器接入因特網。</p>
+<p>在 PON 中，由 OLT 發送到分配器的分組在分配器處複製，並傳送給各個家庭。</p>
+<h3 id="企業-和家庭-接入：以太網和-WiFi"><a href="#企業-和家庭-接入：以太網和-WiFi" class="headerlink" title="企業(和家庭)接入：以太網和 WiFi"></a>企業(和家庭)接入：以太網和 WiFi</h3><p><strong>以太網(Ehernet)</strong> 是<strong>局域網(Local Area Network, LAN)</strong> 技術中的一種，用戶使用雙絞銅線與一台以太交換機相連，交換機再與更大的因特網相連。</p>
+<p>在無線 LAN 環境中，無線用戶 從/到 一個<strong>接入點(Access Point, AP)</strong> 發送/接收 分組，該接入點(可能是無線路由器)與企業網相連，企業網再與有線因特網相連。無線 LAN 用戶必須再距離接入點較近的範圍內。WiFi 即是基於 IEEE 802.11 技術的無線 LAN 接入。</p>
+<h2 id="物理媒介-Physical-Medium"><a href="#物理媒介-Physical-Medium" class="headerlink" title="物理媒介(Physical Medium)"></a>物理媒介(Physical Medium)</h2><p>物理媒介分為以下兩種：</p>
+<ul>
+<li><strong>導引型媒介(guided media)</strong>：電波沿著固體媒介前行，如光纖、同軸電纜。</li>
+<li><strong>非導引型媒介(unguided media)</strong>：電波在空氣或外層空間傳播，如無線局域網。</li>
+</ul>
+<ol>
+<li>雙絞銅線<br> 通常許多雙絞線捆扎在一起形成一根電纜。一對電線構成一條通信鏈路。<strong>非屏蔽雙絞線(Unshielded Twisted Pair, UTP)</strong> 常用於局域網中。</li>
+<li>同軸電纜</li>
+<li>光纖<br> 由於高昂的光設備，如發射器、接收器和交換機，使得光纖無法在短途傳輸中使用。例如在 LAN 或家庭接入網中就不使用它。</li>
+<li>陸地無線電通道</li>
+<li>衛星無線電通道</li>
+</ol>
+<h1 id="網絡核心"><a href="#網絡核心" class="headerlink" title="網絡核心"></a>網絡核心</h1><h2 id="分組交換"><a href="#分組交換" class="headerlink" title="分組交換"></a>分組交換</h2><p>多數分組交換器在鏈路輸入端採取<strong>存儲轉發傳輸(store-and-forward transmission)</strong> 機制。該機制規定必須接收到整個分組才能開始轉發。</p>
+<p>一台交換器的所有連接其他交換器的鏈路上都有一個<strong>輸出緩存(output buffer，又稱輸出對列, output queue)</strong>。若到達此交換器的分組需要傳輸到的鏈路正忙，分組就必須在緩存中等待。</p>
+<p>所以除了<strong>存儲轉發延遲</strong>，分組還有<strong>排隊時延(queuing delay)</strong>。</p>
+<p>若到達該交換器的分組發現緩存已滿，就會發生<strong>丟包(packet loss)</strong>，使得緩存中的一個分組，或到達的分組被丟棄。(基於不同策略做法不同)</p>
+<p><strong>轉發表(forwarding table)</strong>：用於將 IP 地址映射為輸出鏈路，由<strong>路由選擇協議(routing protocol)</strong> 自動設置。</p>
+<h2 id="電路交換"><a href="#電路交換" class="headerlink" title="電路交換"></a>電路交換</h2><p>在<strong>電路交換(circuit switching)</strong> 中，預留了端系統間沿路徑通訊所需要的資源(緩存，鏈路傳輸數據等)，使得在路徑上的傳輸速率是恆定的。而在分組交換網絡中，則不會預留。</p>
+<p><strong>端到端連接(end-to-end connection)</strong>：網絡在鏈路中為兩個連接的主機提供穩定的電路(鏈路由多條電路組成)，一條電路的速度占整個鏈路中所含的電路數 $n$ 的 $\frac{1}{n}$。</p>
+<p>電路通過<strong>頻分複用(Frequency-Division Multiplexing, FDM)</strong> 或 <strong>時分複用(Time-Division Multiplexing, TDM)</strong> 實現。</p>
+<p>對 FDM 來說，鏈路的頻譜由鏈路上所有連接共享。每個連接會被分配到特定的頻段。其中，頻段的寬度稱為<strong>頻寬(bandwidth)</strong>。</p>
+<p>對 TDM 來說，時間被劃分為固定時長的幀，每個幀又被劃分為固定數量的<strong>時隙(slot)</strong>。每個電路會被分配一個專門的時隙，用來傳輸數據。</p>
+<p>要計算 TDM 的傳輸數據：</p>
+<ul>
+<li>對電路來說：$\text{幀數} \times \text{一個時隙可傳輸的大小}$</li>
+<li>對鍊路來說：$\text{幀數} \times \text{一個時隙可傳輸的大小} \times \text{幀的時隙數}$</li>
+</ul>
+<h2 id="二者對比"><a href="#二者對比" class="headerlink" title="二者對比"></a>二者對比</h2><p>由上我們可以知道，分組交換的性能比電路交換的性能好。因為電路交換即使在用戶未活躍時仍為其保留電路，造成資源浪費。</p>
+<h2 id="Internet-of-Internets"><a href="#Internet-of-Internets" class="headerlink" title="Internet of Internets"></a>Internet of Internets</h2><p><strong>存在點(Point of Presence, PoP)</strong>：PoP 存在於所有除了底層(接入 ISP )之外的所有層次等級中，是提供商網絡中多台路由器的群組，其中客戶 ISP 可以和提供商 ISP 連接。</p>
+<p><strong>多宿(multi-home)</strong>：除了第一層 ISP 外的所有 ISP 都可以與多個提供商 ISP 連接，使得就算其中一個提供商出現故障仍可訪問因特網。</p>
+<p><strong>對等(peer)</strong>：可直接將此二對等路由器相連，而雙方都不收取代價。</p>
+<p><strong>因特網交換點(Internet Exchange Point, IXP)</strong>：一個匯合點，多個 ISP 可以在此對等。</p>
+<p><strong>內容提供商網絡(content provider network)</strong>：直接與較低層網絡對等，嘗試繞過因特網較高層。</p>
+<p>以下描述了因特網結構：</p>
+<p><img src="/pictures/computer_network_intro/1.png" alt="1"></p>
+<h1 id="分組交換中的時延、丟包和吞吐量"><a href="#分組交換中的時延、丟包和吞吐量" class="headerlink" title="分組交換中的時延、丟包和吞吐量"></a>分組交換中的時延、丟包和吞吐量</h1><h2 id="時延"><a href="#時延" class="headerlink" title="時延"></a>時延</h2><ul>
+<li><strong>節點處理延遲(nodal processing delay)</strong>：解析傳來的封包所需要的時間。</li>
+<li><strong>排隊延遲(queueing delay)</strong>：在隊列中等待的時間。<br>  假設封包長度 $L$ bits，分組到達隊列的速率是 $a$ packet/s，$R$ 是傳播速率。則可知 $La$ 為 bits 到達隊列的平均速率。<br>  定義<strong>流量強度(traffic intensity)</strong> 為 $\frac{La}{R}$。<br>  當流量強度 &gt; 1 時，代表 bits 到達隊列的平均速率大於隊列傳輸出去的速率。此時隊列會無限增長。<br>  $\implies$<strong>設計系統時流量強度不能大於1。</strong></li>
+<li><strong>傳輸延遲(transmission delay)</strong>：將分組從路由器一字節一字節推向鏈路所需的時間。</li>
+<li><strong>傳播延遲(propagation dalay)</strong>：從鏈路起點傳送分組到路由器所需的時間。</li>
+</ul>
+<h2 id="丟包"><a href="#丟包" class="headerlink" title="丟包"></a>丟包</h2><p>更詳細的排隊延遲：</p>
+<p>當流量強度 &lt;= 1 時</p>
+<ul>
+<li>若週期性到達：i.e., 每 $\frac{L}{R}$ 秒到達一個分組，則每個分組到達時對列皆為空。沒有排隊延遲。</li>
+<li>若突發性到達：i.e., 每 $\left( \frac{L}{R} \right)N$ 秒同時到達 $N$ 個分組，則第 $n$ 個分組有 $(n-1)\left( \frac{L}{R} \right)$ 秒的排隊延遲。</li>
+</ul>
+<p>若隊列滿了，仍有分組到達，則新到達的分組被丟棄，i.e. 丟包。</p>
+<h2 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h2><p><strong>瞬時吞吐量(instataneous throughput)</strong>：主機接受文件的速率。</p>
+<p><strong>平均吞吐量(average throughput)</strong>：接收一個大小為 $F$ bits 的文件需要 $T$ 秒，則平均吞吐量為 $\frac{F}{T}$ bps。</p>
+<p>考慮以下情況(省略其他延遲)：</p>
+<ul>
+<li>由伺服器到路由器的鏈路速率為 $R_{s}$ 。</li>
+<li>由路由器到客戶端的鏈路速率為 $R_{c}$ 。</li>
+</ul>
+<p>則吞吐量為 $\text{min} { R<em>{c}, R</em>{s} }$ 。此情況稱為<strong>瓶頸鏈路(bottleneck link)</strong>。</p>
+<p>而服務器傳輸一個大小為 $F$ bits 的文件到客戶端的時間為 $\frac{F}{\text{min} { R<em>{c}, R</em>{s} }}$ 。</p>
+<h1 id="協議層次"><a href="#協議層次" class="headerlink" title="協議層次"></a>協議層次</h1><p><strong>協議棧(protocol stack)</strong>：各層所有協議的統稱。</p>
+<p>協議棧包含：</p>
+<ul>
+<li>應用層<ul>
+<li>HTTP</li>
+<li>SMTP</li>
+<li>FTP</li>
+<li><strong>報文(message)</strong></li>
+</ul>
+</li>
+<li>運輸層<ul>
+<li>TCP</li>
+<li>UDP</li>
+<li><strong>報文段(segment)</strong></li>
+</ul>
+</li>
+<li>網絡層<ul>
+<li>IP</li>
+<li><strong>數據報(datagram)</strong></li>
+</ul>
+</li>
+<li>鏈路層<ul>
+<li>以太網</li>
+<li>WiFi</li>
+<li>DOCSIS</li>
+<li><strong>幀(frame)</strong> (以幀為單位傳輸)</li>
+</ul>
+</li>
+<li>物理層<ul>
+<li>將幀中的 bit 一個個傳輸</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/09/14/Introduction-to-Computer-Network/">https://ilsao.github.io/2025/09/14/Introduction-to-Computer-Network/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/computer_network_intro.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img class="cover" src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">[GAMES 101] Transformation 筆記</div></div><div class="info-2"><div class="info-item-1">GAMES 101 Week 1 Transformation 筆記</div></div></div></a><a class="pagination-related" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img class="cover" src="/pictures/xv6_syscall.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">xv6 陷入機制淺析</div></div><div class="info-2"><div class="info-item-1">簡單介紹 xv6 操作系統的陷入機制</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9A%E9%BA%BC%E6%98%AF%E5%9B%A0%E7%89%B9%E7%B6%B2"><span class="toc-number">1.</span> <span class="toc-text">甚麼是因特網</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E9%AB%94%E6%A7%8B%E6%88%90%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">具體構成描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8B%99%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.2.</span> <span class="toc-text">服務描述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B6%B2%E7%B5%A1%E9%82%8A%E7%B7%A3"><span class="toc-number">2.</span> <span class="toc-text">網絡邊緣</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5%E7%B6%B2%E7%B5%A1"><span class="toc-number">2.1.</span> <span class="toc-text">接入網絡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B6%E5%BA%AD%E6%8E%A5%E5%85%A5%EF%BC%9ADSL%E3%80%81%E9%9B%BB%E7%BA%9C%E3%80%81FTTH-%E5%92%8C-5G-%E5%9B%BA%E5%AE%9A%E5%BC%8F%E7%84%A1%E7%B7%9A"><span class="toc-number">2.1.1.</span> <span class="toc-text">家庭接入：DSL、電纜、FTTH 和 5G 固定式無線</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%81%E6%A5%AD-%E5%92%8C%E5%AE%B6%E5%BA%AD-%E6%8E%A5%E5%85%A5%EF%BC%9A%E4%BB%A5%E5%A4%AA%E7%B6%B2%E5%92%8C-WiFi"><span class="toc-number">2.1.2.</span> <span class="toc-text">企業(和家庭)接入：以太網和 WiFi</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%AA%92%E4%BB%8B-Physical-Medium"><span class="toc-number">2.2.</span> <span class="toc-text">物理媒介(Physical Medium)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B6%B2%E7%B5%A1%E6%A0%B8%E5%BF%83"><span class="toc-number">3.</span> <span class="toc-text">網絡核心</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%B5%84%E4%BA%A4%E6%8F%9B"><span class="toc-number">3.1.</span> <span class="toc-text">分組交換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%BB%E8%B7%AF%E4%BA%A4%E6%8F%9B"><span class="toc-number">3.2.</span> <span class="toc-text">電路交換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%80%85%E5%B0%8D%E6%AF%94"><span class="toc-number">3.3.</span> <span class="toc-text">二者對比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Internet-of-Internets"><span class="toc-number">3.4.</span> <span class="toc-text">Internet of Internets</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E7%B5%84%E4%BA%A4%E6%8F%9B%E4%B8%AD%E7%9A%84%E6%99%82%E5%BB%B6%E3%80%81%E4%B8%9F%E5%8C%85%E5%92%8C%E5%90%9E%E5%90%90%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">分組交換中的時延、丟包和吞吐量</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%99%82%E5%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">時延</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9F%E5%8C%85"><span class="toc-number">4.2.</span> <span class="toc-text">丟包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%9E%E5%90%90%E9%87%8F"><span class="toc-number">4.3.</span> <span class="toc-text">吞吐量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%94%E8%AD%B0%E5%B1%A4%E6%AC%A1"><span class="toc-number">5.</span> <span class="toc-text">協議層次</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

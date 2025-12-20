@@ -1,0 +1,503 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>OSTEP Virtualization | asciibase64</title><meta name="author" content="asciibase64"><meta name="copyright" content="asciibase64"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="操作系統導論虛擬化部分筆記">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OSTEP Virtualization">
+<meta property="og:url" content="https://ilsao.github.io/2025/08/26/OSTEP-Virtualization/index.html">
+<meta property="og:site_name" content="asciibase64">
+<meta property="og:description" content="操作系統導論虛擬化部分筆記">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ilsao.github.io/pictures/OSTEP_Virtualization.jpg">
+<meta property="article:published_time" content="2025-08-26T09:02:38.000Z">
+<meta property="article:modified_time" content="2025-08-26T09:04:03.629Z">
+<meta property="article:author" content="asciibase64">
+<meta property="article:tag" content="計算機底層原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ilsao.github.io/pictures/OSTEP_Virtualization.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "OSTEP Virtualization",
+  "url": "https://ilsao.github.io/2025/08/26/OSTEP-Virtualization/",
+  "image": "https://ilsao.github.io/pictures/OSTEP_Virtualization.jpg",
+  "datePublished": "2025-08-26T09:02:38.000Z",
+  "dateModified": "2025-08-26T09:04:03.629Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "asciibase64",
+      "url": "https://ilsao.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pictures/dragon.png"><link rel="canonical" href="https://ilsao.github.io/2025/08/26/OSTEP-Virtualization/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OSTEP Virtualization',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/OSTEP_Virtualization.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">asciibase64</span></a><a class="nav-page-title" href="/"><span class="site-name">OSTEP Virtualization</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 鏈接</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/links/"><i class="fa-fw fas fa-link"></i><span> 友情鏈接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">OSTEP Virtualization</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-26T09:02:38.000Z" title="发表于 2025-08-26 17:02:38">2025-08-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/OSTEP/">OSTEP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本書有部分筆記與 CSAPP 中重疊，重疊部分筆記請查找 CSAPP 篇。</p>
+<h1 id="受限直接執行"><a href="#受限直接執行" class="headerlink" title="受限直接執行"></a>受限直接執行</h1><p>The crux of the problem: <strong>如何高效、可控的控制虛擬化CPU？</strong></p>
+<p><strong>受限直接執行(Limited Direct Execution, LDE)</strong>：事先設置好硬件，使得程序在受限的情況下直接在 CPU 上運行。</p>
+<p>LDE 有兩個階段：</p>
+<ul>
+<li>系統引導：開機時，內核初始化陷阱表，使 CPU 記住它的位置以供未來使用。</li>
+<li>運行進程：當執行陷阱返回指令時，CPU 會從內核棧恢復寄存器，切換到用戶模式，並跳轉到 PC 指向處。</li>
+</ul>
+<p>操作系統為保持對 CPU 的控制權，採用<strong>時鐘中斷(timer interrupt)</strong> 。時鐘設備每隔幾毫秒產生一次中斷，使得控制轉移到內核中斷處理程序。這時操作系統重新獲得 CPU 控制權，可以做任何想做的事：停止進程、創建另一個進程。</p>
+<p>上下文切換：當時鐘中斷，且 OS 決定執行上下文切換時會發生以下事情：</p>
+<ul>
+<li>硬件：將寄存器A保存到內核棧A</li>
+<li>處理程序：<ul>
+<li>調用 <code>switch()</code> 例程：<br>  將寄存器A保存到進程結構A。將進程結構B恢復到寄存器B。</li>
+<li>從陷阱返回到進程B</li>
+</ul>
+</li>
+</ul>
+<p>以上過程看似無意義的保存兩次上下文信息，但其含義不同。</p>
+<p>想像以下場景：當要重新調度A時，要對B執行上下文切換。但因為A不在運行，所以 CPU 不知道內存棧A的位置信息，必須通過進程結構A才能獲取該信息。所以有必要保存兩次上下文信息，且兩次保存的信息有些許不同。</p>
+<h1 id="進程調度"><a href="#進程調度" class="headerlink" title="進程調度"></a>進程調度</h1><h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro."></a>Intro.</h1><p>調度的性能指標：<strong>周轉時間(turnaround time)</strong>。即，進程從進入系統到完成執行所花的總時間：</p>
+<script type="math/tex; mode=display">
+T_{turnarond}=T_{completion} - T_{arrival}</script><p><strong>先進先出(FIFO，又稱 First Come First Served, FCFS)</strong>：先到達系統的作業先被調度。缺點：若先到達的作業運行時間長，導致後面運行時間短的作業等待較久，平均周轉時間長。</p>
+<blockquote>
+<p>[!Note] 護航效應<br><strong>護航效應(convoy effect)</strong>：指的是消耗資源較多者排在了消耗資源較少者的前面，導致後者等待時間較長的現象。</p>
+</blockquote>
+<p><strong>最短任務優先(Shortest Job First, SJF)</strong>：若假設所有作業同時到達，可證明 SJF 是最優(optimal)的調度算法。但考慮運行時間較長的作業最早到達，運行到一半時運行時間較短的作業才到達。此時，運行時間短的作業仍被迫等待。</p>
+<p><strong>最短完成時間優先(Shortest Time-to-Completion First, STCF)</strong> 或 <strong>搶佔式最短作業優先(Preemptive Shortest Job First, PSJF)</strong>：每當新作業進入系統，就會判斷剩餘作業與新作業中誰的剩餘時間較短，然後調度該作業。</p>
+<p>新度量指標：<strong>響應時間(response time)</strong>。即，進程從到達系統到首次執行所需的時間：</p>
+<script type="math/tex; mode=display">
+T_{response} = T_{first\_{}run}-T_{arrival}</script><p><strong>輪轉(Round-Robin, RR)</strong>：每個<strong>時間片(time slice，又稱調度量子, scheduling quantum)</strong> 內運行一個作業，到達下個時間片就調度。雖然時間片長度越短，RR的響應時間越短，但須考慮上下文切換所耗的時間。我們必須權衡時間片長度，以攤銷(amortize)該成本。缺點：周轉時間差。</p>
+<blockquote>
+<p>[!Warning]<br>注意：時間片長度必須是時鐘周期的倍數。</p>
+</blockquote>
+<h2 id="多級反饋隊列"><a href="#多級反饋隊列" class="headerlink" title="多級反饋隊列"></a>多級反饋隊列</h2><p><strong>多級反饋隊列(Multi-level Feedback Queue, MLFQ)</strong>：使用多個優先級對列分類、調度程序。</p>
+<p>MLFQ有以下規則：</p>
+<ul>
+<li>若A的優先級 &gt; B，則先運行A。</li>
+<li>若A的優先級 = B，則輪轉調度。</li>
+<li>作業剛進入系統時，處於最高優先級對列中。</li>
+<li>當作業用完在該層的<strong>時間配額</strong>，無論放棄多少次 CPU ，都降低其優先級(移入低一級對列)。<br>  若作業運行時間短，在降低優先級前就會運行完，使得 MLFQ 趨近 SJF。<br>  防止 I/O 密集型作業卡時間放棄 CPU，使得一直處於高優先級。</li>
+<li>每過一段時間，將系統所有作業提升到最高優先級。<br>  避免運算密集型作業長期處於低級，而無法被調度。</li>
+</ul>
+<h2 id="比例份額"><a href="#比例份額" class="headerlink" title="比例份額"></a>比例份額</h2><p><strong>比例份額(proportional-share，或稱公平份額, fair-share)</strong>：假定了每個作業有一些彩票，根據各進程的彩票數來調度程序。</p>
+<p>彩票調度：</p>
+<ul>
+<li>使用鏈表紀錄作業擁有的票數，票數較多者在鏈表較前方。<br>  保證尋找過程效率。</li>
+<li>從 0 ~ 總票數-1 中隨機選數字，誰的加總票數包含此數，就被調度。</li>
+</ul>
+<p>步長調度：</p>
+<ul>
+<li>每個作業擁有一個步長，該值為彩票數的反比。</li>
+<li>使用一個計數器(稱行程值 pass)紀錄總體進展。</li>
+<li>調度器選擇行程值最小者，運行一段時間，並使計數器+=行程值。</li>
+</ul>
+<p>兩個策略都有一個缺點，調度器沒有策略自動分配彩票。所以使用此種方法的前提是，用戶清楚知道，並設置每個作業所佔的份額比例。</p>
+<h2 id="多處理器調度"><a href="#多處理器調度" class="headerlink" title="多處理器調度"></a>多處理器調度</h2><p><strong>緩存親合度(cache affinity)</strong>：一個進程在某 CPU 上運行時，會在該 CPU 上緩存許多狀態。下次該進程在此 CPU 上運行時，由於存在緩存所以會運行得更快。在多處理器調度上，應考慮緩存親合度，使進程盡量保持在同個 CPU 上。</p>
+<p><strong>單隊列調度(Single Queue Multiprocessor Scheduling, SQMS)</strong>：簡單的將單 CPU 的策略搬到多 CPU 上，總共僅維護一個對列，所有 CPU 共享。<br>    親合度機制：<br>        盡量讓進程在同個 CPU 上運行。保持某些作業親合度的同時，可能需要犧牲其他作業的親合度來均衡負載。<br>        比如有4個 CPU 與5個作業需要調度，可能會發生以下情況：<br>        0：A E A A A<br>        1：B B E B B<br>        2：C C C E C<br>        3：D D D D E<br>        犧牲了E的親合度讓其他作業保持親合度。<br>    數據共享與同步：<br>        需要鎖以保證原子性，需要額外的時間開銷。</p>
+<p><strong>多隊列調度(Multi-Queue Multiprocessor Scheduling, MQMS)</strong>：MQMS 與 SQMS 不同的是，每個 CPU 都維護一個專屬的隊列，且不同隊列可以使用不同策略調度。由於每個 CPU 調度之間獨立，可以顯著的避免數據共享與親合度問題。</p>
+<ul>
+<li><strong>遷移(migration)</strong> 與 <strong>工作竊取(work stealing)</strong>：<br>  隊列會不斷檢查其他隊列，當兩隊列之間任務數差距過大，較小者會從較大者處竊取一個或多個作業，使得負載均衡。這種行為就稱工作切確，而作業從一個隊列轉移到另一個隊列的過程稱遷移。</li>
+</ul>
+<h1 id="虛擬內存"><a href="#虛擬內存" class="headerlink" title="虛擬內存"></a>虛擬內存</h1><blockquote>
+<p>[!Warning] 注意<br>此部分本文大量精簡，更多詳細信息請參考：<a href="https://ilsao.github.io/2025/08/06/CSAPP-U9-%E7%AD%86%E8%A8%98%E8%88%87%E7%B7%B4%E7%BF%92%E9%A1%8C%E8%A7%A3%E7%AD%94/">CSAPP U9 筆記</a></p>
+</blockquote>
+<p>虛擬內存系統的目標：</p>
+<ol>
+<li><strong>透明(transparency)</strong>：使得程序無法感知內存虛擬化。</li>
+<li><strong>效率(efficiency)</strong>：時間上不使得程序變慢，空間上不需要額外內存支持。</li>
+<li><strong>保護(protection)</strong>：進程之間<strong>隔離(isolation)</strong>，互不影響。</li>
+</ol>
+<p>基址寄存器：存放進程被加載到的地址數據。</p>
+<p>界限寄存器：進程地址的最大偏移量。與基址寄存器相加可以得到映射後的最大物理地址。</p>
+<p>所以映射到物理地址的公式為：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">physical address = base + virtual address</span><br></pre></td></tr></table></figure>
+<h2 id="分段"><a href="#分段" class="headerlink" title="分段"></a>分段</h2><p>分段：避免直接將整個地址空間映射到物理內存上，使得堆和棧之間的空閒區域也被映射而佔據內存。</p>
+<p>通常地址空間分為段：代碼、棧、堆。每個段都維護自己的基址和界限寄存器。使得我們需要 MMU 的硬件支持一組3對這樣的寄存器。</p>
+<p><strong>粗粒度(coarse grained)</strong>：將地址空間分為少量較大的段，如上假設。</p>
+<p><strong>細粒度(fine grained)</strong>：將地址空間分為大量較小的段。</p>
+<p>對於棧和堆的映射，我們不可以直接將基址加上虛擬地址。必須先將虛擬地址減去堆或棧的虛擬地址，得到該數據在堆或棧為起始的偏移，再加上基址。</p>
+<p><strong>如何判斷地址屬於哪個段</strong>？有一種常見的方式，稱為<strong>顯式(explicit)</strong> 方式：</p>
+<p>如上假設，我們有三個段，所以需要兩位來表示。我們將高兩位當作段標示，剩餘位表示段內偏移量。這樣我們就可以寫出如下地址轉換代碼：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">segment = (virtual_addr &amp; SEG_MASK) &gt;&gt; SEG_SHIFT</span><br><span class="line">offset = virtual_addr &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (offset &gt;= bound[segment])</span><br><span class="line">	raise_exp(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	phys_addr = base[segment] + offset</span><br><span class="line">	<span class="keyword">register</span> = access_mem(phys_addr)</span><br></pre></td></tr></table></figure>
+<p><strong>如何映射棧？</strong> 硬件必須多紀錄一位，即是否正向增長。然後我們還必須正確處理反向偏移：將段內偏移減去段大小，就可以正確得到反向偏移。</p>
+<p><strong>如何支持共享？</strong> 通過額外紀錄一個保護位，就可以隔離破壞從而實現共享。</p>
+<p><strong>操作系統如何支持分段？</strong> 需要考慮以下兩點：</p>
+<ol>
+<li>上下文切換時，各個段寄存器的值必須被保存和恢復。</li>
+<li>若地址空間大小不一，會導致外部碎片的問題。</li>
+</ol>
+<h2 id="分頁"><a href="#分頁" class="headerlink" title="分頁"></a>分頁</h2><p>分段有很大的問題，即容易造成外部碎片。所以出現了第二種方法：分頁。</p>
+<p><strong>頁表存放在哪裡？</strong> 頁表存在內存中，CR3/satp 寄存器存放著指向頁表的基址。</p>
+<p><strong>物理地址索引緩存(physically-indexed cache)</strong>：先將虛擬地址轉換為物理地址，再去查找緩存。因為可能有多個虛擬地址映射到同個物理地址上，所以<strong>若使用虛擬地址讀寫緩存，可能造成緩存一致性出現問題</strong>。</p>
+<p>Why？如果緩存僅在被驅逐時將數據寫回，當某虛擬地址映射到物理地址A，並於A處修改了緩存B，在另一個同樣被映射到A的虛擬地址訪問緩存C時，因為緩存B還未寫回，緩存C返回了未更新的數據，導致緩存一致性出現問題。</p>
+<p>讓我們介紹一下儲存在 PTE 中的一些位的作用：</p>
+<ul>
+<li><strong>有效位(valid bit)</strong>：所有未使用的空間都被標示為無效，訪問這些無效的頁會導致異常。</li>
+<li><strong>保護位(protection bit)</strong>：表明是否可讀、寫、執行。</li>
+<li><strong>存在位(present bit)</strong>：表示該頁在內存還是在磁盤上。</li>
+<li><strong>髒位(dirty bit)</strong>：表示頁進入內存後是否被修改過。</li>
+<li><strong>參考位(reference bit，或稱訪問位, accessed bit)</strong>：追蹤頁是否被訪問。</li>
+</ul>
+<p><strong>誰來處理 TLB 未命中？</strong> 對於 CISC 指令集，硬件處理。對於 RISC 指令集，操作系統處理。</p>
+<p>為了避免 TLB 未命中引起的無限遞歸，有以下兩種方法：</p>
+<ul>
+<li>將處理程序直接存放在物理內存中，而無須映射。</li>
+<li>在 TLB 中保留一些條目專門存放處理程序，這些<strong>被監聽的 (wired)</strong> 地址總會被命中。</li>
+</ul>
+<blockquote>
+<p>[!Warning] 注意</p>
+<ul>
+<li>VPN 與 PFN 會同時存在於 TLB 中，因為 TLB 是<strong>全相聯(fully associative)</strong> 的緩存，所以必須有 VPN 來標示映射的頁面。</li>
+<li>TLB 的有效位 != 頁表的有效位。</li>
+</ul>
+<p>[!Note] PFN 與 PPA 的差別<br>PFN 全稱 Physical Frame Number，指的是物理頁幀的編號。<br>PPA 全稱 Physical Page Address，指的是物理頁幀的地址。<br>所以 PPA = PFN &lt;&lt; offset。</p>
+</blockquote>
+<p><strong>上下文切換時 TLB 怎麼辦？</strong> 有兩種解決方法：</p>
+<ol>
+<li>上下文切換時，將 TLB 每一項的有效位都設置成零，從而清空 TLB。這種方法可以由操作系統或硬件來執行。</li>
+<li>向 TLB 添加一個<strong>地址空間標示符(Address Space Identifier, ASID)</strong>，以標示此條目屬於哪個進程。此方法使得可以跨上下文切換來共享 TLB。</li>
+</ol>
+<blockquote>
+<p>[!Warning] 注意<br>不管如何，操作系統必須在上下文切換時修改頁表基址寄存器(PTBR)的值。</p>
+</blockquote>
+<h2 id="較小的頁表"><a href="#較小的頁表" class="headerlink" title="較小的頁表"></a>較小的頁表</h2><p><strong>Why?</strong> 因為對整個地址空間分頁，仍有<strong>未使用空間卻佔據頁表條目</strong>的問題。</p>
+<p>法一 <strong>分段 + 分頁</strong>：<br>    在此方法中，我們為每個段都分配一個頁表。比如為代碼、棧、堆提供三個頁表。<br>    在此方法中的基址與界限寄存器指向的是相應段的頁表與結尾。<br>    我們仍使用<strong>顯式</strong>方法來識別虛擬地址屬於哪段(取高地址兩位做段標示)。<br>    <strong>Cons</strong>：外部碎片多<br>    當 TLB 未命中時，使用以下方法取得 PTE：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SN       = (virtual_addr &amp; SEG_MASK) &gt;&gt; SN_SHIFT</span><br><span class="line">VPN      = (virtaul_addr &amp; VPN_MASH) &gt;&gt; VPN_SHIFT</span><br><span class="line">pte_addr = base[SN] + (VPN * <span class="keyword">sizeof</span>(PTE))</span><br></pre></td></tr></table></figure>
+<p>法二 <strong>多級頁表</strong>：<br>    此處我們以二級頁表說明。<br>    二級頁表由一個頁目錄與多個頁表組成，一個<strong>頁目錄項(Page Directory Entries)</strong> 指向一個頁表(用<strong>頁幀號(Page Frame Number, PFN)</strong> 表示)。<br>    當 PDE 的有效位為一時，代表其指向的頁表中至少有一個 PTE 的有效位為一。<br>    <strong>Cons</strong>：TLB 未命中時，需要從內存中加載兩次，一次頁目錄，一次頁表。(注：TLB 中存放的仍是 VPN 與 物理地址的映射)<br>    多級頁表屬於<strong>時間-空間折中(time-space trade-off)</strong> 的例子。</p>
+<p><strong>超過二級？</strong> 使用更多級的頁表是有必要的，若使用二級頁表後發現頁目錄表仍然過大，可以考慮繼續拆分成更多級的頁表。</p>
+<p>法三 <strong>反向頁表(inverted page table)</strong>：<br>    系統不為所有進程分頁表，而是所有進程共享一個頁表。其中，頁表項存儲頁幀到 (進程，虛擬頁) 的映射。因為線性查表較慢，通常使用<strong>哈希表</strong>作為查找的數據結構。</p>
+<h2 id="超越物理內存"><a href="#超越物理內存" class="headerlink" title="超越物理內存"></a>超越物理內存</h2><p><strong>交換空間(swap space)</strong>：在硬盤上開闢的一塊供物理頁移入移出的空間。</p>
+<p><strong>存在位(present bit)</strong>：如果存在位(在 PTE 中)為1，則該頁處於物理內存中，否則，在硬盤上。訪問在硬盤上的頁則稱為<strong>頁錯誤(page fault)</strong>，或稱<strong>缺頁</strong>。</p>
+<p><strong>缺頁</strong>：操作系統會用 PTE 中的某些位來存儲硬盤地址。缺頁發生時一律由操作系統提供的缺頁處理程序處理，處理程序通過查找 PTE 來請求頁。當 I/O 完成後，處理程序會更新存在位與 PFN 以記錄獲取的內存地址，並重新執行指令。下一次重新訪問 TLB 仍舊不會命中，但由於存在位為1，所以會將頁表中的地址更新到 TLB 中。</p>
+<p>訪問虛擬地址時，硬件算法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line">(Success, TlbEntry) = TLB_Lookup(VPN)</span><br><span class="line"><span class="keyword">if</span> (Success)</span><br><span class="line">	<span class="keyword">if</span> (CanAccess(TlbEntry.ProtectBits))</span><br><span class="line">		Offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">		PhysAddr = (TlbEntry.PFN &lt;&lt; SHIFT) | Offset</span><br><span class="line">		Register = AccessMemory(PhysAddr)</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PTEAddr = PTBR + (VPN - <span class="keyword">sizeof</span>(PTE))</span><br><span class="line">	PTE = AccessMemory(PTEAddr)</span><br><span class="line">	<span class="keyword">if</span> (!PTE.Valid)</span><br><span class="line">		RaiseException(SEGMENTATION_FAULT)</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">if</span> (!CanAccess(PTE.ProtectBits))</span><br><span class="line">			RaiseException(PROTECTION_FAULT)</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (PTE.Present)</span><br><span class="line">			TLB_Insert(VPN, PTE.PFN, PTE.ProtectBits)</span><br><span class="line">			RetryInstruction()</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (!PTE.Present)</span><br><span class="line">			RaiseException(PAGE_FAULT)</span><br></pre></td></tr></table></figure>
+<p>缺頁時操作系統算法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PFN = FindFreePhysicalPage()</span><br><span class="line"><span class="keyword">if</span> (PFN == <span class="number">-1</span>)</span><br><span class="line">	PFN = EvictPage()</span><br><span class="line">DiskRead(PTE.DiskAddr, pfn)</span><br><span class="line">PTE.present = True</span><br><span class="line">PTE.PFN = PFN</span><br><span class="line">RetryInstruction()</span><br></pre></td></tr></table></figure>
+<p><strong>頁交換何時發生？</strong> 操作系統設置了<strong>高水位線(High Watermark, HW)</strong> 和 <strong>低水位線(Low Watermark, LW)</strong>。當少於 LW 個頁可用，後台線程就會釋放內存直到有 HW 個可用的物理頁。</p>
+<p><strong>分段 FIFO</strong>：<br>    <strong>駐留集大小(Resident Set Size, RSS)</strong>：每個進程可以保存在內存中的最大頁數。<br>    當某進程超過其 RSS 時，最先進入的頁被驅逐到<strong>全局的二次機會列表(second-chance list)</strong>。二次機會列表分為乾淨空閒列表和髒頁列表，頁會根據其髒位放入相對應的列表尾部。<br>    若另一個進程Q需要一個空閒頁，它會從全局乾淨列表取出第一個空閒頁。若原來的進程P在回收某頁之前在該頁上發生缺頁，則會將該頁從列表中回收。</p>
+<p><strong>近似 LRU</strong> ：</p>
+<ul>
+<li>clock algorithm<br>  給所有頁添加一個使用位，當該頁被訪問時設置為1。<br>  所有頁串成一個循環鏈表，當系統需要驅逐頁時，時鐘指針開始掃描此鏈表。<br>  當指針指向的節點的使用位為0，表示該頁很久未使用，可以驅逐。當指針指向的節點使用位為1，則將該節點使用位設置為0，並向前遞進。</li>
+<li>clock algorithim 變種：逐個掃描節點 -&gt; 隨機選取節點。</li>
+</ul>
+<p><strong>考慮髒頁</strong>：因為被修改過的頁在被驅逐時需要將其寫回磁盤，需要花費較久時間。考慮引入一個<strong>修改位(modified bit，又稱髒頁, dirty bit)</strong>，紀錄。clock algorithm 可以再新增一個變種，比如優先驅逐未被修改的頁。</p>
+<p><strong>從虛擬地址映射到物理地址的順序如下</strong>：</p>
+<ol>
+<li>解析虛擬地址 → 得到 VPN 和 VPO。</li>
+<li>查找 TLB 是否命中。<ul>
+<li>命中 → 直接用 PFN 合成 PA，完成！。</li>
+<li>未命中 → 執行以下步驟。</li>
+</ul>
+</li>
+<li>用 VPN 查頁表 → 得到 PTE。<ul>
+<li>檢查 valid bit。</li>
+<li>若無效 → 缺頁處理(頁存在磁盤上)或終止進程(訪問非法地址)。</li>
+</ul>
+</li>
+<li>從 PTE 中取得 PFN。</li>
+<li>更新 TLB。</li>
+<li>合成 PA = PFN + VPO。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/">asciibase64</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://ilsao.github.io/2025/08/26/OSTEP-Virtualization/">https://ilsao.github.io/2025/08/26/OSTEP-Virtualization/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://ilsao.github.io" target="_blank">asciibase64</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E5%BA%95%E5%B1%A4%E5%8E%9F%E7%90%86/">計算機底層原理</a></div><div class="post-share"><div class="social-share" data-image="/pictures/OSTEP_Virtualization.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img class="cover" src="/pictures/xv6_syscall.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">xv6 陷入機制淺析</div></div><div class="info-2"><div class="info-item-1">簡單介紹 xv6 操作系統的陷入機制</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/30/CSAPP-Attack-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Attack Lab 題解"><img class="cover" src="/pictures/AttackLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-30</div><div class="info-item-2">CSAPP Attack Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/04/CSAPP-Architecture-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Architecture Lab 題解"><img class="cover" src="/pictures/ArchLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-04</div><div class="info-item-2">CSAPP Architecture Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/05/10/CSAPP-Bomb-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Bomb Lab 題解"><img class="cover" src="/pictures/BombLab.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">CSAPP Bomb Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/07/18/CSAPP-Cache-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Cache Lab 題解"><img class="cover" src="/pictures/CacheLab.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CSAPP Cache Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統Cache Lab題解</div></div></div></a><a class="pagination-related" href="/2025/02/19/CSAPP-Data-Lab-%E9%A1%8C%E8%A7%A3/" title="CSAPP Data Lab 題解"><img class="cover" src="/pictures/DataLab.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">CSAPP Data Lab 題解</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統官方Lab題解</div></div></div></a><a class="pagination-related" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img class="cover" src="/pictures/CSAPP_U10.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">CSAPP U10 極簡筆記</div></div><div class="info-2"><div class="info-item-1">深入理解計算機系統第十章極簡筆記</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/pictures/A4.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">asciibase64</div><div class="author-info-description">努力學習中的小菜鳥</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ilsao"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%97%E9%99%90%E7%9B%B4%E6%8E%A5%E5%9F%B7%E8%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">受限直接執行</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%B2%E7%A8%8B%E8%AA%BF%E5%BA%A6"><span class="toc-number">3.</span> <span class="toc-text">進程調度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Intro"><span class="toc-number">4.</span> <span class="toc-text">Intro.</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%B4%9A%E5%8F%8D%E9%A5%8B%E9%9A%8A%E5%88%97"><span class="toc-number">4.1.</span> <span class="toc-text">多級反饋隊列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AF%94%E4%BE%8B%E4%BB%BD%E9%A1%8D"><span class="toc-number">4.2.</span> <span class="toc-text">比例份額</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E8%99%95%E7%90%86%E5%99%A8%E8%AA%BF%E5%BA%A6"><span class="toc-number">4.3.</span> <span class="toc-text">多處理器調度</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%99%9B%E6%93%AC%E5%85%A7%E5%AD%98"><span class="toc-number">5.</span> <span class="toc-text">虛擬內存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%AE%B5"><span class="toc-number">5.1.</span> <span class="toc-text">分段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E9%A0%81"><span class="toc-number">5.2.</span> <span class="toc-text">分頁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BC%83%E5%B0%8F%E7%9A%84%E9%A0%81%E8%A1%A8"><span class="toc-number">5.3.</span> <span class="toc-text">較小的頁表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%85%E8%B6%8A%E7%89%A9%E7%90%86%E5%85%A7%E5%AD%98"><span class="toc-number">5.4.</span> <span class="toc-text">超越物理內存</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記"><img src="/pictures/%E6%88%91%E7%9A%84%E7%B4%99%E7%89%87%E4%BA%BA%E5%A5%B3%E5%8F%8B.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="[GAMES 101] Transformation 筆記"/></a><div class="content"><a class="title" href="/2025/12/20/GAMES-101-Transformation-%E7%AD%86%E8%A8%98/" title="[GAMES 101] Transformation 筆記">[GAMES 101] Transformation 筆記</a><time datetime="2025-12-20T14:04:40.382Z" title="更新于 2025-12-20 22:04:40">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network"><img src="/pictures/computer_network_intro.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Introduction to Computer Network"/></a><div class="content"><a class="title" href="/2025/09/14/Introduction-to-Computer-Network/" title="Introduction to Computer Network">Introduction to Computer Network</a><time datetime="2025-09-13T17:23:04.837Z" title="更新于 2025-09-14 01:23:04">2025-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析"><img src="/pictures/xv6_syscall.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="xv6 陷入機制淺析"/></a><div class="content"><a class="title" href="/2025/08/30/xv6-%E9%99%B7%E5%85%A5%E6%A9%9F%E5%88%B6%E6%B7%BA%E6%9E%90/" title="xv6 陷入機制淺析">xv6 陷入機制淺析</a><time datetime="2025-08-30T13:36:27.182Z" title="更新于 2025-08-30 21:36:27">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization"><img src="/pictures/OSTEP_Virtualization.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OSTEP Virtualization"/></a><div class="content"><a class="title" href="/2025/08/26/OSTEP-Virtualization/" title="OSTEP Virtualization">OSTEP Virtualization</a><time datetime="2025-08-26T09:04:03.629Z" title="更新于 2025-08-26 17:04:03">2025-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記"><img src="/pictures/CSAPP_U10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSAPP U10 極簡筆記"/></a><div class="content"><a class="title" href="/2025/08/10/CSAPP-U10-%E6%A5%B5%E7%B0%A1%E7%AD%86%E8%A8%98/" title="CSAPP U10 極簡筆記">CSAPP U10 極簡筆記</a><time datetime="2025-08-19T09:10:56.192Z" title="更新于 2025-08-19 17:10:56">2025-08-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><div id="footer-wrap"><div class="copyright">&copy;2025 By asciibase64</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Have a good day, mate!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ilsao/ilsao.github.io',
+      'data-repo-id': 'R_kgDONxqXQA',
+      'data-category-id': 'DIC_kwDONxqXQM4CmeG9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async src="/js/title.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
