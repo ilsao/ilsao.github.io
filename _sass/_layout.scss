@@ -55,4 +55,66 @@ body.sticky-bottom-footer {
 * Projects
 *****************************************************************************/
 
-// TODO: redefine projects layout.
+.projects {
+  .project-list-item {
+    margin-bottom: 1rem;
+  }
+
+  .project-list-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .project-list-thumb {
+    display: block;
+  }
+
+  .project-list-title {
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .project-list-title a {
+    color: var(--global-text-color);
+  }
+
+  .project-list-date {
+    margin-left: 0.35rem;
+    color: var(--global-text-color-light);
+    font-weight: 400;
+    font-size: 0.95rem;
+  }
+
+  .project-list-description {
+    margin-bottom: 0.5rem;
+    color: var(--global-text-color-light);
+  }
+
+  .project-list-link {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .project-list-link a {
+    color: var(--global-theme-color);
+    text-decoration: none;
+  }
+
+  .project-list-link a:hover {
+    text-decoration: underline;
+  }
+
+  .project-list-divider {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    border-top: 1px solid var(--global-divider-color);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .projects .project-list-grid {
+    grid-template-columns: 1fr;
+  }
+}
