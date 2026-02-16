@@ -36,7 +36,7 @@ Responsible for building the backend of a science education website, using Go an
 
 Participate in team-based software development projects, focusing on hands-on software engineering practice and collaborative development with Git.
 
-Beyond academics, I have a passion for Chinese calligraphy.
+Beyond academics, I have a passion for Chinese calligraphy and playing the drums.
 
 - Skills
     - Programming: C/C++, Go, Python
