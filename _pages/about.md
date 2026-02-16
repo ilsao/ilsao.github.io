@@ -32,7 +32,7 @@ I am a first-year undergraduate student majoring in Computer Science at [Nationa
 
 Responsible for building the backend of a science education website, using Go and Postgres, and adhering to the three-layer architecture (Handler -> Service -> Querier) in the development.
 
-**Member** | Software Development Club (SDC), NYCU | Since Jan 2026
+**Member** | Software Development Club (SDC), NYCU | Since Sep 2025
 
 Participate in team-based software development projects, focusing on hands-on software engineering practice and collaborative development with Git.
 
@@ -40,4 +40,4 @@ Beyond academics, I have a passion for Chinese calligraphy and playing the drums
 
 - Skills
     - Programming: C/C++, Go, Python
-    - Tools: Vim, LaTeX, Git, Makefile, Unity
+    - Tools: Vim, LaTeX, Git, Makefile, gdb, Unity
