@@ -256,6 +256,82 @@ ul.task-list input[type="checkbox"] {
 
 // diff2html
 
+// News timeline
+
+.news-timeline-wrapper {
+  padding-top: 0.25rem;
+}
+
+.news-timeline-scrollable {
+  overflow-y: auto;
+  padding-right: 0.75rem;
+}
+
+.news-timeline {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  list-style: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0.45rem;
+    bottom: 0.6rem;
+    left: 0.25rem;
+    width: 2px;
+    background: var(--global-divider-color);
+  }
+}
+
+.news-timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(8.5rem, 20%) 1fr;
+  gap: 1rem;
+  padding: 0 0 1.35rem 0.75rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0.35rem;
+    left: -1.08rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid var(--global-theme-color);
+    border-radius: 50%;
+    background: var(--global-bg-color);
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.news-timeline-date {
+  color: var(--global-theme-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.news-timeline-content {
+  min-width: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 575px) {
+  .news-timeline-item {
+    display: block;
+  }
+
+  .news-timeline-date {
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+}
+
 .d2h-diff-table {
   position: relative;
 }
