@@ -24,20 +24,18 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-🧑‍🎓 Undergraduate Student at National Yang Ming Chiao Tung University
+👋 Hi! I am an undergraduate student majoring in Computer Science at [National Yang Ming Chiao Tung University](https://www.nycu.edu.tw/nycu/en/index).
 
-I am a first-year undergraduate student majoring in Computer Science at [National Yang Ming Chiao Tung University](https://www.nycu.edu.tw/nycu/en/index).
+My research interests lie in **Machine Learning Systems (MLSys)**, particularly efficient LLM inference and serving, parallel computing with CUDA, and efficient kernel design. 
 
 **Research Assistant (RA)** | [Cognition and Science Learning Laboratory, NYCU](https://esciedu.lab.nycu.edu.tw/hcshe/?lang=en) | Since Jan 2026
 
-Responsible for building the backend of a science education website, using Go and Postgres, and adhering to the three-layer architecture (Handler -> Service -> Querier) in the development.
+I help build the backend of a science education website using Go and PostgreSQL. Our development process includes ERD and class diagram design, a three-layer architecture (Handler -> Service -> Querier), and table-driven tests with mockery.
 
-**Member** | Software Development Club (SDC), NYCU | Since Sep 2025
+I enjoy learning computer systems by building them. My projects include [BeyondOS](https://github.com/ilsao/BeyondOS), a modular RISC-V operating system; a non-pipelined RISC-V processor and ISA emulator; and a [ray tracing renderer](https://github.com/ilsao/Ray-Tracing-Renderer). These projects have helped me connect low-level systems, computer architecture, graphics, and performance-oriented computing.
 
-Participate in team-based software development projects, focusing on hands-on software engineering practice and collaborative development with Git.
-
-Beyond academics, I have a passion for Chinese calligraphy and playing the drums.
+Beyond academics, I enjoy Chinese calligraphy and playing the drums.
 
 - Skills
-    - Programming: C/C++, Go, Python
-    - Tools: Vim, LaTeX, Git, Makefile, gdb, Unity
+  - Programming: C/C++, Go, Python
+  - Tools & Technologies: Linux, Git, CUDA, PyTorch, LaTeX, Makefile, Vim
