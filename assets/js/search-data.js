@@ -16,6 +16,13 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
+        },{id: "nav-research",
+          title: "research",
+          description: "Technical reports and research papers.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/research/";
+          },
         },{id: "nav-projects",
           title: "projects",
           description: "/* some cool stuff */",
@@ -405,6 +412,9 @@ ninja.data = [{
           description: "",
           section: "News",},{id: "news-assisted-in-facilitating-team-activities-and-supporting-participants-at-sitcon-camp-2026-as-a-team-counselor",
           title: 'Assisted in facilitating team activities and supporting participants at SITCON Camp 2026 as...',
+          description: "",
+          section: "News",},{id: "news-gold-award-2026-geneva-international-youth-inventions-challenge",
+          title: 'Gold Award, 2026 Geneva International Youth Inventions Challenge',
           description: "",
           section: "News",},{id: "projects-beyondos",
           title: 'BeyondOS',
