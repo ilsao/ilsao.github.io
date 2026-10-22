@@ -9,14 +9,7 @@ ninja.data = [{
     handler: () => {
       window.location.href = "/";
     },
-  },{id: "nav-blog",
-          title: "blog",
-          description: "",
-          section: "Navigation",
-          handler: () => {
-            window.location.href = "/blog/";
-          },
-        },{id: "nav-research",
+  },{id: "nav-research",
           title: "research",
           description: "Technical reports and research papers.",
           section: "Navigation",
@@ -29,6 +22,13 @@ ninja.data = [{
           section: "Navigation",
           handler: () => {
             window.location.href = "/projects/";
+          },
+        },{id: "nav-slides",
+          title: "slides",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/https:/ilsao.github.io/slides/";
           },
         },{id: "post-a-post-with-plotly-js",
         
