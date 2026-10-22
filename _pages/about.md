@@ -16,7 +16,7 @@ social: true # includes social icons at the bottom of the page
 announcements:
   enabled: true # includes a list of news items
   scrollable: true # adds a vertical scroll bar if there are more than 3 news items
-  limit:  # leave blank to include all the news in the `_news` folder
+  limit: # leave blank to include all the news in the `_news` folder
 
 latest_posts:
   enabled: false
@@ -26,7 +26,7 @@ latest_posts:
 
 👋 Hi! I am an undergraduate student majoring in Computer Science at [National Yang Ming Chiao Tung University](https://www.nycu.edu.tw/nycu/en/index).
 
-My research interests lie in **Machine Learning Systems (MLSys)**, particularly efficient LLM inference and serving, parallel computing with CUDA, and efficient kernel design. 
+My research interests lie in **Machine Learning Systems (MLSys)**, particularly efficient LLM inference and serving, parallel computing with CUDA, and efficient kernel design.
 
 **Research Assistant (RA)** | [Cognition and Science Learning Laboratory, NYCU](https://esciedu.lab.nycu.edu.tw/hcshe/?lang=en) | Since Jan 2026
 

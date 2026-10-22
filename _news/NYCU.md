@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Enrolled in [National Yang Ming Chiao Tung University](https://www.nycu.edu.tw/nycu/en/index). 
+Enrolled in [National Yang Ming Chiao Tung University](https://www.nycu.edu.tw/nycu/en/index).
